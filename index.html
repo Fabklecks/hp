@@ -8,6 +8,8 @@
 		<link rel="shortcut icon" type="image/x-icon" href="https://www.pngkit.com/png/full/382-3823447_rainbow-six-icon-rainbow-six-siege-icon.png">
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		
 	</head>
 	<body class="is-preload">
 		<audio src="bgm.mp3" hidden="true" autoplay="true"></audio>
@@ -86,218 +88,300 @@
 							<h2 class="major">OverTheTopShop Preisliste</h2>
 							<span class="image main"><img src="images/pic03.jpg" alt="" /></span>
 							
-							<p><font color="orange">/p v Mall</font></p>
 
 							<label for="dropdown">Wähle ein Item</label>
 							<select id="dropdown" name="items" onchange="calculatePrice()">
-								<option value="7500">Netherrite</option>
-								<option value="250">Diamant</option>
-								<option value="25">Eisen</option>
-								<option value="35">Gold</option>
-								<option value="5">Redstone</option>
-								<option value="15">Kohle</option>
-								<option value="10">Lapis</option>
-								<option value="10">Sand</option>
-								<option value="235">Quartz Block</option>
-								<option value="100">Wolle</option>
-								<option value="20">Weizen</option>
-								<option value="3">Bambus</option>
-								<option value="15">Eichenholz</option>
-								<option value="100">Beton</option>
-								<option value="20">Glas</option>
-								<option value="5">Stone</option>
-								<option value="100">Kürbis</option>
-								<option value="50">Gun Powder</option>
-								<option value="100">Leder</option>
-								<option value="10">Kakaobohne</option>
-								<option value="10">Melone</option>
-								<option value="1000">Schleimball</option>
-								<option value="5">Zuckerrohr</option>
-								<option value="10">Kaktus</option>
-								<option value="25">Quartz</option>
-								<option value="100">Blaze Rod</option>
-								<option value="20">Arrow</option>
-								<option value="20">Knochen</option>
+							
 							</select>
-							
-							
 
-							<input id="amount" placeholder="Menge" type="number" onchange="calculatePrice()">
 							
-							<p><center>Preis: <span id="total"><font color="lime">0$</font></span></center></p>
+					
+				
+					<input id="amount" placeholder="Menge" type="number" onchange="calculatePrice()">
+					
+					<p>Preis: <span id="total"><font color="lime">0$</font></span></p>
+					
+					<script>
+						function calculatePrice(){
+							let value = document.getElementById("amount").value
+							let dropdownValue = document.getElementById("dropdown").value
+							dropdownValue = parseInt(dropdownValue)
+							let total = document.getElementById("total")
+							total.innerHTML = value * dropdownValue +"$"
+							total.style.color = "lime"
+							
+						}
+					</script>
+						<!--
+												<a href="#Netherrite">Netherrite</a>
+							<a href="#Diamanten">Diamanten</a>
+							<a href="#Eisen">Eisen</a>
+							<a href="#Gold">Gold</a>
+							<a href="#Redstone">Redstone</a>
+							<a href="#Kohle">Kohle</a>
+							<a href="#Lapis">Lapis</a>
+							<a href="#Sand">Sand</a>
+							<a href="#Quartz_Block">Quartz Block</a>
+							<a href="Wolle">Wolle</a>
+							<a href="#Weizen">Weizen</a>
+							<a href="#Bambus">Bambus</a>
+							<a href="#Eichenholz">Eichenholz</a>
+							<a href="#Beton">Beton</a>
+							<a href="#Eichenholz">Eichenholz</a>
+							<a href="#Glas">Glas</a>
+							<a href="#Stone">Stone</a>
+							<a href="#Kürbis">Kürbis</a>
+							<a href="#Gun_Powder">Gun Powder</a>
+							<a href="#Leder">Leder</a>
+							<a href="#Kakaobohne">Kakaobohne</a>
+							<a href="#Melone">Melone</a>
+							<a href="#Nether_Warze">Nether Warze</a>
+							<a href="#Schleimball">Schleimball</a>
+							<a href="#Zuckerrohr">Zuckerrohr</a>
+							<a href="#Kaktus">Kaktus</a>
+							<p><u>Um ein Bestimmtes Item zu suchen druecke einfach STRG + F und gib in der Suchleiste den Namen des Items ein.</u></p>
+							<font color="green">Styycraft.net</font>
+							<p><font color="orange">/p v Mall</font></p>
+							-->
+							<br>
+							<div id="overview">
+
+							</div>
 							
 							<script>
-								function calculatePrice(){
-									let value = document.getElementById("amount").value
-									let dropdownValue = document.getElementById("dropdown").value
-									dropdownValue = parseInt(dropdownValue)
-									let total = document.getElementById("total")
-									total.innerHTML = value * dropdownValue +"$"
-									total.style.color = "lime"
-									
-								}
-							</script>
-
+								
+								let items= [
+								{
+								itemName: "Netherrite",
+								plural: "Netherrite", 
+								price: "7500",
+								image: "netherrite.png",
+								color:"black"
+							},
+							{
+								itemName: "Diamant",
+								plural: "Diamanten",
+								price: "250",
+								image: "dia.webp",
+								color:"#13E0E2"
+							},
+							{
+								itemName: "Eisen",
+								plural: "Eisen",
+								price: "50",
+								image: "iron.webp",
+								color:"silver"
+							},
+							{
+								itemName: "Gold",
+								plural: "Gold",
+								price: "70",
+								image: "gold.webp",
+								color:"gold"
+							},
+						
+							{
+								itemName: "Redstone",
+								plural: "Redstone",
+								price: "5",
+								image: "redstone.webp",
+								color:"red"
+							},
+							{
+								itemName: "Kohle",
+								plural: "Kohle",
+								price: "15",
+								image: "coal.png",
+								color:"black"
+							},
+							{
+								itemName: "Lapis",
+								plural: "Lapis",
+								price: "10",
+								image: "lapis.webp",
+								color:"#0D55E7"
+							},
+							{
+								itemName:"Sand",
+								plural: "Sand",
+								price: "10",
+								image:"Sand.webp",
+								color:"#F4D48A"
+							},
+							{
+								itemName: "Quartz Block",
+								plural: "Quartz Blöcke",
+								price: "600",
+								image: "quartzblock.webp",
+								color:"#F7EFDB"
+							},
+							{
+								itemName: "Wolle",
+								plural: "Wolle",
+								price: "100",
+								image: "wool.webp",
+								color:"white"
+							},
+							{
+								itemName: "Weizen",
+								plural: "Weizen",
+								price: "20",
+								image: "wheat.png",
+								color:"yellow"
+							},
+							{
+								itemName: "Bambus",
+								plural: "Bambus",
+								price: "3",
+								image: "bambus.webp",
+								color:"green"
+							},
+							{
+								itemName: "Eichenholz",
+								plural: "Eichenholz",
+								price: "15",
+								image: "wood.webp",
+								color:"#692C07"
+							},
+							{
+								itemName: "Beton",
+								plural: "Beton",
+								price: "100",
+								image: "beton.webp",
+								color:"white"
+							},
+							{
+								itemName: "Glas",
+								plural: "Glas",
+								price: "20",
+								image: "glass.webp",
+								color:"white"
+							},
+							{
+								itemName: "Stein",
+								plural: "Stein",
+								price: "5",
+								image: "stone.png",
+								color:"#9DA4B3"
+							},
+							{
+								itemName: "Kürbis",
+								plural: "Kürbis",
+								price: "100",
+								image: "pumpkin.webp",
+								color:"orange"
+							},
+							{
+								itemName: "Gun Powder",
+								plural: "Gun Powder",
+								price: "50",
+								image: "gun.webp",
+								color:"#616159"
+							},
+							{
+								itemName: "Leder",
+								plural: "Leder",
+								price: "100",
+								image: "Leder.webp",
+								color:"#C44809"
+							},
+							{
+								itemName: "Kakaobohnen",
+								plural: "Kakaobohnen",
+								price: "10",
+								image: "Kakaobohnen.webp",
+								color:"#734A11"
+							},
+							{
+								itemName: "Melone",
+								plural: "Melonen",
+								price: "10",
+								image: "melone.webp",
+								color:"#4FC250"
+							},
+							{
+								itemName: "Nether Warze",
+								plural: "Nether Warzen",
+								price: "5",
+								image: "Nether_Wart.png",
+								color:"darkred"
+							},
+							{
+								itemName: "Schleimball",
+								plural: "Schleimbälle",
+								price: "1000",
+								image: "slimeball.webp",
+								color:"#0AA30B"
+							},
+							{
+								itemName: "Zuckerrohr",
+								plural: "Zuckerrohr",
+								price: "5",
+								image: "zuckerrohr.png",
+								color:"#46D910"
+							},
+							{
+								itemName: "Kaktus",
+								plural: "Kakteen",
+								price: "10",
+								image: "Kaktus.webp",
+								color:"#0D9010"
+							},
+							{
+								itemName: "Quartz",
+								plural: "Quartz",
+								price: "4",
+								image: "Netherquarz.webp",
+								color:"#F7EFDB"
+							},
+							{
+								itemName: "Blaze Rod",
+								plural: "Blaze Rods",
+								price: "10",
+								image: "blaze.png",
+								color:"#F4A12B"
+							},
+							{
+								itemName: "Knochen",
+								plural: "Knochen",
+								price: "20",
+								image: "Knochen.webp",
+								color:"white"
+							},
+							{
+								itemName: "Pfeil",
+								plural: "Pfeile",
+								price: "20",
+								image: "pfeil.png",
+								color:"white"
+							}
+						]
+						
+						let final = ""
+							for(let index= 0; index< items.length; index++){
+								let item = items[index]
+								let selectMenu = document.getElementById("dropdown")
+								let option = document.createElement("option")
+								option.value = item.price
+								option.text = item.itemName
+								selectMenu.add(option)
+								
+								let block = `<span id="${items[index].itemName}">`+
+								`<font color="${items[index].color}">1 ${items[index].itemName}</font> <img src="images/${items[index].image}" width="20" height="20" /> = <font color="lime">${items[index].price}$</font>`+
+								`<p><font color="${items[index].color}">64 ${items[index].plural}</font> <img src="images/${items[index].image}" width="20" height="20" /> = <font color="lime">${items[index].price * 64}$</font></p>`+
+							`</span>`
+							final = final + block
 							
+							}
+							
+							document.getElementById("overview").innerHTML = final
 
-							<br>
-							<span id="Netherrite">
-							<p><font color="black">1 Netherrite</font> <img src="images/netherrite.png" width="20" height="20" /> = <font color="lime">7500$</font></p>
-						</span>	
-
-								<span id="Diamanten">
-								<font color="#13E0E2">1 Diamant</font> <img src="images/dia.webp" width="20" height="20" /> = <font color="lime">250$</font>
-								<p><font color="#13E0E2">64 Diamanten</font> <img src="images/dia.webp" width="20" height="20" /> = <font color="lime">16000$</font></p>
-							</span>
-								
-								<span id="Eisen">
-								<font color="silver">1 Eisen</font> <img src="images/iron.webp" width="20" height="20" /> = <font color="lime">25$</font>
-								<p><font color="silver">64 Eisen</font> <img src="images/iron.webp" width="20" height="20" /> = <font color="lime">1600$</font></p>
-							</span>
-
-							<span id="Gold">
-								<font color="gold">1 Gold</font> <img src="images/gold.webp" width="20" height="20" /> = <font color="lime">35$</font>
-								<p><font color="gold">64 Gold</font> <img src="images/gold.webp" width="20" height="20" /> = <font color="lime">2240$</font></p>
-							</span>
-
-							<span id="Redstone">
-								<font color="red">1 Redstone</font> <img src="images/redstone.webp" width="20" height="20" /> = <font color="lime">5$</font>
-								<p><font color="red">64 Redstone</font> <img src="images/redstone.webp" width="20" height="20" /> = <font color="lime">320$</font></p>
-							</span>
-
-							<span id="Kohle">
-								<font color="black">1 Kohle</font> <img src="images/coal.png" width="20" height="20" /> = <font color="lime">15$</font>
-								<p><font color="black">64 Kohle</font> <img src="images/coal.png" width="20" height="20" /> = <font color="lime">960$</font></p>
-							</span>
-
-							<span id="Lapis">
-								<font color="#0D55E7">1 Lapis</font> <img src="images/lapis.webp" width="20" height="20" /> = <font color="lime">10$</font>
-								<p><font color="#0D55E7">64 Lapis</font> <img src="images/lapis.webp" width="20" height="20" /> = <font color="lime">640$</font></p>
-							</span>
-
-							<span id="Quartz">
-								<font color="#F7EFDB">1 Quartz</font> <img src="images/Netherquarz.webp" width="20" height="20" /> = <font color="lime">25$</font>
-								<p><font color="#F7EFDB">64 Quartz</font> <img src="images/Netherquarz.webp" width="20" height="20" /> = <font color="lime">1600$</font></p>
-							</span>
-
-							<span id="Sand">
-								<font color="#F4D48A">1 Sand</font> <img src="images/Sand.webp" width="20" height="20" /> = <font color="lime">10$</font>
-								<p><font color="#F4D48A">64 Sand</font> <img src="images/Sand.webp" width="20" height="20" /> = <font color="lime">640$</font></p>
-							</span>
-
-							<span id="Quartz_Block">
-								<font color="#F7EFDB">1 Quartz Block</font> <img src="images/quartzblock.webp" width="20" height="20" /> = <font color="lime">235$</font>
-								<p><font color="#F7EFDB">64 Quartz Bloecke</font> <img src="images/quartzblock.webp" width="20" height="20" /> = <font color="lime">15040$</font></p>
-							</span>
-
-							<span id="Wolle">
-								<font color="white">1 Wolle</font> <img src="images/wool.webp" width="20" height="20" />  = <font color="lime">100$</font>
-								<p><font color="white">64 Wolle</font> <img src="images/wool.webp" width="20" height="20" /> = <font color="lime">6400$</font></p>
-							</span>
-
-							<span id="Weizen">
-								<font color="yellow">1 Weizen</font> <img src="images/wheat.png" width="20" height="20" /> = <font color="lime">20$</font>
-								<p><font color="yellow">64 Weizen</font> <img src="images/wheat.png" width="20" height="20" /> = <font color="lime">1280$</font></p>
-							</span>
-
-							<span id="Bambus">
-								<font color="green">1 Bambus</font> <img src="images/bambus.webp" width="20" height="20" /> = <font color="lime">3$</font>
-								<p><font color="green">64 Bambus</font> <img src="images/bambus.webp" width="20" height="20" /> = <font color="lime">192$</font></p>
-							</span>
-
-							<span id="Eichenholz">
-								<font color="#692C07">1 Eichenholz</font> <img src="images/wood.webp" width="20" height="20" /> = <font color="lime">15$</font>
-								<p><font color="#692C07">64 Eichenholz</font> <img src="images/wood.webp" width="20" height="20" /> = <font color="lime">960$</font></p>
-							</span>
-
-							<span id="Beton">
-								<font color="white">1 Beton</font> <img src="images/beton.webp" width="20" height="20" /> = <font color="lime">100$</font>
-								<p><font color="white">64 Beton</font> <img src="images/beton.webp" width="20" height="20" /> = <font color="lime">6400$</font></p>
-							</span>
-
-							<span id="Glas">
-								<font color="white">1 Glas</font> <img src="images/glass.webp" width="20" height="20" /> = <font color="lime">20$</font>
-								<p><font color="white">64 Glas</font> <img src="images/glass.webp" width="20" height="20" /> = <font color="lime">1280$</font></p>
-							</span>
-
-							<span id="Stone">
-								<font color="#9DA4B3">1 Stone</font> <img src="images/stone.png" width="20" height="20" /> = <font color="lime">5$</font>
-								<p><font color="#9DA4B3">64 Stone</font> <img src="images/stone.png" width="20" height="20" /> = <font color="lime">320$</font></p>
-							</span>
-
-							<span id="Kürbis">
-								<font color="orange">1 Kürbis</font> <img src="images/pumpkin.webp" width="20" height="20" /> = <font color="lime">100$</font>
-								<p><font color="orange">64 Kürbis</font> <img src="images/pumpkin.webp" width="20" height="20" /> = <font color="lime">6400$</font></p>
-							</span>
-
-							<span id="Gun_Powder">
-								<font color="#616159">1 Gun Powder</font> <img src="images/gun.webp" width="20" height="20" /> = <font color="lime">50$</font>
-								<p><font color="#616159">64 Gun Powder</font> <img src="images/gun.webp" width="20" height="20" /> = <font color="lime">3200$</font></p>
-							</span>
-
-							<span id="Leder">
-								<font color="#C44809">1 Leder</font> <img src="images/Leder.webp" width="20" height="20" /> = <font color="lime">100$</font>
-								<p><font color="#C44809">64 Leder</font> <img src="images/Leder.webp" width="20" height="20" /> = <font color="lime">6400$</font></p>
-							</span>
-
-							<span id="Kakaobohne">
-								<font color="#734A11">1 Kakaobohne</font> <img src="images/Kakaobohnen.webp" width="20" height="20" /> = <font color="lime">10$</font>
-								<p><font color="#734A11">64 Kakaobohnen</font> <img src="images/Kakaobohnen.webp" width="20" height="20" /> = <font color="lime">640$</font></p>
-							</span>
-
-							<span id="Melone">
-								<font color="#4FC250">1 Melone</font> <img src="images/melone.webp" width="20" height="20" /> = <font color="lime">10$</font>
-								<p><font color="#4FC250">64 Melonen</font> <img src="images/melone.webp" width="20" height="20" /> = <font color="lime">640$</font></p>
-							</span>
-
-							<span id="Nether_Warze">
-								<font color="darkred">1 Nether Warze</font> <img src="images/Nether_Wart.png" width="20" height="20" /> = <font color="lime">5$</font>
-								<p><font color="darkred">64 Nether Warzen</font> <img src="images/Nether_Wart.png" width="20" height="20" /> = <font color="lime">320$</font></p>
-							</span>
-
-							<span id="Schleimball">
-								<p><font color="#0AA30B">1 Schleimball</font> <img src="images/slimeball.webp" width="20" height="20" /> = <font color="lime">1000$</font></p>
-							</span>
-
-							<span id="Zuckerrohr">
-								<font color="#46D910">1 Zuckerrohr</font> <img src="images/zuckerrohr.png" width="20" height="20" /> = <font color="lime">5$</font>
-								<p><font color="#46D910">64 Zuckerrohr</font> <img src="images/zuckerrohr.png" width="20" height="20" /> = <font color="lime">320$</font></p>
-							</span>
-
-							<span id="Kaktus">
-								<font color="#0D9010">1 Kaktus</font> <img src="images/Kaktus.webp" width="20" height="20" /> = <font color="lime">10$</font>
-								<p><font color="#0D9010">64 Kakteen</font> <img src="images/Kaktus.webp" width="20" height="20" /> = <font color="lime">640$</font></p>
-							</span>
-
-							<span id="Blaze Rod">
-								<font color="#F4A12B">1 Blaze Rod</font> <img src="images/blaze.png" width="20" height="20" /> = <font color="lime">10$</font>
-								<p><font color="#F4A12B">64 Blaze Rod</font> <img src="images/blaze.png" width="20" height="20" /> = <font color="lime">640$</font></p>
-							</span>
-
-							<span id="Knochen">
-								<font color="white">1 Knochen</font> <img src="images/Knochen.webp" width="20" height="20" /> = <font color="lime">20$</font>
-								<p><font color="white">64 Knochen</font> <img src="images/Knochen.webp" width="20" height="20" /> = <font color="lime">1280$</font></p>
-							</span>
-
-							<span id="Pfeile">
-								<font color="white">1 Pfeil</font> <img src="images/pfeil.png" width="20" height="20" /> = <font color="lime">20$</font>
-								<p><font color="white">64 Pfeile</font> <img src="images/pfeil.png" width="20" height="20" /> = <font color="lime">1280$</font></p>
-							</span>
-
-								
+						</script>	
 								
 								
 						</article>
 
-						<script>
-							function searchItem(){
-								let value = document.getElementById("item").value
-								
-								
-
-							}
-						</script>
-
+						
 						<!-- Elements -->
 							<article id="elements">
 								<h2 class="major">Elements</h2>
