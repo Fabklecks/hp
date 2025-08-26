@@ -36,11 +36,11 @@ a { text-decoration: none; color: inherit; }
 .stream-timer { margin-top: 1rem; font-size: 1.3rem; font-weight: bold; color: var(--accent); }
 #timer { font-size: 2rem; margin-top: 0.3rem; }
 
-/* Hero Media */
+
 .hero-media .twitch-frame {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* 16:9 Verhältnis = 9/16*100% */
+  padding-top: 56.25%; /* 16:9, NICHT AENDERN */
 }
 
 .hero-media .twitch-frame iframe {
@@ -64,7 +64,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 
-/* Cards */
+/* Karten */
 .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 1.5rem; margin-top: 2rem;}
 .card { background: var(--btn-bg); border-radius: 12px; padding: 1.5rem; text-align: center; transition: transform 0.3s, box-shadow 0.3s; }
 .card:hover { transform: translateY(-5px); box-shadow: 0 0 25px var(--glow);}
@@ -76,7 +76,7 @@ a { text-decoration: none; color: inherit; }
 .icon.x { background-image: url('https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg'); }
 .icon.discord { background-image: url('https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg'); }
 
-/* FAQ */
+/* Faq */
 .faq-item { margin-bottom: 1rem; }
 .faq-item summary { cursor: pointer; font-weight: bold; }
 .faq-item p { margin-left: 1rem; color: #ccc; }
