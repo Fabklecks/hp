@@ -25,7 +25,8 @@ a {
   margin: 0 auto;
 }
 
-.site-header, .site-footer {
+/* Header */
+.site-header {
   padding: 1rem 0;
   background: #0f0f17;
 }
@@ -34,33 +35,11 @@ a {
   margin-left: 1rem;
 }
 
-.btn {
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-weight: bold;
-  transition: background 0.3s;
+.nav-toggle {
+  display: none;
 }
 
-.btn-primary {
-  background: var(--color-primary);
-  color: #fff;
-}
-
-.btn-primary:hover {
-  background: var(--color-accent);
-}
-
-.btn-ghost {
-  background: transparent;
-  border: 2px solid var(--color-primary);
-  color: var(--color-primary);
-}
-
-.btn-ghost:hover {
-  background: var(--color-primary);
-  color: #fff;
-}
-
+/* Hero */
 .hero-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -95,7 +74,20 @@ a {
   font-size: 0.8rem;
 }
 
-/* Social Cards */
+/* Timer */
+.stream-timer {
+  margin-top: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+#timer {
+  font-size: 2rem;
+  margin-top: 0.5rem;
+}
+
+/* Cards */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -131,78 +123,4 @@ a {
 
 .card-title {
   font-weight: bold;
-  margin-bottom: 0.3rem;
-}
-
-.card-desc {
-  font-size: 0.9rem;
-  color: #aaa;
-}
-
-/* Discord Icon Styling – gleiche Optik wie andere Cards */
-.card a[href*="discord"] .card-icon svg {
-  fill: #7289da; /* Discord-Blau */
-}
-
-/* About Section */
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  padding: 3rem 0;
-}
-
-.about-card {
-  background: var(--color-btn-bg);
-  padding: 1.5rem;
-  border-radius: 12px;
-}
-
-.bullet-list li {
-  margin-bottom: 0.5rem;
-}
-
-.steps li {
-  margin-bottom: 0.5rem;
-}
-
-/* FAQ */
-.faq-item summary {
-  font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 0.5rem;
-}
-
-.faq-item div {
-  margin-left: 1rem;
-  margin-bottom: 1rem;
-}
-
-/* Footer */
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  gap: 1rem;
-}
-
-.foot-links a {
-  margin-right: 1rem;
-}
-
-.foot-social a {
-  margin-right: 0.5rem;
-  font-weight: bold;
-  color: var(--color-primary);
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-  .hero-grid, .about-grid, .footer-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .cta-row .btn {
-    margin-bottom: 0.5rem;
-  }
-}
+  margin-bottom:
