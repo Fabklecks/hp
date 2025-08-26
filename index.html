@@ -1,374 +1,178 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>jokr_io – Landing</title>
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="description" content="Offizielle Landingpage von jokr_io – Twitch-Streamer & Content Creator." />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav">
+        <a class="brand" href="#">
+          <span class="brand-logo" aria-hidden="true">◎</span>
+          <span class="brand-text">jokr_io</span>
+        </a>
+        <nav class="nav-links">
+          <a href="#about">Über</a>
+          <a href="#socials">Socials</a>
+          <a href="#faq">FAQ</a>
+          <a class="btn btn-primary" href="#watch">Jetzt ansehen</a>
+        </nav>
+        <button class="nav-toggle" aria-label="Navigation ein-/ausblenden">☰</button>
+      </div>
+    </header>
 
-<html>
-	<head>
-		<title>Fabi's Homepage</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="shortcut icon" type="image/x-icon" href="https://www.pngkit.com/png/full/382-3823447_rainbow-six-icon-rainbow-six-siege-icon.png">
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-		
-	</head>
-	<body class="is-preload">
-		<audio src="bgm.mp3" hidden="true" autoplay="true" vol="0.1"></audio>
+    <main>
+      <!-- Hero -->
+      <section class="hero" id="watch">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <h1>Live auf Twitch – jokr_io</h1>
+            <p class="lead">
+              Willkommen auf meiner offiziellen Seite. Ich bin jokr_io – Streamer, Gamer und Content Creator.
+              Begleite mich live auf Twitch oder schau meine Videos auf YouTube.
+            </p>
+            <div class="cta-row">
+              <a class="btn btn-primary" href="https://www.twitch.tv/jokr_io" target="_blank" rel="noreferrer">Twitch öffnen</a>
+              <a class="btn btn-ghost" href="https://www.youtube.com/@J.O.K.R" target="_blank" rel="noreferrer">YouTube-Kanal</a>
+            </div>
+            <div class="badges">
+              <span class="badge">Gaming</span>
+              <span class="badge">Community</span>
+              <span class="badge">Live-Chat</span>
+            </div>
+          </div>
+          <div class="hero-media">
+            <div class="media-frame">
+              <div class="gradient-ring" aria-hidden="true"></div>
+              <iframe
+                src="https://player.twitch.tv/?channel=jokr_io&parent=localhost"
+                height="400"
+                width="100%"
+                allowfullscreen="true"
+                frameborder="0"
+                class="hero-image">
+              </iframe>
+            </div>
+          </div>
+        </div>
+      </section>
 
-		<!-- Wrapper -->
-			<div id="wrapper">
+      <!-- Socials -->
+      <section class="section" id="socials">
+        <div class="container">
+          <h2>Folge & unterstütze</h2>
+          <p class="section-lead">Hier findest du meine offiziellen Kanäle.</p>
 
-				<!-- Header -->
-					<header id="header">
-						<div class="logo">
-							<span class="icon fa-gem"></span>
-						</div>
-						<div class="content">
-							<div class="inner">
-								<h1>Fabio</h1>
-								<p>Das ist meine erste Richtige Homepage, daher kann es <p>sein das manches noch nicht so Richtig
-									funktioniert. Fehler bitte melden per 
-									<a href= "mailto:fabioasik221206@gmail.com">E-Mail</a>.
-							</div>
-						</div>
-						<nav>
-							<ul>
-								<li><a href="#intro">Über mich</a></li>
-								<li><a href="#work">Social Media</a></li>
-								<li><a href="#about">Steckbrief</a></li>
-								<li><a href="#contact">Dienste</a></li>
-								<!--<li><a href="#elements">Elements</a></li>-->
-							</ul>
-						</nav>
-					</header>
+          <div class="card-grid">
+            <a class="card" href="https://www.twitch.tv/jokr_io" target="_blank" rel="noreferrer">
+              <div class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M4 4h16v12l-4 4h-4l-2 2v-2H6a2 2 0 0 1-2-2V4zm4 4v6h2V8H8zm6 0v6h2V8h-2z"/></svg>
+              </div>
+              <div class="card-title">Twitch</div>
+              <div class="card-desc">Livestreams, Chat & Community.</div>
+            </a>
 
-				<!-- Main -->
-					<div id="main">
+            <a class="card" href="https://www.youtube.com/@J.O.K.R" target="_blank" rel="noreferrer">
+              <div class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M10 15l5.19-3L10 9v6zm2-13C6.48 2 2 6.48 2 12s4.48 10 10 10
+                10-4.48 10-10S17.52 2 12 2z"/></svg>
+              </div>
+              <div class="card-title">YouTube</div>
+              <div class="card-desc">Highlights & Videos.</div>
+            </a>
 
-						<!-- Intro -->
-							<article id="intro">
-								<h2 class="major">Über mich</h2>
-								<span class="image main"><img src="images/pic01.jpg" alt="" /></span>
-								<p>Ich bin Fabio, auf den meisten Social media seiten wie <a href="https://www.youtube.com/channel/UCL2W_pfz7ToDo0h6aH1ezAQ?view_as=subscriber" target="blank">Youtube</a> <a href="https://www.instagram.com/fabklecks.mp4/" target="blank">Instagram</a> und Co. aber eher als
-									Fabklecks bekannt. Ich wurde Geboren am 22.12.2006 und bin mitterweile 16 Jahre alt. Ich Gehe auf die <a href="https://blog.edith-stein-lippstadt.de">Edith-Stein-Realschule-Lippstadt</a>.
-								<p>Ich habe vor ca. 8 Jahren meinen Ersten Richtigen PC bekommen. Seit dem hat so ziemlich alles
-									was ich tuhe mit PC's zu tun. Ausserhalb vom "Zocken" interessiere ich mich auch noch für sachen wie:
-									Video/Bild-Bearbeitung, Progammieren, und das Gennerele Arbeiten am PC. Programmier sprachen kann ich
-									leider keine ausser HTML, versuche aber derzeit die Programmier Sprache Java zu lernen. Mit
-									Bild und Video Bearbeitung hatte ich das erste mal was zu tun als ich meinen Youtube kanal 
-									<a href="https://www.youtube.com/channel/UCL2W_pfz7ToDo0h6aH1ezAQ?view_as=subscriber" target="blank">Fabklecks</a> gestartet
-									habe.
-								</p>
-							</article>
+            <a class="card" href="https://x.com/Fabklecks" target="_blank" rel="noreferrer">
+              <div class="card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.28 4.28 0 001.88-2.37
+                8.59 8.59 0 01-2.72 1.04 4.27 4.27 0 00-7.29 3.89A12.1 12.1 0 013 4.79a4.26 4.26 0 001.32 5.69 4.25 4.25 0 01-1.93-.54v.05
+                a4.27 4.27 0 003.42 4.18c-.47.13-.98.2-1.5.07a4.28 4.28 0 003.99 2.96A8.57 8.57 0 012 19.54a12.08 12.08 0 006.56 1.92
+                c7.87 0 12.18-6.52 12.18-12.18 0-.19 0-.37-.01-.56A8.62 8.62 0 0022.46 6z"/></svg>
+              </div>
+              <div class="card-title">X / Twitter</div>
+              <div class="card-desc">Updates & News.</div>
+            </a>
+          </div>
+        </div>
+      </section>
 
-						<!-- Work -->
-							<article id="work">
-								<h2 class="major">Social Media</h2>
-								<span class="image main"><img src="images/pic02.jpg" alt="" /></span>
-								<p><a href="https://www.youtube.com/channel/UCL2W_pfz7ToDo0h6aH1ezAQ?view_as=subscriber" style="color:red" target="blank">Youtube</a></p>
-								<p><a href="https://www.instagram.com/fabklecks.mp4/" style="color: blueviolet" target="blank">Instagram</a></p>
-								<p><a href="https://www.tiktok.com/@fabklecks.exe?lang=de" style="color: black" target="blank">TikTok</a></p>
-								<p><a href="https://www.snapchat.com/add/fabioodersoyt" style="color: yellow" target="blank">Snapchat</a></p>
-							</article>
+      <!-- About -->
+      <section class="section" id="about">
+        <div class="container about-grid">
+          <div>
+            <h2>Über mich</h2>
+            <p>
+              Ich bin jokr_io – leidenschaftlicher Streamer auf Twitch. Ich liebe es, mit meiner Community Games zu spielen,
+              spannende Momente zu erleben und gemeinsam Spaß zu haben. Auf YouTube findest du meine besten Highlights.
+            </p>
+            <ul class="bullet-list">
+              <li>Livestreams mit Community</li>
+              <li>Gaming & Unterhaltung</li>
+              <li>Clips & Highlights auf YouTube</li>
+            </ul>
+          </div>
+          <div class="about-card">
+            <h3>So kannst du starten</h3>
+            <ol class="steps">
+              <li>Folge mir auf <a href="https://www.twitch.tv/jokr_io" target="_blank">Twitch</a>.</li>
+              <li>Schau meine Videos auf <a href="https://www.youtube.com/@J.O.K.R" target="_blank">YouTube</a>.</li>
+              <li>Verpasse keine Updates auf <a href="https://x.com/Fabklecks" target="_blank">X / Twitter</a>.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
 
-						<!-- About -->
-							<article id="about">
-								<h2 class="major">Steckbrief</h2>
-								<span class="image main"><img src="images/pic03.jpg" alt="" /></span>
-								<p>Name: Fabio</p>
-								<p>Nachname: Asik</p>
-								<p>Alter: 16</p>
-								<p>Geburtstag: 22.12.2006</p>
-								<p>E-Mail: <a href="mailto:fabioasik221206@gmail.com">fabioasik221206@gmail.com</a></p>
-								<p>Lieblingsfarbe: <font color="orange">Orange</font></P>
-								<p>Glückszahl: 3</p>
-							</article>
+      <!-- FAQ -->
+      <section class="section" id="faq">
+        <div class="container">
+          <h2>FAQ</h2>
+          <details class="faq-item">
+            <summary>Wann streamst du?</summary>
+            <div>Meine Streams finden unregelmäßig statt – am besten auf Twitch folgen, um keine Benachrichtigung zu verpassen.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Welche Spiele spielst du?</summary>
+            <div>Ich spiele verschiedene Games, meistens Multiplayer- und Community-Spiele.</div>
+          </details>
+          <details class="faq-item">
+            <summary>Wie kann ich dich unterstützen?</summary>
+            <div>Am meisten hilfst du mir mit einem Follow auf Twitch und YouTube. Danke für deine Unterstützung!</div>
+          </details>
+        </div>
+      </section>
+    </main>
 
-						<!-- Contact -->
-						<article id="contact">
-							<h2 class="major">Dienstleistungen</h2>
-							<span class="image main"><img src="images/pic03.jpg" alt="" /></span>
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div class="foot-brand">
+          <div class="brand-mini">◎</div>
+          <div>
+            <div class="foot-title">jokr_io</div>
+            <div class="foot-sub">© 2025 – Alle Rechte vorbehalten</div>
+          </div>
+        </div>
+        <nav class="foot-links">
+          <a href="#about">Über</a>
+          <a href="#socials">Socials</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+        <div class="foot-social">
+          <a href="https://www.twitch.tv/jokr_io" aria-label="Twitch">T</a>
+          <a href="https://www.youtube.com/@J.O.K.R" aria-label="YouTube">Y</a>
+          <a href="https://x.com/Fabklecks" aria-label="X">X</a>
+        </div>
+      </div>
+    </footer>
 
-							<div itemscope itemtype='http://schema.org/Person' class='fiverr-seller-widget' style='display: inline-block;'>
-								<a itemprop='url' href=https://www.fiverr.com/faburaa rel="nofollow" target="_blank" style='display: inline-block;'>
-								   <div class='fiverr-seller-content' id='fiverr-seller-widget-content-9c3902c7-a7b7-4fdd-bb2e-115bfe8953b9' itemprop='images/pfp.png' style='display: none;'></div>
-								   <div id='fiverr-widget-seller-data' style='display: none;'>
-									   <div itemprop='name' >faburaa</div>
-									   <div itemscope itemtype='http://schema.org/Organization'><span itemprop='name'>Fiverr</span></div>
-									   <div itemprop='jobtitle'>Verkäufer</div>
-									   <div itemprop='description'>I am now working with Media Creation tools like Sony Vegas, Photoshop, Davinci Resolve etc. since over 5 years. 
-										I really like editing Videos or even Pictures, so i thought "Why not just help other people that dont want to learn how that works, and also get a bit off Money by doing that".</div>
-								   </div>
-							   </a>
-							</div>
-							
-							<script id='fiverr-seller-widget-script-9c3902c7-a7b7-4fdd-bb2e-115bfe8953b9' src='https://widgets.fiverr.com/api/v1/seller/faburaa?widget_id=9c3902c7-a7b7-4fdd-bb2e-115bfe8953b9' data-config='{"category_name":"\n                                    Video \u0026 Animation\n\n                            "}' async='true' defer='true'></script>
-							
-							
-								
-								
-						</article>
-
-						
-						<!-- Elements -->
-							<article id="elements">
-								<h2 class="major">Elements</h2>
-
-								<section>
-									<h3 class="major">Text</h3>
-									<p>This is <b>bold</b> and this is <strong>strong</strong>. This is <i>italic</i> and this is <em>emphasized</em>.
-									This is <sup>superscript</sup> text and this is <sub>subscript</sub> text.
-									This is <u>underlined</u> and this is code: <code>for (;;) { ... }</code>. Finally, <a href="#">this is a link</a>.</p>
-									<hr />
-									<h2>Heading Level 2</h2>
-									<h3>Heading Level 3</h3>
-									<h4>Heading Level 4</h4>
-									<h5>Heading Level 5</h5>
-									<h6>Heading Level 6</h6>
-									<hr />
-									<h4>Blockquote</h4>
-									<blockquote>Fringilla nisl. Donec accumsan interdum nisi, quis tincidunt felis sagittis eget tempus euismod. Vestibulum ante ipsum primis in faucibus vestibulum. Blandit adipiscing eu felis iaculis volutpat ac adipiscing accumsan faucibus. Vestibulum ante ipsum primis in faucibus lorem ipsum dolor sit amet nullam adipiscing eu felis.</blockquote>
-									<h4>Preformatted</h4>
-									<pre><code>i = 0;
-
-while (!deck.isInOrder()) {
-    print 'Iteration ' + i;
-    deck.shuffle();
-    i++;
-}
-
-print 'It took ' + i + ' iterations to sort the deck.';</code></pre>
-								</section>
-
-								<section>
-									<h3 class="major">Lists</h3>
-
-									<h4>Unordered</h4>
-									<ul>
-										<li>Dolor pulvinar etiam.</li>
-										<li>Sagittis adipiscing.</li>
-										<li>Felis enim feugiat.</li>
-									</ul>
-
-									<h4>Alternate</h4>
-									<ul class="alt">
-										<li>Dolor pulvinar etiam.</li>
-										<li>Sagittis adipiscing.</li>
-										<li>Felis enim feugiat.</li>
-									</ul>
-
-									<h4>Ordered</h4>
-									<ol>
-										<li>Dolor pulvinar etiam.</li>
-										<li>Etiam vel felis viverra.</li>
-										<li>Felis enim feugiat.</li>
-										<li>Dolor pulvinar etiam.</li>
-										<li>Etiam vel felis lorem.</li>
-										<li>Felis enim et feugiat.</li>
-									</ol>
-									<h4>Icons</h4>
-									<ul class="icons">
-										<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-										<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-										<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-										<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
-									</ul>
-
-									<h4>Actions</h4>
-									<ul class="actions">
-										<li><a href="#" class="button primary">Default</a></li>
-										<li><a href="#" class="button">Default</a></li>
-									</ul>
-									<ul class="actions stacked">
-										<li><a href="#" class="button primary">Default</a></li>
-										<li><a href="#" class="button">Default</a></li>
-									</ul>
-								</section>
-
-								<section>
-									<h3 class="major">Table</h3>
-									<h4>Default</h4>
-									<div class="table-wrapper">
-										<table>
-											<thead>
-												<tr>
-													<th>Name</th>
-													<th>Description</th>
-													<th>Price</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>Item One</td>
-													<td>Ante turpis integer aliquet porttitor.</td>
-													<td>29.99</td>
-												</tr>
-												<tr>
-													<td>Item Two</td>
-													<td>Vis ac commodo adipiscing arcu aliquet.</td>
-													<td>19.99</td>
-												</tr>
-												<tr>
-													<td>Item Three</td>
-													<td> Morbi faucibus arcu accumsan lorem.</td>
-													<td>29.99</td>
-												</tr>
-												<tr>
-													<td>Item Four</td>
-													<td>Vitae integer tempus condimentum.</td>
-													<td>19.99</td>
-												</tr>
-												<tr>
-													<td>Item Five</td>
-													<td>Ante turpis integer aliquet porttitor.</td>
-													<td>29.99</td>
-												</tr>
-											</tbody>
-											<tfoot>
-												<tr>
-													<td colspan="2"></td>
-													<td>100.00</td>
-												</tr>
-											</tfoot>
-										</table>
-									</div>
-
-									<h4>Alternate</h4>
-									<div class="table-wrapper">
-										<table class="alt">
-											<thead>
-												<tr>
-													<th>Name</th>
-													<th>Description</th>
-													<th>Price</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>Item One</td>
-													<td>Ante turpis integer aliquet porttitor.</td>
-													<td>29.99</td>
-												</tr>
-												<tr>
-													<td>Item Two</td>
-													<td>Vis ac commodo adipiscing arcu aliquet.</td>
-													<td>19.99</td>
-												</tr>
-												<tr>
-													<td>Item Three</td>
-													<td> Morbi faucibus arcu accumsan lorem.</td>
-													<td>29.99</td>
-												</tr>
-												<tr>
-													<td>Item Four</td>
-													<td>Vitae integer tempus condimentum.</td>
-													<td>19.99</td>
-												</tr>
-												<tr>
-													<td>Item Five</td>
-													<td>Ante turpis integer aliquet porttitor.</td>
-													<td>29.99</td>
-												</tr>
-											</tbody>
-											<tfoot>
-												<tr>
-													<td colspan="2"></td>
-													<td>100.00</td>
-												</tr>
-											</tfoot>
-										</table>
-									</div>
-								</section>
-
-								<section>
-									<h3 class="major">Buttons</h3>
-									<ul class="actions">
-										<li><a href="#" class="button primary">Primary</a></li>
-										<li><a href="#" class="button">Default</a></li>
-									</ul>
-									<ul class="actions">
-										<li><a href="#" class="button">Default</a></li>
-										<li><a href="#" class="button small">Small</a></li>
-									</ul>
-									<ul class="actions">
-										<li><a href="#" class="button primary icon solid fa-download">Icon</a></li>
-										<li><a href="#" class="button icon solid fa-download">Icon</a></li>
-									</ul>
-									<ul class="actions">
-										<li><span class="button primary disabled">Disabled</span></li>
-										<li><span class="button disabled">Disabled</span></li>
-									</ul>
-								</section>
-
-								<section>
-									<h3 class="major">Form</h3>
-									<form method="post" action="#">
-										<div class="fields">
-											<div class="field half">
-												<label for="demo-name">Name</label>
-												<input type="text" name="demo-name" id="demo-name" value="" placeholder="Fabio" />
-											</div>
-											<div class="field half">
-												<label for="demo-email">Email</label>
-												<input type="email" name="demo-email" id="demo-email" value="" placeholder="fabioasik221206@gmail.com" />
-											</div>
-											<div class="field">
-												<label for="demo-category">Category</label>
-												<select name="demo-category" id="demo-category">
-													<option value="">-</option>
-													<option value="1">Manufacturing</option>
-													<option value="1">Shipping</option>
-													<option value="1">Administration</option>
-													<option value="1">Human Resources</option>
-												</select>
-											</div>
-											<div class="field half">
-												<input type="radio" id="demo-priority-low" name="demo-priority" checked>
-												<label for="demo-priority-low">Niedrig</label>
-											</div>
-											<div class="field half">
-												<input type="radio" id="demo-priority-high" name="demo-priority">
-												<label for="demo-priority-high">Hoch</label>
-											</div>
-											<div class="field half">
-												<input type="checkbox" id="demo-copy" name="demo-copy">
-												<label for="demo-copy">Schick mir eine Copy</label>
-											</div>
-											<div class="field half">
-												<input type="checkbox" id="demo-human" name="demo-human" checked>
-												<label for="demo-human">Kein Roboter</label>
-											</div>
-											<div class="field">
-												<label for="demo-message">Nachicht</label>
-												<textarea name="demo-message" id="demo-message" placeholder="Enter your message" rows="6"></textarea>
-											</div>
-										</div>
-										<ul class="actions">
-											<li><input type="submit" value="Schicke Nachicht" class="primary" /></li>
-											<li><input type="reset" value="Zurücksetzten" /></li>
-										</ul>
-									</form>
-								</section>
-
-							</article>
-
-					</div>
-
-				<!-- Footer -->
-					<footer id="footer">
-						<p class="copyright">&copy; Private Website Basiert auf einem Template.</p>
-					</footer>
-
-			</div>
-
-		<!-- BG -->
-			<div id="bg"></div>
-
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
-
-	</body>
+    <script>
+      // Simple mobile nav toggle
+      const toggle = document.querySelector('.nav-toggle');
+      const links = document.querySelector('.nav-links');
+      toggle?.addEventListener('click', () => {
+        links.classList.toggle('open');
+      });
+    </script>
+  </body>
 </html>
