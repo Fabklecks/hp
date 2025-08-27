@@ -14,6 +14,7 @@
         <a href="#watch">Live</a>
         <a href="#socials">Socials</a>
         <a href="#faq">FAQ</a>
+        <a href="#admin">Admin</a>
       </nav>
     </div>
   </header>
@@ -25,25 +26,31 @@
         <div class="hero-text">
           <h1>Live auf Twitch – jokr_io</h1>
           <p>Willkommen auf meiner offiziellen Seite. Begleite mich live auf Twitch oder schau meine Videos auf YouTube.</p>
+
           <div class="hero-buttons">
-            <a class="btn btn-primary" href="https://www.twitch.tv/jokr_io" target="_blank">Twitch öffnen</a>
-            <a class="btn btn-outline" href="https://www.youtube.com/@J.O.K.R" target="_blank">YouTube</a>
-            <a class="btn btn-outline" href="https://discord.gg/dVQjAxXgNA" target="_blank">Discord</a>
+            <a class="btn btn-primary" href="https://www.twitch.tv/jokr_io" target="_blank" rel="noreferrer">Twitch öffnen</a>
+            <a class="btn btn-outline" href="https://www.youtube.com/@J.O.K.R" target="_blank" rel="noreferrer">YouTube</a>
+            <a class="btn btn-outline" href="https://discord.gg/dVQjAxXgNA" target="_blank" rel="noreferrer">Discord</a>
           </div>
+
           <div class="stream-timer">
             <span>Nächster Stream in:</span>
             <div id="timer">--:--:--</div>
+            <div id="nextWhen" style="opacity:.8;font-size:.95rem;margin-top:.25rem;"></div>
           </div>
         </div>
-        <div class="hero-media">
-  <div class="twitch-frame">
-    <iframe 
-      src="https://player.twitch.tv/?channel=jokr_io&parent=fabklecks.github.io" 
-      frameborder="0" allowfullscreen></iframe>
-    <div class="glow-ring"></div>
-  </div>
-</div>
 
+        <!-- 16:9 Twitch-Embed -->
+        <div class="hero-media">
+          <div class="twitch-frame" style="position:relative;width:100%;padding-top:56.25%;">
+            <iframe
+              src="https://player.twitch.tv/?channel=jokr_io&parent=fabklecks.github.io"
+              frameborder="0" allowfullscreen
+              style="position:absolute;inset:0;width:100%;height:100%;border-radius:12px;"
+            ></iframe>
+            <div class="glow-ring"></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -52,22 +59,22 @@
       <div class="container">
         <h2>Folge & unterstütze</h2>
         <div class="card-grid">
-          <a class="card" href="https://www.twitch.tv/jokr_io" target="_blank">
+          <a class="card" href="https://www.twitch.tv/jokr_io" target="_blank" rel="noreferrer">
             <div class="icon twitch"></div>
             <h3>Twitch</h3>
             <p>Livestreams & Community</p>
           </a>
-          <a class="card" href="https://www.youtube.com/@J.O.K.R" target="_blank">
+          <a class="card" href="https://www.youtube.com/@J.O.K.R" target="_blank" rel="noreferrer">
             <div class="icon youtube"></div>
             <h3>YouTube</h3>
             <p>Highlights & Videos</p>
           </a>
-          <a class="card" href="https://x.com/Fabklecks" target="_blank">
+          <a class="card" href="https://x.com/Fabklecks" target="_blank" rel="noreferrer">
             <div class="icon x"></div>
             <h3>X / Twitter</h3>
             <p>Updates & News</p>
           </a>
-          <a class="card" href="https://discord.gg/dVQjAxXgNA" target="_blank">
+          <a class="card" href="https://discord.gg/dVQjAxXgNA" target="_blank" rel="noreferrer">
             <div class="icon discord"></div>
             <h3>Discord</h3>
             <p>Community & Chat</p>
@@ -82,12 +89,50 @@
         <h2>FAQ</h2>
         <details class="faq-item">
           <summary>Wann streamst du?</summary>
-          <p>Di–Fr immer ab 18 Uhr live auf Twitch.</p>
+          <p>Der Timer oben zählt bis zum nächsten geplanten Stream (aus dem Admin-Panel).</p>
         </details>
         <details class="faq-item">
           <summary>Wie kann ich dir folgen?</summary>
           <p>Nutze die Buttons oben oder finde mich auf YouTube, X und Discord.</p>
         </details>
+      </div>
+    </section>
+
+    <!-- Admin Panel -->
+    <section class="section admin-panel" id="admin">
+      <div class="container">
+        <h2>Admin Panel</h2>
+        <p id="adminNotice" style="opacity:.85">
+          Melde dich mit Google an, um die Stream-Zeiten für alle zu bearbeiten.
+        </p>
+
+        <div style="margin:.75rem 0 1.25rem 0;">
+          <button id="loginBtn" class="btn btn-primary">Mit Google anmelden</button>
+          <button id="logoutBtn" class="btn btn-outline" style="display:none;">Abmelden</button>
+        </div>
+
+        <form id="scheduleForm" style="display:none;">
+          <div class="schedule-grid" style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+            <label>Tag:
+              <select name="day">
+                <option value="1">Montag</option>
+                <option value="2">Dienstag</option>
+                <option value="3">Mittwoch</option>
+                <option value="4">Donnerstag</option>
+                <option value="5">Freitag</option>
+                <option value="6">Samstag</option>
+                <option value="0">Sonntag</option>
+              </select>
+            </label>
+            <label>Uhrzeit:
+              <input type="time" name="time" required>
+            </label>
+            <button type="submit" class="btn btn-primary">Hinzufügen</button>
+            <button type="button" id="clearAll" class="btn btn-outline">Alle löschen</button>
+          </div>
+        </form>
+
+        <ul id="scheduleList" style="list-style:none;padding:0;margin-top:1rem;"></ul>
       </div>
     </section>
   </main>
@@ -98,32 +143,171 @@
     </div>
   </footer>
 
-  <script>
-    // Stream Timer
-    function getNextStream() {
-      const now = new Date();
-      const weekDays = [2,3,4,5]; // Di=2, Mi=3, Do=4, Fr=5
-      const nextStream = weekDays.map(day => {
-        const d = new Date(now);
-        d.setDate(now.getDate() + ((day + 7 - now.getDay()) % 7));
-        d.setHours(18,0,0,0);
-        return d;
-      }).filter(d => d > now).sort((a,b) => a-b)[0];
-      return nextStream;
+  <!-- Firebase + Timer + Admin -->
+  <script type="module">
+    /***** Firebase SDKs *****/
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import {
+      getDatabase, ref, set, get, onValue
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+    import {
+      getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    /***** Deine Firebase Config – HIER databaseURL einsetzen! *****/
+    const firebaseConfig = {
+      apiKey: "AIzaSyDE1KgYtam9MbnFcXhiQJM0O4T87KDT22Y",
+      authDomain: "jokr-streams.firebaseapp.com",
+      projectId: "jokr-streams",
+      storageBucket: "jokr-streams.firebasestorage.app",
+      messagingSenderId: "330674568802",
+      appId: "1:330674568802:web:689fe5ca69e03a09c99b3b",
+
+      // ⬇️ WICHTIG: aus der Realtime-Database-Übersicht kopieren!
+      // Beispiel-Format:
+      // databaseURL: "https://jokr-streams-default-rtdb.europe-west1.firebasedatabase.app"
+      databaseURL: "https://jokr-streams-default-rtdb.europe-west1.firebasedatabase.app/"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const db   = getDatabase(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    /***** DOM Elemente *****/
+    const DAYS = ["So","Mo","Di","Mi","Do","Fr","Sa"];
+    const timerEl   = document.getElementById("timer");
+    const nextWhen  = document.getElementById("nextWhen");
+    const listEl    = document.getElementById("scheduleList");
+    const formEl    = document.getElementById("scheduleForm");
+    const loginBtn  = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const adminNote = document.getElementById("adminNotice");
+    const clearAll  = document.getElementById("clearAll");
+
+    let scheduleCache = [];   // [{day:2,time:"18:00"}, ...]
+
+    /***** Auth *****/
+    loginBtn.addEventListener("click", async () => {
+      try { await signInWithPopup(auth, provider); } catch (e) { alert(e.message); }
+    });
+    logoutBtn.addEventListener("click", async () => {
+      try { await signOut(auth); } catch (e) { alert(e.message); }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      const isAuthed = !!user;
+      formEl.style.display   = isAuthed ? "block" : "none";
+      logoutBtn.style.display= isAuthed ? "inline-block" : "none";
+      loginBtn.style.display = isAuthed ? "none" : "inline-block";
+      adminNote.textContent  = isAuthed
+        ? `Angemeldet als ${user.displayName || user.email}. Du kannst die Zeiten bearbeiten.`
+        : "Melde dich mit Google an, um die Stream-Zeiten für alle zu bearbeiten.";
+    });
+
+    /***** DB: lesen (live) *****/
+    const scheduleRef = ref(db, "schedule");
+    onValue(scheduleRef, (snap) => {
+      const val = snap.val();
+      scheduleCache = Array.isArray(val) ? val : (val ? Object.values(val) : []);
+      renderSchedule();
+    });
+
+    /***** DB: schreiben *****/
+    async function saveSchedule(newSchedule) {
+      await set(scheduleRef, newSchedule);
     }
 
-    function updateTimer() {
-      const timerEl = document.getElementById('timer');
-      const next = getNextStream();
-      const diff = next - new Date();
-      if(diff <= 0) { timerEl.textContent = 'Live!'; return; }
-      const hours = Math.floor(diff/1000/60/60);
-      const minutes = Math.floor((diff/1000/60) % 60);
-      const seconds = Math.floor((diff/1000) % 60);
-      timerEl.textContent = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+    /***** Admin-Form *****/
+    formEl.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const day  = parseInt(e.target.day.value, 10);
+      const time = e.target.time.value; // "HH:MM"
+      if (!time) return;
+
+      const updated = [...scheduleCache, { day, time }]
+        .sort((a,b) => a.day - b.day || a.time.localeCompare(b.time));
+      try {
+        await saveSchedule(updated);
+        e.target.reset();
+      } catch (err) { alert("Speichern fehlgeschlagen: " + err.message); }
+    });
+
+    clearAll.addEventListener("click", async () => {
+      if (!confirm("Wirklich alle Termine löschen?")) return;
+      try { await saveSchedule([]); } catch (err) { alert(err.message); }
+    });
+
+    /***** UI: Liste rendern *****/
+    function renderSchedule() {
+      listEl.innerHTML = "";
+      if (!scheduleCache.length) {
+        listEl.innerHTML = '<li style="opacity:.8">Keine Termine eingetragen.</li>';
+      } else {
+        scheduleCache.forEach((item, idx) => {
+          const li = document.createElement("li");
+          li.style.cssText = "margin:.4rem 0;padding:.6rem .8rem;background:#1b1b25;border-radius:8px;display:flex;justify-content:space-between;align-items:center;";
+          li.innerHTML = `<span>${DAYS[item.day]} um ${item.time}</span>`;
+          const del = document.createElement("button");
+          del.className = "btn btn-outline";
+          del.textContent = "Löschen";
+          del.onclick = async () => {
+            const updated = scheduleCache.slice();
+            updated.splice(idx, 1);
+            try { await saveSchedule(updated); } catch (err) { alert(err.message); }
+          };
+          li.appendChild(del);
+          listEl.appendChild(li);
+        });
+      }
+      // Anzeige unter dem Timer aktualisieren
+      const next = getNextStream(scheduleCache);
+      nextWhen.textContent = next ? formatNext(next) : "Kein Stream geplant";
     }
-    setInterval(updateTimer, 1000);
-    updateTimer();
+
+    /***** Timer *****/
+    function getNextStream(schedule) {
+      if (!schedule || !schedule.length) return null;
+      const now = new Date();
+
+      // Alle Kandidaten im nächsten 7-Tage-Fenster berechnen
+      const candidates = schedule.map(({day, time}) => {
+        const [h, m] = time.split(":").map(Number);
+        const d = new Date(now);
+        d.setHours(0,0,0,0);
+        d.setDate(now.getDate() + ((day + 7 - d.getDay()) % 7));
+        d.setHours(h, m, 0, 0);
+        if (d <= now) d.setDate(d.getDate() + 7); // auf nächste Woche schieben, wenn schon vorbei
+        return d;
+      });
+
+      candidates.sort((a,b) => a - b);
+      return candidates[0] || null;
+    }
+
+    function formatNext(dt) {
+      const dd = DAYS[dt.getDay()];
+      const hh = dt.getHours().toString().padStart(2,"0");
+      const mm = dt.getMinutes().toString().padStart(2,"0");
+      const ddm = dt.toLocaleDateString(undefined, { day:"2-digit", month:"2-digit" });
+      return `${dd}, ${ddm} – ${hh}:${mm}`;
+    }
+
+    function tick() {
+      const next = getNextStream(scheduleCache);
+      if (!next) { timerEl.textContent = "Kein Stream geplant"; return; }
+      const diff = next - new Date();
+      if (diff <= 0) { timerEl.textContent = "Live!"; return; }
+
+      const totalSec = Math.floor(diff / 1000);
+      const hours = Math.floor(totalSec / 3600);
+      const minutes = Math.floor((totalSec % 3600) / 60);
+      const seconds = totalSec % 60;
+      timerEl.textContent =
+        `${hours.toString().padStart(2,"0")}:${minutes.toString().padStart(2,"0")}:${seconds.toString().padStart(2,"0")}`;
+    }
+    setInterval(tick, 1000);
+    tick(); // sofort initial laufen lassen
   </script>
 </body>
 </html>
