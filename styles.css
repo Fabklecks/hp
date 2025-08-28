@@ -1,7 +1,7 @@
 :root {
   --bg: #121318;
   --text: #f5f5f5;
-  --accent: #FF8C42; /* leichter orange Akzent */
+  --accent: #FF8C42;
   --btn-bg: #1f1f29;
   --btn-hover: #2e2e3d;
   --glow: rgba(255, 140, 66, 0.4);
@@ -36,13 +36,11 @@ a { text-decoration: none; color: inherit; }
 .stream-timer { margin-top: 1rem; font-size: 1.3rem; font-weight: bold; color: var(--accent); }
 #timer { font-size: 2rem; margin-top: 0.3rem; }
 
-
 .hero-media .twitch-frame {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* 16:9, NICHT AENDERN */
+  padding-top: 56.25%;
 }
-
 .hero-media .twitch-frame iframe {
   position: absolute;
   top: 0;
@@ -51,7 +49,6 @@ a { text-decoration: none; color: inherit; }
   height: 100%;
   border-radius: 12px;
 }
-
 .glow-ring {
   position: absolute;
   top: -10px;
@@ -60,29 +57,5 @@ a { text-decoration: none; color: inherit; }
   height: calc(100% + 20px);
   border-radius: 14px;
   box-shadow: 0 0 30px var(--glow);
-  pointer-events: none;
+  pointer-events: none
 }
-
-
-/* Karten */
-.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 1.5rem; margin-top: 2rem;}
-.card { background: var(--btn-bg); border-radius: 12px; padding: 1.5rem; text-align: center; transition: transform 0.3s, box-shadow 0.3s; }
-.card:hover { transform: translateY(-5px); box-shadow: 0 0 25px var(--glow);}
-.card h3 { margin-top: 1rem; margin-bottom: 0.5rem; color: var(--accent);}
-.card p { font-size: 0.9rem; color: #ccc; }
-.icon { width: 40px; height: 40px; margin: 0 auto; background-size: contain; background-repeat: no-repeat; }
-.icon.twitch { background-image: url('https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg'); }
-.icon.youtube { background-image: url('https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtube.svg'); }
-.icon.x { background-image: url('https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg'); }
-.icon.discord { background-image: url('https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg'); }
-
-/* Faq */
-.faq-item { margin-bottom: 1rem; }
-.faq-item summary { cursor: pointer; font-weight: bold; }
-.faq-item p { margin-left: 1rem; color: #ccc; }
-
-/* Footer */
-.footer { padding: 2rem 0; text-align: center; color: #888; }
-
-/* Responsive */
-@media(max-width: 900px) { .hero-container { grid-template-columns: 1fr; } }

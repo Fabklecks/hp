@@ -154,7 +154,7 @@
       getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
     } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-    /***** Deine Firebase Config – HIER databaseURL einsetzen! *****/
+    /***** Firebase Config *****/
     const firebaseConfig = {
       apiKey: "AIzaSyDE1KgYtam9MbnFcXhiQJM0O4T87KDT22Y",
       authDomain: "jokr-streams.firebaseapp.com",
@@ -162,10 +162,6 @@
       storageBucket: "jokr-streams.firebasestorage.app",
       messagingSenderId: "330674568802",
       appId: "1:330674568802:web:689fe5ca69e03a09c99b3b",
-
-      // ⬇️ WICHTIG: aus der Realtime-Database-Übersicht kopieren!
-      // Beispiel-Format:
-      // databaseURL: "https://jokr-streams-default-rtdb.europe-west1.firebasedatabase.app"
       databaseURL: "https://jokr-streams-default-rtdb.europe-west1.firebasedatabase.app/"
     };
 
@@ -185,9 +181,9 @@
     const adminNote = document.getElementById("adminNotice");
     const clearAll  = document.getElementById("clearAll");
 
-    let scheduleCache = [];   // [{day:2,time:"18:00"}, ...]
+    let scheduleCache = [];
 
-    /***** Auth *****/
+    /***** Auth Buttons *****/
     loginBtn.addEventListener("click", async () => {
       try { await signInWithPopup(auth, provider); } catch (e) { alert(e.message); }
     });
@@ -195,14 +191,40 @@
       try { await signOut(auth); } catch (e) { alert(e.message); }
     });
 
-    onAuthStateChanged(auth, (user) => {
-      const isAuthed = !!user;
-      formEl.style.display   = isAuthed ? "block" : "none";
-      logoutBtn.style.display= isAuthed ? "inline-block" : "none";
-      loginBtn.style.display = isAuthed ? "none" : "inline-block";
-      adminNote.textContent  = isAuthed
-        ? `Angemeldet als ${user.displayName || user.email}. Du kannst die Zeiten bearbeiten.`
-        : "Melde dich mit Google an, um die Stream-Zeiten für alle zu bearbeiten.";
+    /***** Auth-State-Check *****/
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const emailKey = user.email.replace(/\./g, ",");
+        const adminRef = ref(db, "admins/" + emailKey);
+
+        try {
+          const snap = await get(adminRef);
+          if (snap.exists()) {
+            // ✅ User ist Admin
+            formEl.style.display   = "block";
+            logoutBtn.style.display= "inline-block";
+            loginBtn.style.display = "none";
+            adminNote.textContent  = `Angemeldet als ${user.displayName || user.email}. ✅ Admin-Zugang`;
+            adminNote.style.color  = "var(--accent)";
+          } else {
+            // ❌ Eingeloggt, aber KEIN Admin
+            formEl.style.display   = "none";
+            logoutBtn.style.display= "inline-block";
+            loginBtn.style.display = "none";
+            adminNote.textContent  = `Angemeldet als ${user.email}, aber du hast keinen Admin-Zugang.`;
+            adminNote.style.color  = "#f55";
+          }
+        } catch (err) {
+          console.error("Admin-Check fehlgeschlagen", err);
+        }
+      } else {
+        // ❌ Nicht eingeloggt
+        formEl.style.display   = "none";
+        logoutBtn.style.display= "none";
+        loginBtn.style.display = "inline-block";
+        adminNote.textContent  = "Melde dich mit Google an, um die Stream-Zeiten für alle zu bearbeiten.";
+        adminNote.style.color  = "var(--text)";
+      }
     });
 
     /***** DB: lesen (live) *****/
@@ -222,7 +244,7 @@
     formEl.addEventListener("submit", async (e) => {
       e.preventDefault();
       const day  = parseInt(e.target.day.value, 10);
-      const time = e.target.time.value; // "HH:MM"
+      const time = e.target.time.value;
       if (!time) return;
 
       const updated = [...scheduleCache, { day, time }]
@@ -260,7 +282,6 @@
           listEl.appendChild(li);
         });
       }
-      // Anzeige unter dem Timer aktualisieren
       const next = getNextStream(scheduleCache);
       nextWhen.textContent = next ? formatNext(next) : "Kein Stream geplant";
     }
@@ -269,18 +290,15 @@
     function getNextStream(schedule) {
       if (!schedule || !schedule.length) return null;
       const now = new Date();
-
-      // Alle Kandidaten im nächsten 7-Tage-Fenster berechnen
       const candidates = schedule.map(({day, time}) => {
         const [h, m] = time.split(":").map(Number);
         const d = new Date(now);
         d.setHours(0,0,0,0);
         d.setDate(now.getDate() + ((day + 7 - d.getDay()) % 7));
         d.setHours(h, m, 0, 0);
-        if (d <= now) d.setDate(d.getDate() + 7); // auf nächste Woche schieben, wenn schon vorbei
+        if (d <= now) d.setDate(d.getDate() + 7);
         return d;
       });
-
       candidates.sort((a,b) => a - b);
       return candidates[0] || null;
     }
@@ -298,7 +316,6 @@
       if (!next) { timerEl.textContent = "Kein Stream geplant"; return; }
       const diff = next - new Date();
       if (diff <= 0) { timerEl.textContent = "Live!"; return; }
-
       const totalSec = Math.floor(diff / 1000);
       const hours = Math.floor(totalSec / 3600);
       const minutes = Math.floor((totalSec % 3600) / 60);
@@ -307,7 +324,7 @@
         `${hours.toString().padStart(2,"0")}:${minutes.toString().padStart(2,"0")}:${seconds.toString().padStart(2,"0")}`;
     }
     setInterval(tick, 1000);
-    tick(); // sofort initial laufen lassen
+    tick();
   </script>
 </body>
 </html>
