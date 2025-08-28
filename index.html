@@ -33,25 +33,26 @@
             <a class="btn btn-outline" href="https://discord.gg/dVQjAxXgNA" target="_blank" rel="noreferrer">Discord</a>
           </div>
 
-<div class="stream-timer">
-  <span id="countdownLabel">Nächster Stream in:</span>
-  <div id="timer">--:--:--</div>
-  <div id="nextWhen" style="opacity:.8;font-size:.95rem;margin-top:.25rem;"></div>
-</div>
+          <div class="stream-timer">
+            <span id="countdownLabel">Nächster Stream in:</span>
+            <div id="timer">--:--:--</div>
+            <div id="nextWhen" style="opacity:.8;font-size:.95rem;margin-top:.25rem;"></div>
+          </div>
+        </div>
 
->
         <!-- Twitch-Embed -->
-<div class="hero-media">
-  <div class="twitch-frame" style="position:relative;width:100%;padding-top:56.25%; display:none;" id="twitchEmbed">
-    <iframe
-      src="https://player.twitch.tv/?channel=jokr_io&parent=fabklecks.github.io"
-      frameborder="0" allowfullscreen
-      style="position:absolute;inset:0;width:100%;height:100%;border-radius:12px;"
-    ></iframe>
-    <div class="glow-ring"></div>
-  </div>
-</div>
+        <div class="hero-media">
+          <div class="twitch-frame" style="position:relative;width:100%;padding-top:56.25%; display:none;" id="twitchEmbed">
+            <iframe
+              src="https://player.twitch.tv/?channel=jokr_io&parent=fabklecks.github.io"
+              frameborder="0" allowfullscreen
+              style="position:absolute;inset:0;width:100%;height:100%;border-radius:12px;"
+            ></iframe>
+            <div class="glow-ring"></div>
+          </div>
+        </div>
 
+      </div>
     </section>
 
     <!-- Social Cards -->
@@ -98,54 +99,51 @@
       </div>
     </section>
 
-    <!-- Admin Panel -->
-    <section class="section admin-panel" id="admin">
-      <div class="container">
-        <h2>Admin Panel</h2>
-        <p id="adminNotice" style="opacity:.85">
-          Melde dich mit Google an, um die Stream-Zeiten für alle zu bearbeiten.
-        </p>
+<!-- Admin Panel -->
+<section class="section admin-panel" id="adminPanel" style="display:none;">
+  <div class="container">
+    <h2>Admin Panel</h2>
+    <p id="adminNotice" style="opacity:.85"></p> <!-- leer, bis Admin eingeloggt -->
 
-<div style="margin:.75rem 0 1.25rem 0;">
-  <button id="loginBtn" class="btn btn-primary">Mit Google anmelden</button>
-  <button id="logoutBtn" class="btn btn-outline" style="display:none;">Abmelden</button>
+    <div style="margin:.75rem 0 1.25rem 0;">
+      <button id="loginBtn" class="btn btn-primary">Mit Google anmelden</button>
+      <button id="logoutBtn" class="btn btn-outline" style="display:none;">Abmelden</button>
 
-  <!-- Live Toggle -->
-  <div id="liveToggleContainer" style="margin-top:1rem; display:none;">
-    <label style="font-weight:bold;color:var(--text);">
-      <input type="checkbox" id="liveToggle">
-      Live
-    </label>
-  </div>
-</div>
-
-
-        </div>
-
-        <form id="scheduleForm" style="display:none;">
-          <div class="schedule-grid" style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
-            <label>Tag:
-              <select name="day">
-                <option value="1">Montag</option>
-                <option value="2">Dienstag</option>
-                <option value="3">Mittwoch</option>
-                <option value="4">Donnerstag</option>
-                <option value="5">Freitag</option>
-                <option value="6">Samstag</option>
-                <option value="0">Sonntag</option>
-              </select>
-            </label>
-            <label>Uhrzeit:
-              <input type="time" name="time" required>
-            </label>
-            <button type="submit" class="btn btn-primary">Hinzufügen</button>
-            <button type="button" id="clearAll" class="btn btn-outline">Alle löschen</button>
-          </div>
-        </form>
-
-        <ul id="scheduleList" style="list-style:none;padding:0;margin-top:1rem;"></ul>
+      <!-- Live Toggle -->
+      <div id="liveToggleContainer" style="margin-top:1rem; display:none;">
+        <label style="font-weight:bold;color:var(--text);">
+          <input type="checkbox" id="liveToggle">
+          Live
+        </label>
       </div>
-    </section>
+    </div>
+
+    <form id="scheduleForm" style="display:none;">
+      <div class="schedule-grid" style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+        <label>Tag:
+          <select name="day">
+            <option value="1">Montag</option>
+            <option value="2">Dienstag</option>
+            <option value="3">Mittwoch</option>
+            <option value="4">Donnerstag</option>
+            <option value="5">Freitag</option>
+            <option value="6">Samstag</option>
+            <option value="0">Sonntag</option>
+          </select>
+        </label>
+        <label>Uhrzeit:
+          <input type="time" name="time" required>
+        </label>
+        <button type="submit" class="btn btn-primary">Hinzufügen</button>
+        <button type="button" id="clearAll" class="btn btn-outline">Alle löschen</button>
+      </div>
+    </form>
+
+    <ul id="scheduleList" style="list-style:none;padding:0;margin-top:1rem;"></ul>
+  </div>
+</section>
+
+
   </main>
 
   <footer class="footer">
@@ -156,16 +154,10 @@
 
   <!-- Firebase + Timer + Admin -->
   <script type="module">
-    /***** Firebase SDKs *****/
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-    import {
-      getDatabase, ref, set, get, onValue
-    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-    import {
-      getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
-    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+    import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-    /***** Firebase Config *****/
     const firebaseConfig = {
       apiKey: "AIzaSyDE1KgYtam9MbnFcXhiQJM0O4T87KDT22Y",
       authDomain: "jokr-streams.firebaseapp.com",
@@ -181,58 +173,52 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    /***** DOM Elemente *****/
     const DAYS = ["So","Mo","Di","Mi","Do","Fr","Sa"];
-    const timerEl   = document.getElementById("timer");
-    const nextWhen  = document.getElementById("nextWhen");
-    const listEl    = document.getElementById("scheduleList");
-    const formEl    = document.getElementById("scheduleForm");
-    const loginBtn  = document.getElementById("loginBtn");
+    const timerEl = document.getElementById("timer");
+    const nextWhen = document.getElementById("nextWhen");
+    const listEl = document.getElementById("scheduleList");
+    const formEl = document.getElementById("scheduleForm");
+    const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const adminNote = document.getElementById("adminNotice");
-    const clearAll  = document.getElementById("clearAll");
+    const clearAll = document.getElementById("clearAll");
+    const adminSection = document.getElementById("adminPanel");
+    adminSection.style.display = "none";
 
     let scheduleCache = [];
-    
-    // Live-Status Elemente
-const liveToggleContainer = document.getElementById("liveToggleContainer");
-const liveToggle = document.getElementById("liveToggle");
-const twitchEmbed = document.getElementById("twitchEmbed");
-const countdownLabel = document.getElementById("countdownLabel");
-let liveStatus = false;
+    const liveToggleContainer = document.getElementById("liveToggleContainer");
+    const liveToggle = document.getElementById("liveToggle");
+    const twitchEmbed = document.getElementById("twitchEmbed");
+    const countdownLabel = document.getElementById("countdownLabel");
+    let liveStatus = false;
 
-// Funktion: Anzeige Twitch/Countdown steuern
-function updateStreamDisplay() {
-  if(liveStatus){
-    twitchEmbed.style.display = "block";
-    countdownLabel.style.display = "none";
-    timerEl.style.display = "none";
-    nextWhen.style.display = "none";
-  } else {
-    twitchEmbed.style.display = "none";
-    countdownLabel.style.display = "inline";
-    timerEl.style.display = "block";
-    nextWhen.style.display = "block";
-  }
-}
+    function updateStreamDisplay() {
+      if(liveStatus){
+        twitchEmbed.style.display = "block";
+        countdownLabel.style.display = "none";
+        timerEl.style.display = "none";
+        nextWhen.style.display = "none";
+      } else {
+        twitchEmbed.style.display = "none";
+        countdownLabel.style.display = "inline";
+        timerEl.style.display = "block";
+        nextWhen.style.display = "block";
+      }
+    }
 
-// Admin kann Live-Status ändern
-liveToggle.addEventListener("change", async () => {
-  liveStatus = liveToggle.checked;
-  await set(ref(db, "liveStatus"), liveStatus);
-  updateStreamDisplay();
-});
+    liveToggle.addEventListener("change", async () => {
+      liveStatus = liveToggle.checked;
+      await set(ref(db, "liveStatus"), liveStatus);
+      updateStreamDisplay();
+    });
 
-// Live-Status aus Firebase beobachten
-const liveRef = ref(db, "liveStatus");
-onValue(liveRef, snap => {
-  liveStatus = snap.val() || false;
-  liveToggle.checked = liveStatus;
-  updateStreamDisplay();
-});
+    const liveRef = ref(db, "liveStatus");
+    onValue(liveRef, snap => {
+      liveStatus = snap.val() || false;
+      liveToggle.checked = liveStatus;
+      updateStreamDisplay();
+    });
 
-
-    /***** Auth Buttons *****/
     loginBtn.addEventListener("click", async () => {
       try { await signInWithPopup(auth, provider); } catch (e) { alert(e.message); }
     });
@@ -240,48 +226,32 @@ onValue(liveRef, snap => {
       try { await signOut(auth); } catch (e) { alert(e.message); }
     });
 
-    /***** Auth-State-Check *****/
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    const emailKey = user.email.replace(/\./g, ",");
-    const adminRef = ref(db, "admins/" + emailKey);
-
-    try {
-      const snap = await get(adminRef);
-      if (snap.exists()) {
-        // ✅ User ist Admin
-        formEl.style.display        = "block";
-        logoutBtn.style.display     = "inline-block";
-        loginBtn.style.display      = "none";
-        liveToggleContainer.style.display = "block"; // Live-Toggle sichtbar für Admin
-        adminNote.textContent       = `Angemeldet als ${user.displayName || user.email}. ✅ Admin-Zugang`;
-        adminNote.style.color       = "var(--accent)";
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const emailKey = user.email.replace(/\./g, ",");
+        const adminRef = ref(db, "admins/" + emailKey);
+        try {
+          const snap = await get(adminRef);
+          if (snap.exists()) {
+            adminSection.style.display = "block";
+            formEl.style.display = "block";
+            logoutBtn.style.display = "inline-block";
+            loginBtn.style.display = "none";
+            liveToggleContainer.style.display = "block";
+            adminNote.textContent = `Angemeldet als ${user.displayName || user.email}. ✅ Admin-Zugang`;
+            adminNote.style.color = "var(--accent)";
+          } else {
+            adminSection.style.display = "none";
+          }
+        } catch (err) {
+          console.error("Admin-Check fehlgeschlagen", err);
+          adminSection.style.display = "none";
+        }
       } else {
-        // ❌ Eingeloggt, aber KEIN Admin
-        formEl.style.display        = "none";
-        logoutBtn.style.display     = "inline-block";
-        loginBtn.style.display      = "none";
-        liveToggleContainer.style.display = "none"; // Live-Toggle verstecken
-        adminNote.textContent       = `Angemeldet als ${user.email}, aber du hast keinen Admin-Zugang.`;
-        adminNote.style.color       = "#f55";
+        adminSection.style.display = "none";
       }
-    } catch (err) {
-      console.error("Admin-Check fehlgeschlagen", err);
-    }
-  } else {
-    // ❌ Nicht eingeloggt
-    formEl.style.display          = "none";
-    logoutBtn.style.display       = "none";
-    loginBtn.style.display        = "inline-block";
-    liveToggleContainer.style.display = "none"; // Live-Toggle verstecken
-    adminNote.textContent          = "Melde dich mit Google an, um die Stream-Zeiten für alle zu bearbeiten.";
-    adminNote.style.color          = "var(--text)";
-  }
-});
+    });
 
-
-
-    /***** DB: lesen (live) *****/
     const scheduleRef = ref(db, "schedule");
     onValue(scheduleRef, (snap) => {
       const val = snap.val();
@@ -289,20 +259,17 @@ onAuthStateChanged(auth, async (user) => {
       renderSchedule();
     });
 
-    /***** DB: schreiben *****/
     async function saveSchedule(newSchedule) {
       await set(scheduleRef, newSchedule);
     }
 
-    /***** Admin-Form *****/
     formEl.addEventListener("submit", async (e) => {
       e.preventDefault();
       const day  = parseInt(e.target.day.value, 10);
       const time = e.target.time.value;
       if (!time) return;
 
-      const updated = [...scheduleCache, { day, time }]
-        .sort((a,b) => a.day - b.day || a.time.localeCompare(b.time));
+      const updated = [...scheduleCache, { day, time }].sort((a,b) => a.day - b.day || a.time.localeCompare(b.time));
       try {
         await saveSchedule(updated);
         e.target.reset();
@@ -314,7 +281,6 @@ onAuthStateChanged(auth, async (user) => {
       try { await saveSchedule([]); } catch (err) { alert(err.message); }
     });
 
-    /***** UI: Liste rendern *****/
     function renderSchedule() {
       listEl.innerHTML = "";
       if (!scheduleCache.length) {
@@ -340,7 +306,6 @@ onAuthStateChanged(auth, async (user) => {
       nextWhen.textContent = next ? formatNext(next) : "Kein Stream geplant";
     }
 
-    /***** Timer *****/
     function getNextStream(schedule) {
       if (!schedule || !schedule.length) return null;
       const now = new Date();
@@ -374,9 +339,9 @@ onAuthStateChanged(auth, async (user) => {
       const hours = Math.floor(totalSec / 3600);
       const minutes = Math.floor((totalSec % 3600) / 60);
       const seconds = totalSec % 60;
-      timerEl.textContent =
-        `${hours.toString().padStart(2,"0")}:${minutes.toString().padStart(2,"0")}:${seconds.toString().padStart(2,"0")}`;
+      timerEl.textContent = `${hours.toString().padStart(2,"0")}:${minutes.toString().padStart(2,"0")}:${seconds.toString().padStart(2,"0")}`;
     }
+
     setInterval(tick, 1000);
     tick();
   </script>
