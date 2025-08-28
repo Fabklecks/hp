@@ -33,25 +33,25 @@
             <a class="btn btn-outline" href="https://discord.gg/dVQjAxXgNA" target="_blank" rel="noreferrer">Discord</a>
           </div>
 
-          <div class="stream-timer">
-            <span>Nächster Stream in:</span>
-            <div id="timer">--:--:--</div>
-            <div id="nextWhen" style="opacity:.8;font-size:.95rem;margin-top:.25rem;"></div>
-          </div>
-        </div>
+<div class="stream-timer">
+  <span id="countdownLabel">Nächster Stream in:</span>
+  <div id="timer">--:--:--</div>
+  <div id="nextWhen" style="opacity:.8;font-size:.95rem;margin-top:.25rem;"></div>
+</div>
 
-        <!-- 16:9 Twitch-Embed -->
-        <div class="hero-media">
-          <div class="twitch-frame" style="position:relative;width:100%;padding-top:56.25%;">
-            <iframe
-              src="https://player.twitch.tv/?channel=jokr_io&parent=fabklecks.github.io"
-              frameborder="0" allowfullscreen
-              style="position:absolute;inset:0;width:100%;height:100%;border-radius:12px;"
-            ></iframe>
-            <div class="glow-ring"></div>
-          </div>
-        </div>
-      </div>
+>
+        <!-- Twitch-Embed -->
+<div class="hero-media">
+  <div class="twitch-frame" style="position:relative;width:100%;padding-top:56.25%; display:none;" id="twitchEmbed">
+    <iframe
+      src="https://player.twitch.tv/?channel=jokr_io&parent=fabklecks.github.io"
+      frameborder="0" allowfullscreen
+      style="position:absolute;inset:0;width:100%;height:100%;border-radius:12px;"
+    ></iframe>
+    <div class="glow-ring"></div>
+  </div>
+</div>
+
     </section>
 
     <!-- Social Cards -->
@@ -106,9 +106,20 @@
           Melde dich mit Google an, um die Stream-Zeiten für alle zu bearbeiten.
         </p>
 
-        <div style="margin:.75rem 0 1.25rem 0;">
-          <button id="loginBtn" class="btn btn-primary">Mit Google anmelden</button>
-          <button id="logoutBtn" class="btn btn-outline" style="display:none;">Abmelden</button>
+<div style="margin:.75rem 0 1.25rem 0;">
+  <button id="loginBtn" class="btn btn-primary">Mit Google anmelden</button>
+  <button id="logoutBtn" class="btn btn-outline" style="display:none;">Abmelden</button>
+
+  <!-- Live Toggle -->
+  <div id="liveToggleContainer" style="margin-top:1rem; display:none;">
+    <label style="font-weight:bold;color:var(--text);">
+      <input type="checkbox" id="liveToggle">
+      Live
+    </label>
+  </div>
+</div>
+
+
         </div>
 
         <form id="scheduleForm" style="display:none;">
@@ -182,6 +193,44 @@
     const clearAll  = document.getElementById("clearAll");
 
     let scheduleCache = [];
+    
+    // Live-Status Elemente
+const liveToggleContainer = document.getElementById("liveToggleContainer");
+const liveToggle = document.getElementById("liveToggle");
+const twitchEmbed = document.getElementById("twitchEmbed");
+const countdownLabel = document.getElementById("countdownLabel");
+let liveStatus = false;
+
+// Funktion: Anzeige Twitch/Countdown steuern
+function updateStreamDisplay() {
+  if(liveStatus){
+    twitchEmbed.style.display = "block";
+    countdownLabel.style.display = "none";
+    timerEl.style.display = "none";
+    nextWhen.style.display = "none";
+  } else {
+    twitchEmbed.style.display = "none";
+    countdownLabel.style.display = "inline";
+    timerEl.style.display = "block";
+    nextWhen.style.display = "block";
+  }
+}
+
+// Admin kann Live-Status ändern
+liveToggle.addEventListener("change", async () => {
+  liveStatus = liveToggle.checked;
+  await set(ref(db, "liveStatus"), liveStatus);
+  updateStreamDisplay();
+});
+
+// Live-Status aus Firebase beobachten
+const liveRef = ref(db, "liveStatus");
+onValue(liveRef, snap => {
+  liveStatus = snap.val() || false;
+  liveToggle.checked = liveStatus;
+  updateStreamDisplay();
+});
+
 
     /***** Auth Buttons *****/
     loginBtn.addEventListener("click", async () => {
@@ -192,40 +241,45 @@
     });
 
     /***** Auth-State-Check *****/
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const emailKey = user.email.replace(/\./g, ",");
-        const adminRef = ref(db, "admins/" + emailKey);
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    const emailKey = user.email.replace(/\./g, ",");
+    const adminRef = ref(db, "admins/" + emailKey);
 
-        try {
-          const snap = await get(adminRef);
-          if (snap.exists()) {
-            // ✅ User ist Admin
-            formEl.style.display   = "block";
-            logoutBtn.style.display= "inline-block";
-            loginBtn.style.display = "none";
-            adminNote.textContent  = `Angemeldet als ${user.displayName || user.email}. ✅ Admin-Zugang`;
-            adminNote.style.color  = "var(--accent)";
-          } else {
-            // ❌ Eingeloggt, aber KEIN Admin
-            formEl.style.display   = "none";
-            logoutBtn.style.display= "inline-block";
-            loginBtn.style.display = "none";
-            adminNote.textContent  = `Angemeldet als ${user.email}, aber du hast keinen Admin-Zugang.`;
-            adminNote.style.color  = "#f55";
-          }
-        } catch (err) {
-          console.error("Admin-Check fehlgeschlagen", err);
-        }
+    try {
+      const snap = await get(adminRef);
+      if (snap.exists()) {
+        // ✅ User ist Admin
+        formEl.style.display        = "block";
+        logoutBtn.style.display     = "inline-block";
+        loginBtn.style.display      = "none";
+        liveToggleContainer.style.display = "block"; // Live-Toggle sichtbar für Admin
+        adminNote.textContent       = `Angemeldet als ${user.displayName || user.email}. ✅ Admin-Zugang`;
+        adminNote.style.color       = "var(--accent)";
       } else {
-        // ❌ Nicht eingeloggt
-        formEl.style.display   = "none";
-        logoutBtn.style.display= "none";
-        loginBtn.style.display = "inline-block";
-        adminNote.textContent  = "Melde dich mit Google an, um die Stream-Zeiten für alle zu bearbeiten.";
-        adminNote.style.color  = "var(--text)";
+        // ❌ Eingeloggt, aber KEIN Admin
+        formEl.style.display        = "none";
+        logoutBtn.style.display     = "inline-block";
+        loginBtn.style.display      = "none";
+        liveToggleContainer.style.display = "none"; // Live-Toggle verstecken
+        adminNote.textContent       = `Angemeldet als ${user.email}, aber du hast keinen Admin-Zugang.`;
+        adminNote.style.color       = "#f55";
       }
-    });
+    } catch (err) {
+      console.error("Admin-Check fehlgeschlagen", err);
+    }
+  } else {
+    // ❌ Nicht eingeloggt
+    formEl.style.display          = "none";
+    logoutBtn.style.display       = "none";
+    loginBtn.style.display        = "inline-block";
+    liveToggleContainer.style.display = "none"; // Live-Toggle verstecken
+    adminNote.textContent          = "Melde dich mit Google an, um die Stream-Zeiten für alle zu bearbeiten.";
+    adminNote.style.color          = "var(--text)";
+  }
+});
+
+
 
     /***** DB: lesen (live) *****/
     const scheduleRef = ref(db, "schedule");
