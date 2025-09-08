@@ -82,7 +82,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getDatabase, ref, onValue, update, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
@@ -100,7 +100,7 @@
     const provider = new GoogleAuthProvider();
     const db = getDatabase(app);
 
-    const ADMINS = ["fabioasik221206@gmail.com", "redgamepvp474@gmail.com"];
+    const ADMINS = ["fabioasik221206@gmail.com", "cand7105@gmail.com"];
 
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
@@ -133,6 +133,19 @@
       if (user) {
         loginBtn.style.display = "none";
         logoutBtn.style.display = "inline-block";
+
+        // Spieler automatisch in DB speichern
+        const userRef = ref(db, `players/${user.uid}`);
+        onValue(userRef, snapshot => {
+          if (!snapshot.exists()) {
+            set(userRef, {
+              name: user.displayName || "Unbekannt",
+              rank: "",
+              mainType: "",
+              mains: []
+            });
+          }
+        });
 
         if (ADMINS.includes(user.email)) {
           adminPanel.style.display = "block";
@@ -228,7 +241,8 @@
       const groups = {};
       players.forEach(p => {
         if (!groups[p.rank]) groups[p.rank] = [];
-        groups[p.rank].push(`${p.name} (${p.mains.join(", ")})`);
+        const mainsText = p.mains.length ? `(${p.mains.join(", ")})` : "";
+        groups[p.rank].push(`${p.name} ${mainsText}`);
       });
 
       Object.keys(groups).forEach(rank => {
