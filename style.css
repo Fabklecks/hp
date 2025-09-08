@@ -8,18 +8,24 @@ h1,h2{ color:#ff4d4d; }
 .login-area{ margin-bottom:15px; }
 button{
   cursor:pointer;
-  background-color:#ff4d4d;
   border:none;
-  color:#fff;
-  padding:8px 12px;
   border-radius:5px;
-  margin-right:5px;
+  padding:10px 15px;
+  margin:5px 5px 5px 0;
   transition: transform 0.2s;
 }
 button:hover{ transform: scale(1.05); }
-input, select{ padding:5px; margin:5px 0; width:200px; display:block; border-radius:5px; border:none; }
+.type-buttons{ margin:10px 0; }
+.type-btn{
+  background-color:#555;
+  color:#fff;
+  font-size:16px;
+  padding:10px 20px;
+  margin-right:10px;
+}
+.type-btn.selected{ background-color:#ff4d4d; }
+input, select{ padding:5px; margin:5px 0; width:220px; display:block; border-radius:5px; border:none; }
 .admin-panel{ background-color:#333; padding:15px; border-radius:10px; margin-bottom:20px; }
-.type-options{ margin:5px 0 10px 0; }
 .ranking-list{ list-style:none; padding:0; margin:0; }
 .ranking-list li{
   padding:10px;
@@ -39,3 +45,9 @@ input, select{ padding:5px; margin:5px 0; width:200px; display:block; border-rad
 .player-name{ font-weight:bold; }
 .player-rank{ font-style:italic; margin-left:10px; }
 .player-mains{ color:#fff; margin-left:10px; }
+.action-btn{
+  background-color:#ff4d4d;
+  color:#fff;
+  padding:8px 12px;
+  border-radius:5px;
+}

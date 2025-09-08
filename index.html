@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Demon Slayer Hinokami Chronicles 2 Ranking</title>
+<title>Demon Slayer Hinokami Chronicles 2 - Adminpanel</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Demon Slayer Rangliste made by J.0.K.R</h1>
+<h1>Demon Slayer Hinokami Chronicles 2 - Adminpanel</h1>
 
 <div class="login-area">
   <button id="loginBtn">Login</button>
@@ -22,25 +22,25 @@
   <label>Spielername:</label>
   <input type="text" id="playerName" placeholder="Spielername">
 
-  <label>Typ:</label>
-  <div class="type-options">
-    <input type="radio" name="type" value="Demon" checked>Demon
-    <input type="radio" name="type" value="Demon Slayer">Demon Slayer
+  <label>Typ auswählen:</label>
+  <div class="type-buttons">
+    <button id="btnDemon" class="type-btn selected">Demon</button>
+    <button id="btnDemonSlayer" class="type-btn">Demon Slayer</button>
   </div>
 
-  <label>Main Character 1:</label>
-  <input type="text" id="main1" placeholder="Main 1">
-  <label>Main Character 2 (nur Demon Slayer):</label>
-  <input type="text" id="main2" placeholder="Main 2">
+  <div id="mainFields">
+    <label>Main Character 1:</label>
+    <input type="text" id="main1" placeholder="Main 1">
+  </div>
 
-  <button onclick="addOrUpdatePlayer()">Spieler hinzufügen/aktualisieren</button>
+  <button onclick="addOrUpdatePlayer()" class="action-btn">Spieler hinzufügen/aktualisieren</button>
   <br>
   <label>Bestehenden Spieler auswählen:</label>
   <select id="existingPlayers"></select>
-  <button onclick="removePlayer()">Spieler entfernen</button>
+  <button onclick="removePlayer()" class="action-btn">Spieler entfernen</button>
 </div>
 
-<h2>Rangliste der Monde</h2>
+<h2>Live-Rangliste (Drag & Drop)</h2>
 <ul id="rankingList" class="ranking-list"></ul>
 
 <script type="module">
@@ -68,9 +68,29 @@ const logoutBtn = document.getElementById("logoutBtn");
 const adminPanel = document.getElementById("adminPanel");
 const rankingList = document.getElementById("rankingList");
 const existingPlayers = document.getElementById("existingPlayers");
+const btnDemon = document.getElementById("btnDemon");
+const btnDemonSlayer = document.getElementById("btnDemonSlayer");
+const mainFields = document.getElementById("mainFields");
+
+let selectedType = "Demon"; // Standard
 
 loginBtn.addEventListener("click", () => signInWithPopup(auth, provider));
 logoutBtn.addEventListener("click", () => signOut(auth));
+
+// Typ-Buttons
+btnDemon.addEventListener("click", ()=>{
+  selectedType="Demon";
+  btnDemon.classList.add("selected");
+  btnDemonSlayer.classList.remove("selected");
+  mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1">`;
+});
+btnDemonSlayer.addEventListener("click", ()=>{
+  selectedType="Demon Slayer";
+  btnDemonSlayer.classList.add("selected");
+  btnDemon.classList.remove("selected");
+  mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1">
+  <label>Main Character 2:</label><input type="text" id="main2" placeholder="Main 2">`;
+});
 
 onAuthStateChanged(auth, (user) => {
   if(user){
@@ -79,28 +99,31 @@ onAuthStateChanged(auth, (user) => {
       adminPanel.style.display = "block";
     } else {
       adminPanel.style.display = "none";
+      alert("Du bist kein Admin!");
     }
   } else {
-    document.getElementById("userEmail").innerText = "Nicht eingeloggt";
     adminPanel.style.display = "none";
+    alert("Bitte zuerst einloggen!");
   }
 });
 
 function addOrUpdatePlayer(){
   const name = document.getElementById("playerName").value.trim();
-  const type = document.querySelector('input[name="type"]:checked').value;
   const main1 = document.getElementById("main1").value.trim();
-  const main2 = document.getElementById("main2").value.trim();
+  const main2Input = document.getElementById("main2");
+  const main2 = main2Input ? main2Input.value.trim() : null;
 
-  if(!name || !main1 || (type==="Demon Slayer" && !main2)){
+  if(!name || !main1 || (selectedType==="Demon Slayer" && !main2)){
     alert("Bitte alle Felder ausfüllen!");
     return;
   }
 
-  const playerData = { name, type, mains: type==="Demon"? [main1]: [main1, main2], rank: "Lower Moon 6" };
+  const mains = selectedType==="Demon" ? [main1] : [main1, main2];
+  const playerData = { name, type: selectedType, mains, rank: "Lower Moon 6" };
+
   set(ref(db,'players/'+name), playerData)
     .then(()=>alert("Spieler gespeichert!"))
-    .catch(err=>alert(err.message));
+    .catch(err=>alert("Fehler: "+err.message));
 }
 
 function removePlayer(){
