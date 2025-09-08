@@ -1,90 +1,17 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Demon Slayer – Rank System</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Demon Slayer Ranks</title>
   <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <header class="header">
-    <div class="container header-container">
-      <div class="logo">鬼滅の刃 Ranks</div>
-      <nav class="nav">
-        <a href="#ranks">Rangliste</a>
-        <a href="#admin" id="adminNavLink" style="display:none;">Admin</a>
-      </nav>
-    </div>
-  </header>
-
-  <main>
-    <!-- Hero -->
-    <section class="hero">
-      <div class="container hero-container">
-        <h1>Demon Slayer Hinokami Chronicles 2 – Rangsystem</h1>
-        <p>Hier kannst du sehen, welcher Spieler welchen Rang erreicht hat.  
-           Basierend auf den Dämonenrängen: <strong>Lower Moon 1-6</strong> und <strong>Upper Moon 1-6</strong>.</p>
-      </div>
-    </section>
-
-    <!-- Rankliste -->
-    <section class="section" id="ranks">
-      <div class="container">
-        <h2>🏆 Rangliste</h2>
-        <ul id="playerList" class="rank-list"></ul>
-      </div>
-    </section>
-
-    <!-- Admin Panel -->
-    <section class="section admin-panel" id="adminPanel" style="display:none;">
-      <div class="container">
-        <h2>⚔️ Admin Panel</h2>
-        <div class="auth-buttons">
-          <button id="loginBtn" class="btn btn-primary">Mit Google anmelden</button>
-          <button id="logoutBtn" class="btn btn-outline" style="display:none;">Abmelden</button>
-        </div>
-
-        <form id="addPlayerForm" class="form" style="display:none;">
-          <h3>Neuen Spieler hinzufügen</h3>
-          <input type="text" id="playerName" placeholder="Spielername" required>
-          <select id="playerRank">
-            <optgroup label="Lower Moons">
-              <option value="Lower 6">Lower Moon 6</option>
-              <option value="Lower 5">Lower Moon 5</option>
-              <option value="Lower 4">Lower Moon 4</option>
-              <option value="Lower 3">Lower Moon 3</option>
-              <option value="Lower 2">Lower Moon 2</option>
-              <option value="Lower 1">Lower Moon 1</option>
-            </optgroup>
-            <optgroup label="Upper Moons">
-              <option value="Upper 6">Upper Moon 6</option>
-              <option value="Upper 5">Upper Moon 5</option>
-              <option value="Upper 4">Upper Moon 4</option>
-              <option value="Upper 3">Upper Moon 3</option>
-              <option value="Upper 2">Upper Moon 2</option>
-              <option value="Upper 1">Upper Moon 1</option>
-            </optgroup>
-          </select>
-          <button type="submit" class="btn btn-primary">Hinzufügen</button>
-        </form>
-
-        <ul id="adminPlayerList" class="rank-list"></ul>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="container footer-container">
-      <p>© 2025 Demon Slayer Ranks – Alle Rechte vorbehalten</p>
-    </div>
-  </footer>
-
-  <!-- Firebase -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-    import { getDatabase, ref, set, push, get, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+    // Firebase Imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getDatabase, ref, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+    // Deine Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
       authDomain: "demonslayerranks.firebaseapp.com",
@@ -96,123 +23,156 @@
       measurementId: "G-WH3WQBKPX4"
     };
 
+    // Init Firebase
     const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
+    const db = getDatabase(app);
 
-    const playerList = document.getElementById("playerList");
-    const adminPlayerList = document.getElementById("adminPlayerList");
-    const addPlayerForm = document.getElementById("addPlayerForm");
+    // Admin-Liste (hier Emails eintragen)
+    const ADMINS = ["fabioasik221206@gmail.com", "redgamepvp474@gmail.com"];
+
+    // Elemente
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const adminPanel = document.getElementById("adminPanel");
-    const adminNavLink = document.getElementById("adminNavLink");
+    const rankListEl = document.getElementById("rankList");
+    const playerForm = document.getElementById("playerForm");
+    const playerNameInput = document.getElementById("playerName");
+    const playerRankSelect = document.getElementById("playerRank");
 
-    // Login / Logout
-    loginBtn.addEventListener("click", async () => {
-      try { await signInWithPopup(auth, provider); } catch(e){ alert(e.message); }
-    });
-    logoutBtn.addEventListener("click", async () => {
-      try { await signOut(auth); } catch(e){ alert(e.message); }
+    // Login
+    loginBtn.addEventListener("click", () => {
+      signInWithPopup(auth, provider);
     });
 
-    // Auth check
-    onAuthStateChanged(auth, async (user) => {
-      if(user){
-        const emailKey = user.email.replace(/\./g, ",");
-        const adminRef = ref(db, "admins/" + emailKey);
-        const snap = await get(adminRef);
-        if(snap.exists()){
+    // Logout
+    logoutBtn.addEventListener("click", () => {
+      signOut(auth);
+    });
+
+    // Auth-Zustand
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        const email = user.email;
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
+
+        if (ADMINS.includes(email)) {
           adminPanel.style.display = "block";
-          adminNavLink.style.display = "inline-block";
-          loginBtn.style.display = "none";
-          logoutBtn.style.display = "inline-block";
-          addPlayerForm.style.display = "block";
-          loadAdminList();
         } else {
           adminPanel.style.display = "none";
-          adminNavLink.style.display = "none";
         }
       } else {
-        adminPanel.style.display = "none";
-        adminNavLink.style.display = "none";
         loginBtn.style.display = "inline-block";
         logoutBtn.style.display = "none";
+        adminPanel.style.display = "none";
       }
     });
 
-    // Spieler hinzufügen
-    addPlayerForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name = document.getElementById("playerName").value.trim();
-      const rank = document.getElementById("playerRank").value;
-      if(!name) return;
-      const newRef = push(ref(db, "players"));
-      await set(newRef, { name, rank });
-      addPlayerForm.reset();
-    });
+    // Spieler anzeigen (dynamisch, nur belegte Ränge)
+    function renderRanks(players) {
+      rankListEl.innerHTML = "";
 
-    // Spieler Liste laden (öffentlich)
-    onValue(ref(db, "players"), (snap) => {
-      playerList.innerHTML = "";
-      if(snap.exists()){
-        const players = Object.values(snap.val());
-        players.sort((a,b) => a.rank.localeCompare(b.rank));
-        players.forEach(p => {
-          const li = document.createElement("li");
-          li.textContent = `${p.name} – ${p.rank}`;
-          playerList.appendChild(li);
-        });
-      } else {
-        playerList.innerHTML = "<li>Keine Spieler vorhanden.</li>";
-      }
-    });
+      // Gruppieren
+      const groups = {};
+      players.forEach(p => {
+        if (!groups[p.rank]) groups[p.rank] = [];
+        groups[p.rank].push(p.name);
+      });
 
-    // Admin Liste laden
-    function loadAdminList(){
-      onValue(ref(db, "players"), (snap) => {
-        adminPlayerList.innerHTML = "";
-        if(snap.exists()){
-          const data = snap.val();
-          Object.entries(data).forEach(([id,player]) => {
-            const li = document.createElement("li");
-            li.innerHTML = `
-              ${player.name} – ${player.rank}
-              <div>
-                <button class="btn btn-small promote">▲</button>
-                <button class="btn btn-small demote">▼</button>
-                <button class="btn btn-small danger">X</button>
-              </div>
-            `;
-            // Aufstieg
-            li.querySelector(".promote").onclick = () => {
-              update(ref(db, "players/" + id), { rank: promoteRank(player.rank) });
-            };
-            // Abstieg
-            li.querySelector(".demote").onclick = () => {
-              update(ref(db, "players/" + id), { rank: demoteRank(player.rank) });
-            };
-            // Löschen
-            li.querySelector(".danger").onclick = () => {
-              remove(ref(db, "players/" + id));
-            };
-            adminPlayerList.appendChild(li);
-          });
-        }
+      // Rendern nur wenn Spieler vorhanden
+      Object.keys(groups).forEach(rank => {
+        const section = document.createElement("div");
+        section.className = "rank-section";
+        section.innerHTML = `
+          <h3>${rank}</h3>
+          <ul>
+            ${groups[rank].map(name => `<li>${name}</li>`).join("")}
+          </ul>
+        `;
+        rankListEl.appendChild(section);
       });
     }
 
-    // Hilfsfunktionen für Ränge
-    const allRanks = ["Lower 6","Lower 5","Lower 4","Lower 3","Lower 2","Lower 1","Upper 6","Upper 5","Upper 4","Upper 3","Upper 2","Upper 1"];
-    function promoteRank(rank){
-      const i = allRanks.indexOf(rank);
-      return i > 0 ? allRanks[i-1] : rank;
-    }
-    function demoteRank(rank){
-      const i = allRanks.indexOf(rank);
-      return i < allRanks.length-1 ? allRanks[i+1] : rank;
-    }
+    // Spieler aus DB laden
+    const playersRef = ref(db, "players");
+    onValue(playersRef, snapshot => {
+      const data = snapshot.val() || {};
+      const players = Object.keys(data).map(id => ({
+        id,
+        name: data[id].name,
+        rank: data[id].rank
+      }));
+      renderRanks(players);
+    });
+
+    // Spieler hinzufügen
+    playerForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const name = playerNameInput.value.trim();
+      const rank = playerRankSelect.value;
+
+      if (name && rank) {
+        push(playersRef, { name, rank });
+        playerNameInput.value = "";
+      }
+    });
   </script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-container">
+      <div class="logo">Demon Slayer Ranks</div>
+      <nav class="nav">
+        <a href="#ranks">Rangliste</a>
+        <a href="#admin" id="adminNavLink" style="display:none;">Admin</a>
+        <button id="loginBtn" class="btn btn-primary">Login</button>
+        <button id="logoutBtn" class="btn btn-outline" style="display:none;">Logout</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Rangliste -->
+  <section id="ranks" class="section">
+    <div class="container">
+      <h2>Rangliste</h2>
+      <div id="rankList" class="rank-list"></div>
+    </div>
+  </section>
+
+  <!-- Admin Panel -->
+  <section id="admin" class="section">
+    <div class="container">
+      <div id="adminPanel" style="display:none;">
+        <h2>Admin Panel</h2>
+        <form id="playerForm">
+          <input type="text" id="playerName" placeholder="Spielername" required />
+          <select id="playerRank">
+            <option value="Lower Moon 6">Lower Moon 6</option>
+            <option value="Lower Moon 5">Lower Moon 5</option>
+            <option value="Lower Moon 4">Lower Moon 4</option>
+            <option value="Lower Moon 3">Lower Moon 3</option>
+            <option value="Lower Moon 2">Lower Moon 2</option>
+            <option value="Lower Moon 1">Lower Moon 1</option>
+            <option value="Upper Moon 6">Upper Moon 6</option>
+            <option value="Upper Moon 5">Upper Moon 5</option>
+            <option value="Upper Moon 4">Upper Moon 4</option>
+            <option value="Upper Moon 3">Upper Moon 3</option>
+            <option value="Upper Moon 2">Upper Moon 2</option>
+            <option value="Upper Moon 1">Upper Moon 1</option>
+          </select>
+          <button type="submit" class="btn btn-primary">Spieler hinzufügen</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      &copy; Abonniert mich lol – J.O.K.R auf Youtube
+    </div>
+  </footer>
 </body>
 </html>
