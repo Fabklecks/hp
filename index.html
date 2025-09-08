@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Demon Slayer Ranks</title>
   <link rel="stylesheet" href="styles.css">
+  <style>
+    .main-demon { color: red; font-weight: bold; }
+    .main-demon-slayer { color: blue; font-weight: bold; }
+    .rank-section { margin-bottom: 20px; }
+    .rank-section h3 { margin-bottom: 5px; }
+  </style>
 </head>
 <body>
   <!-- Header -->
@@ -20,7 +26,7 @@
     </div>
   </header>
 
-  <!-- Nickname Eingabe -->
+  <!-- Nickname Eingabe für alle Spieler -->
   <section id="nicknameSection" class="section" style="display:none;">
     <div class="container">
       <h2>Wähle einen Nickname</h2>
@@ -130,9 +136,11 @@
 
       const playersRef = ref(db, "players");
 
+      // Login / Logout
       loginBtn.addEventListener("click", () => signInWithPopup(auth, provider).catch(console.error));
       logoutBtn.addEventListener("click", () => signOut(auth).catch(console.error));
 
+      // Auth Zustand
       onAuthStateChanged(auth, user => {
         currentUser = user;
         if (user) {
@@ -163,6 +171,7 @@
         }
       });
 
+      // Nickname speichern
       saveNicknameBtn.addEventListener("click", () => {
         const nickname = nicknameInput.value.trim();
         if (!nickname || !currentUser) return alert("Bitte einen gültigen Nickname eingeben.");
@@ -170,16 +179,16 @@
         nicknameSection.style.display = "none";
       });
 
-      // Spieler laden und sortieren
+      // Spieler laden
       onValue(playersRef, snapshot => {
         const data = snapshot.val() || {};
         const playersMap = {};
         Object.keys(data).forEach(id => {
           const p = data[id];
-          if (p && p.nickname) {
+          if (p) {
             playersMap[id] = {
               id,
-              nickname: p.nickname,
+              nickname: p.nickname || `Spieler-${id.substring(0,5)}`,
               rank: p.rank || "",
               mainType: p.mainType || "",
               mains: Array.isArray(p.mains) ? p.mains : []
@@ -188,14 +197,14 @@
         });
         const players = Object.values(playersMap);
 
-        // Sortierung nach Rang
+        // Rang sortieren
         const rankOrder = [
           "Upper Moon 1","Upper Moon 2","Upper Moon 3","Upper Moon 4","Upper Moon 5","Upper Moon 6",
           "Lower Moon 1","Lower Moon 2","Lower Moon 3","Lower Moon 4","Lower Moon 5","Lower Moon 6"
         ];
         players.sort((a,b) => {
-          const aIndex = rankOrder.indexOf(a.rank);
-          const bIndex = rankOrder.indexOf(b.rank);
+          const aIndex = rankOrder.indexOf(a.rank) === -1 ? 999 : rankOrder.indexOf(a.rank);
+          const bIndex = rankOrder.indexOf(b.rank) === -1 ? 999 : rankOrder.indexOf(b.rank);
           return aIndex - bIndex;
         });
 
@@ -208,13 +217,29 @@
           playerSelect.appendChild(option);
         });
 
-        // Rangliste
+        // Admin-Panel Vorschau
+        playerSelect.addEventListener("change", () => {
+          const selected = players.find(pl => pl.id === playerSelect.value);
+          if (selected) {
+            playerRankSelect.value = selected.rank;
+            mainInputContainer.style.display = selected.mains.length ? "block" : "none";
+            playerMainInput.value = selected.mains.join(", ");
+            mainType = selected.mainType || "";
+          }
+        });
+
+        // Rangliste rendern mit farbigen Mains
         rankListEl.innerHTML = "";
         const groups = {};
         players.forEach(p => {
           if (!groups[p.rank]) groups[p.rank] = [];
-          const mainsText = p.mains.length ? `(${p.mains.join(", ")})` : "";
-          groups[p.rank].push(`${p.nickname} ${mainsText}`);
+          const mainsText = p.mains.map(m => {
+            if(p.mainType === "Demon") return `<span class="main-demon">${m}</span>`;
+            if(p.mainType === "Demon Slayer") return `<span class="main-demon-slayer">${m}</span>`;
+            return m;
+          }).join(", ");
+          const displayText = mainsText ? `${p.nickname} (${mainsText})` : p.nickname;
+          groups[p.rank].push(displayText);
         });
         Object.keys(groups).forEach(rank => {
           const section = document.createElement("div");
@@ -224,9 +249,11 @@
         });
       });
 
+      // Main Buttons
       demonBtn.addEventListener("click", () => { mainType="Demon"; mainInputContainer.style.display="block"; playerMainInput.placeholder="1 Main eingeben"; playerMainInput.value=""; });
       demonSlayerBtn.addEventListener("click", () => { mainType="Demon Slayer"; mainInputContainer.style.display="block"; playerMainInput.placeholder="2 Mains eingeben, getrennt durch Komma"; playerMainInput.value=""; });
 
+      // Spieler aktualisieren
       playerForm.addEventListener("submit", e => {
         e.preventDefault();
         const playerId = playerSelect.value;
