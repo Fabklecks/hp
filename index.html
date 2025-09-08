@@ -20,6 +20,15 @@
     </div>
   </header>
 
+  <!-- Nickname Eingabe -->
+  <section id="nicknameSection" class="section" style="display:none;">
+    <div class="container">
+      <h2>Wähle einen Nickname</h2>
+      <input type="text" id="nicknameInput" placeholder="Dein Nickname" />
+      <button id="saveNicknameBtn" class="btn btn-primary">Speichern</button>
+    </div>
+  </section>
+
   <!-- Rangliste -->
   <section id="ranks" class="section">
     <div class="container">
@@ -34,12 +43,10 @@
       <div id="adminPanel" style="display:none;">
         <h2>Admin Panel</h2>
         <form id="playerForm">
-          <!-- Spieler auswählen -->
           <select id="playerSelect">
             <option value="" disabled selected>Spieler auswählen</option>
           </select>
 
-          <!-- Rang auswählen -->
           <select id="playerRank">
             <option value="Lower Moon 6">Lower Moon 6</option>
             <option value="Lower Moon 5">Lower Moon 5</option>
@@ -55,13 +62,11 @@
             <option value="Upper Moon 1">Upper Moon 1</option>
           </select>
 
-          <!-- Buttons für Main -->
           <div style="margin-top:10px;">
             <button type="button" id="demonBtn">Demon</button>
             <button type="button" id="demonSlayerBtn">Demon Slayer</button>
           </div>
 
-          <!-- Textfeld für Mains -->
           <div id="mainInputContainer" style="margin-top:10px; display:none;">
             <input type="text" id="playerMainInput" placeholder="Trage hier die Main(s) ein" />
           </div>
@@ -78,7 +83,6 @@
     </div>
   </footer>
 
-  <!-- Firebase & Admin Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -89,7 +93,7 @@
       authDomain: "demonslayerranks.firebaseapp.com",
       databaseURL: "https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app/",
       projectId: "demonslayerranks",
-      storageBucket: "demonslayerranks.firebasestorage.app",
+      storageBucket: "demonslayerranks.firebasedatabase.app",
       messagingSenderId: "244021550640",
       appId: "1:244021550640:web:4d2a3c7a52c205f5e997f5",
       measurementId: "G-WH3WQBKPX4"
@@ -102,161 +106,143 @@
 
     const ADMINS = ["fabioasik221206@gmail.com", "cand7105@gmail.com"];
 
-    const loginBtn = document.getElementById("loginBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const adminPanel = document.getElementById("adminPanel");
-    const rankListEl = document.getElementById("rankList");
+    document.addEventListener("DOMContentLoaded", () => {
+      const loginBtn = document.getElementById("loginBtn");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const adminPanel = document.getElementById("adminPanel");
+      const rankListEl = document.getElementById("rankList");
 
-    const playerForm = document.getElementById("playerForm");
-    const playerSelect = document.getElementById("playerSelect");
-    const playerRankSelect = document.getElementById("playerRank");
-    const mainInputContainer = document.getElementById("mainInputContainer");
-    const playerMainInput = document.getElementById("playerMainInput");
+      const playerForm = document.getElementById("playerForm");
+      const playerSelect = document.getElementById("playerSelect");
+      const playerRankSelect = document.getElementById("playerRank");
+      const mainInputContainer = document.getElementById("mainInputContainer");
+      const playerMainInput = document.getElementById("playerMainInput");
 
-    const demonBtn = document.getElementById("demonBtn");
-    const demonSlayerBtn = document.getElementById("demonSlayerBtn");
+      const demonBtn = document.getElementById("demonBtn");
+      const demonSlayerBtn = document.getElementById("demonSlayerBtn");
 
-    let mainType = "";
+      const nicknameSection = document.getElementById("nicknameSection");
+      const nicknameInput = document.getElementById("nicknameInput");
+      const saveNicknameBtn = document.getElementById("saveNicknameBtn");
 
-    const playersRef = ref(db, "players");
+      let mainType = "";
+      let currentUser = null;
 
-    // Login / Logout
-    loginBtn.addEventListener("click", () => {
-      signInWithPopup(auth, provider).catch(err => console.error(err));
-    });
-    logoutBtn.addEventListener("click", () => {
-      signOut(auth).catch(err => console.error(err));
-    });
+      const playersRef = ref(db, "players");
 
-    // Auth-Zustand
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        loginBtn.style.display = "none";
-        logoutBtn.style.display = "inline-block";
+      loginBtn.addEventListener("click", () => signInWithPopup(auth, provider).catch(console.error));
+      logoutBtn.addEventListener("click", () => signOut(auth).catch(console.error));
 
-        // Spieler automatisch in DB speichern
-        const userRef = ref(db, `players/${user.uid}`);
-        onValue(userRef, snapshot => {
-          if (!snapshot.exists()) {
-            set(userRef, {
-              name: user.displayName || "Unbekannt",
-              rank: "",
-              mainType: "",
-              mains: []
-            });
-          }
-        });
+      onAuthStateChanged(auth, user => {
+        currentUser = user;
+        if (user) {
+          loginBtn.style.display = "none";
+          logoutBtn.style.display = "inline-block";
 
-        if (ADMINS.includes(user.email)) {
-          adminPanel.style.display = "block";
-          document.getElementById("adminNavLink").style.display = "inline-block";
+          const userRef = ref(db, `players/${user.uid}`);
+          onValue(userRef, snapshot => {
+            if (!snapshot.exists()) {
+              set(userRef, { nickname: "", rank: "", mainType: "", mains: [] });
+              nicknameSection.style.display = "block";
+            } else if (!snapshot.val().nickname) {
+              nicknameSection.style.display = "block";
+            } else {
+              nicknameSection.style.display = "none";
+            }
+          });
+
+          adminPanel.style.display = ADMINS.includes(user.email) ? "block" : "none";
+          document.getElementById("adminNavLink").style.display = ADMINS.includes(user.email) ? "inline-block" : "none";
+
         } else {
+          loginBtn.style.display = "inline-block";
+          logoutBtn.style.display = "none";
           adminPanel.style.display = "none";
           document.getElementById("adminNavLink").style.display = "none";
+          nicknameSection.style.display = "none";
         }
-      } else {
-        loginBtn.style.display = "inline-block";
-        logoutBtn.style.display = "none";
-        adminPanel.style.display = "none";
-        document.getElementById("adminNavLink").style.display = "none";
-      }
-    });
-
-    // Spieler aus DB laden
-    onValue(playersRef, snapshot => {
-      const data = snapshot.val() || {};
-      const players = Object.keys(data).map(id => ({
-        id,
-        name: data[id].name,
-        rank: data[id].rank,
-        mainType: data[id].mainType || "",
-        mains: data[id].mains || []
-      }));
-
-      // Dropdown aktualisieren
-      playerSelect.innerHTML = '<option value="" disabled selected>Spieler auswählen</option>';
-      players.forEach(p => {
-        const option = document.createElement("option");
-        option.value = p.id;
-        option.textContent = p.name;
-        playerSelect.appendChild(option);
       });
 
-      // Rangliste rendern
-      renderRanks(players);
-    });
-
-    // Main Buttons
-    demonBtn.addEventListener("click", () => {
-      mainType = "Demon";
-      mainInputContainer.style.display = "block";
-      playerMainInput.placeholder = "1 Main eingeben";
-      playerMainInput.value = "";
-    });
-
-    demonSlayerBtn.addEventListener("click", () => {
-      mainType = "Demon Slayer";
-      mainInputContainer.style.display = "block";
-      playerMainInput.placeholder = "2 Mains eingeben, getrennt durch Komma";
-      playerMainInput.value = "";
-    });
-
-    // Spieler aktualisieren
-    playerForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const playerId = playerSelect.value;
-      const rank = playerRankSelect.value;
-      const mainsText = playerMainInput.value.trim();
-
-      if (!playerId || !rank || !mainType || !mainsText) {
-        alert("Bitte alle Felder ausfüllen!");
-        return;
-      }
-
-      let mains = mainsText.split(",").map(m => m.trim());
-
-      if (mainType === "Demon" && mains.length !== 1) {
-        alert("Demon darf nur 1 Main haben!");
-        return;
-      }
-      if (mainType === "Demon Slayer" && mains.length !== 2) {
-        alert("Demon Slayer muss genau 2 Mains haben!");
-        return;
-      }
-
-      const playerRef = ref(db, `players/${playerId}`);
-      update(playerRef, { rank, mainType, mains })
-        .then(() => {
-          console.log("Spieler aktualisiert");
-          mainInputContainer.style.display = "none";
-          playerMainInput.value = "";
-          mainType = "";
-        })
-        .catch(err => console.error(err));
-    });
-
-    // Rangliste rendern
-    function renderRanks(players) {
-      rankListEl.innerHTML = "";
-      const groups = {};
-      players.forEach(p => {
-        if (!groups[p.rank]) groups[p.rank] = [];
-        const mainsText = p.mains.length ? `(${p.mains.join(", ")})` : "";
-        groups[p.rank].push(`${p.name} ${mainsText}`);
+      saveNicknameBtn.addEventListener("click", () => {
+        const nickname = nicknameInput.value.trim();
+        if (!nickname || !currentUser) return alert("Bitte einen gültigen Nickname eingeben.");
+        update(ref(db, `players/${currentUser.uid}`), { nickname });
+        nicknameSection.style.display = "none";
       });
 
-      Object.keys(groups).forEach(rank => {
-        const section = document.createElement("div");
-        section.className = "rank-section";
-        section.innerHTML = `
-          <h3>${rank}</h3>
-          <ul>
-            ${groups[rank].map(name => `<li>${name}</li>`).join("")}
-          </ul>
-        `;
-        rankListEl.appendChild(section);
+      // Spieler laden und sortieren
+      onValue(playersRef, snapshot => {
+        const data = snapshot.val() || {};
+        const playersMap = {};
+        Object.keys(data).forEach(id => {
+          const p = data[id];
+          if (p && p.nickname) {
+            playersMap[id] = {
+              id,
+              nickname: p.nickname,
+              rank: p.rank || "",
+              mainType: p.mainType || "",
+              mains: Array.isArray(p.mains) ? p.mains : []
+            };
+          }
+        });
+        const players = Object.values(playersMap);
+
+        // Sortierung nach Rang
+        const rankOrder = [
+          "Upper Moon 1","Upper Moon 2","Upper Moon 3","Upper Moon 4","Upper Moon 5","Upper Moon 6",
+          "Lower Moon 1","Lower Moon 2","Lower Moon 3","Lower Moon 4","Lower Moon 5","Lower Moon 6"
+        ];
+        players.sort((a,b) => {
+          const aIndex = rankOrder.indexOf(a.rank);
+          const bIndex = rankOrder.indexOf(b.rank);
+          return aIndex - bIndex;
+        });
+
+        // Dropdown
+        playerSelect.innerHTML = '<option value="" disabled selected>Spieler auswählen</option>';
+        players.forEach(p => {
+          const option = document.createElement("option");
+          option.value = p.id;
+          option.textContent = p.nickname;
+          playerSelect.appendChild(option);
+        });
+
+        // Rangliste
+        rankListEl.innerHTML = "";
+        const groups = {};
+        players.forEach(p => {
+          if (!groups[p.rank]) groups[p.rank] = [];
+          const mainsText = p.mains.length ? `(${p.mains.join(", ")})` : "";
+          groups[p.rank].push(`${p.nickname} ${mainsText}`);
+        });
+        Object.keys(groups).forEach(rank => {
+          const section = document.createElement("div");
+          section.className = "rank-section";
+          section.innerHTML = `<h3>${rank}</h3><ul>${groups[rank].map(name=>`<li>${name}</li>`).join("")}</ul>`;
+          rankListEl.appendChild(section);
+        });
       });
-    }
+
+      demonBtn.addEventListener("click", () => { mainType="Demon"; mainInputContainer.style.display="block"; playerMainInput.placeholder="1 Main eingeben"; playerMainInput.value=""; });
+      demonSlayerBtn.addEventListener("click", () => { mainType="Demon Slayer"; mainInputContainer.style.display="block"; playerMainInput.placeholder="2 Mains eingeben, getrennt durch Komma"; playerMainInput.value=""; });
+
+      playerForm.addEventListener("submit", e => {
+        e.preventDefault();
+        const playerId = playerSelect.value;
+        const rank = playerRankSelect.value;
+        const mainsText = playerMainInput.value.trim();
+        if (!playerId || !rank || !mainType || !mainsText) return alert("Bitte alle Felder ausfüllen!");
+
+        let mains = mainsText.split(",").map(m => m.trim());
+        if (mainType==="Demon" && mains.length!==1) return alert("Demon darf nur 1 Main haben!");
+        if (mainType==="Demon Slayer" && mains.length!==2) return alert("Demon Slayer muss genau 2 Mains haben!");
+
+        update(ref(db, `players/${playerId}`), { rank, mainType, mains })
+          .then(()=>{ mainInputContainer.style.display="none"; playerMainInput.value=""; mainType=""; })
+          .catch(console.error);
+      });
+    });
   </script>
 </body>
 </html>
