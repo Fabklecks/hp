@@ -1,358 +1,438 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>jokr_io – Official Homepage</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DSHC2 - Rangliste</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="header">
-    <div class="container header-container">
-      <div class="logo">jokr_io</div>
-      <nav class="nav">
-        <a href="#watch">Live</a>
-        <a href="#socials">Socials</a>
-        <a href="#faq">FAQ</a>
-        <a href="#admin" id="adminNavLink" style="display:none;">Admin</a>
-      </nav>
-      <!-- Login / Logout Buttons im Header -->
-      <button id="loginBtn" class="btn btn-primary">Mit Google anmelden</button>
-      <button id="logoutBtn" class="btn btn-outline" style="display:none;">Abmelden</button>
+  <header class="site-header">
+    <div class="container header-grid">
+      <div class="brand">
+        <h1>Demon Slayer • Hinokami Chronicles 2</h1>
+        <p class="tagline">Ranking-Übersicht & Admin-Panel</p>
+      </div>
+
+      <div class="auth-area" id="authArea">
+        <div id="userInfo" class="user-info" style="display:none;">
+          <img id="userAvatar" alt="avatar" class="avatar" />
+          <div>
+            <div id="userName"></div>
+            <small id="userEmail"></small>
+          </div>
+        </div>
+
+        <div class="auth-buttons">
+          <button id="loginBtn" class="btn">Mit Google anmelden</button>
+          <button id="logoutBtn" class="btn btn-ghost" style="display:none;">Abmelden</button>
+        </div>
+      </div>
     </div>
   </header>
 
-  <main>
-    <!-- Hero -->
-    <section class="hero" id="watch">
-      <div class="container hero-container">
-        <div class="hero-text">
-          <h1>Live auf Twitch – jokr_io</h1>
-          <p>Willkommen auf meiner offiziellen Seite. Begleite mich live auf Twitch oder schau meine Videos auf YouTube.</p>
+  <main class="container main-grid">
+    <aside class="sidebar">
+      <h2>Ränge</h2>
+      <ul class="ranks-legend">
+        <li><strong>Upper Moon</strong> 1 → 6 (Top)</li>
+        <li><strong>Lower Moon</strong> 1 → 6</li>
+      </ul>
 
-          <div class="hero-buttons">
-            <a class="btn btn-primary" href="https://www.twitch.tv/jokr_io" target="_blank" rel="noreferrer">Twitch öffnen</a>
-            <a class="btn btn-outline" href="https://www.youtube.com/@J.O.K.R" target="_blank" rel="noreferrer">YouTube</a>
-            <a class="btn btn-outline" href="https://discord.gg/dVQjAxXgNA" target="_blank" rel="noreferrer">Discord</a>
-          </div>
-
-          <div class="stream-timer">
-            <span id="countdownLabel">Nächster Stream in:</span>
-            <div id="timer">--:--:--</div>
-            <div id="nextWhen" style="opacity:.8;font-size:.95rem;margin-top:.25rem;"></div>
-          </div>
-        </div>
-
-        <!-- Twitch-Embed -->
-        <div class="hero-media">
-          <div class="twitch-frame" style="position:relative;width:100%;padding-top:56.25%; display:none;" id="twitchEmbed">
-            <iframe
-              src="https://player.twitch.tv/?channel=jokr_io&parent=fabklecks.github.io"
-              frameborder="0" allowfullscreen
-              style="position:absolute;inset:0;width:100%;height:100%;border-radius:12px;">
-            </iframe>
-            <div class="glow-ring"></div>
-          </div>
-        </div>
+      <div class="note">
+        <p>Hinweis: Spieler müssen sich erst einmalig anmelden, bevor sie dem Ranking hinzugefügt werden können.</p>
       </div>
-    </section>
 
-    <!-- Social Cards -->
-    <section class="section" id="socials">
-      <div class="container">
-        <h2>Folge & unterstütze</h2>
-        <div class="card-grid">
-          <a class="card" href="https://www.twitch.tv/jokr_io" target="_blank" rel="noreferrer">
-            <div class="icon twitch"></div>
-            <h3>Twitch</h3>
-            <p>Livestreams & Community</p>
-          </a>
-          <a class="card" href="https://www.youtube.com/@J.O.K.R" target="_blank" rel="noreferrer">
-            <div class="icon youtube"></div>
-            <h3>YouTube</h3>
-            <p>Highlights & Videos</p>
-          </a>
-          <a class="card" href="https://x.com/Fabklecks" target="_blank" rel="noreferrer">
-            <div class="icon x"></div>
-            <h3>X / Twitter</h3>
-            <p>Updates & News</p>
-          </a>
-          <a class="card" href="https://discord.gg/dVQjAxXgNA" target="_blank" rel="noreferrer">
-            <div class="icon discord"></div>
-            <h3>Discord</h3>
-            <p>Community & Chat</p>
-          </a>
-        </div>
+      <div id="adminPanelToggle" style="display:none;">
+        <button id="openAdminBtn" class="btn btn-block">Admin-Panel öffnen</button>
       </div>
-    </section>
+    </aside>
 
-    <!-- FAQ -->
-    <section class="section" id="faq">
-      <div class="container">
-        <h2>FAQ</h2>
-        <details class="faq-item">
-          <summary>Wann streamst du?</summary>
-          <p>Der Timer oben zählt bis zum nächsten geplanten Stream.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Wie kann ich dir folgen?</summary>
-          <p>Nutze die Buttons oben oder finde mich auf YouTube, X und Discord.</p>
-        </details>
-      </div>
-    </section>
-
-    <!-- Admin Panel -->
-    <section class="section admin-panel" id="adminPanel" style="display:none;">
-      <div class="container">
-        <h2>Admin Panel</h2>
-
-        <!-- Live Toggle -->
-        <div id="liveToggleContainer" style="margin-top:1rem; display:none;">
-          <label style="font-weight:bold;color:var(--text);">
-            <input type="checkbox" id="liveToggle"> Live
-          </label>
-        </div>
-
-        <form id="scheduleForm" style="display:none;">
-          <div class="schedule-grid" style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
-            <label>Tag:
-              <select name="day">
-                <option value="1">Montag</option>
-                <option value="2">Dienstag</option>
-                <option value="3">Mittwoch</option>
-                <option value="4">Donnerstag</option>
-                <option value="5">Freitag</option>
-                <option value="6">Samstag</option>
-                <option value="0">Sonntag</option>
-              </select>
-            </label>
-            <label>Uhrzeit:
-              <input type="time" name="time" required>
-            </label>
-            <button type="submit" class="btn btn-primary">Hinzufügen</button>
-            <button type="button" id="clearAll" class="btn btn-outline">Alle löschen</button>
-          </div>
-        </form>
-
-        <ul id="scheduleList" style="list-style:none;padding:0;margin-top:1rem;"></ul>
-      </div>
+    <section class="content">
+      <section class="ranks" id="ranks">
+        <!-- Ranks werden hier dynamisch erzeugt -->
+      </section>
     </section>
   </main>
 
-  <footer class="footer">
-    <div class="container footer-container">
-      <p>© 2025 jokr_io – Alle Rechte vorbehalten</p>
+  <!-- Admin Modal / Panel -->
+  <div id="adminModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <button class="modal-close" id="closeAdminBtn">&times;</button>
+      <h3>Admin Panel</h3>
+
+      <section class="admin-section">
+        <h4>Registrierte Nutzer</h4>
+        <p>Wähle einen registrierten Nutzer (muss sich vorher mit Google angemeldet haben) und füge ihn in ein Ranking ein.</p>
+        <div class="form-row">
+          <select id="usersSelect"></select>
+          <select id="rankSelect"></select>
+          <button id="addPlayerBtn" class="btn">Spieler hinzufügen</button>
+        </div>
+      </section>
+
+      <section class="admin-section">
+        <h4>Manage Players</h4>
+        <p>Wähle einen Spieler aus der Rangliste zum verschieben oder entfernen.</p>
+        <div id="playersManageList" class="players-manage-list"></div>
+      </section>
+
+      <section class="admin-section">
+        <h4>Admin-Verwaltung</h4>
+        <p>Admins werden in der Realtime-DB unter <code>/admins</code> als Schlüssel (email mit Punkt -> komma) gespeichert.</p>
+        <p>Beispiel: <code>/admins/fabioasik221206@gmail,com: true</code></p>
+      </section>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>© 2025 DSHC2 • Demo-Projekt</small>
     </div>
   </footer>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+  <!-- Firebase + App Script -->
+  <script type="module">
+    /****************************************************************
+     * IMPORTANT:
+     * - Set your Firebase config below (apiKey, authDomain, databaseURL etc.)
+     * - Make sure Realtime Database rules allow reads/writes as you expect.
+     * - Create a node /admins in your DB and add admin emails (dots replaced by commas).
+     *
+     * Realtime DB structure used:
+     * /users/{uid} = { uid, displayName, email, photoURL, createdAt }
+     * /players/{uid} = { uid, rank: "Upper-1" | "Lower-6" ... , addedAt }
+     * /admins/{email-with-dots-replaced-by-commas} = true
+     ****************************************************************/
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDE1KgYtam9MbnFcXhiQJM0O4T87KDT22Y",
-  authDomain: "jokr-streams.firebaseapp.com",
-  projectId: "jokr-streams",
-  storageBucket: "jokr-streams.firebasestorage.app",
-  messagingSenderId: "330674568802",
-  appId: "1:330674568802:web:689fe5ca69e03a09c99b3b",
-  databaseURL: "https://jokr-streams-default-rtdb.europe-west1.firebasedatabase.app/"
-};
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import {
+      getDatabase, ref, set, get, onValue, push, remove, update
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+    import {
+      getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+    // ---------- FIREBASE CONFIG: REPLACE WITH YOURS ----------
+    const firebaseConfig = {
+      apiKey: "REPLACE_WITH_YOUR_APIKEY",
+      authDomain: "REPLACE_WITH_AUTHDOMAIN.firebaseapp.com",
+      projectId: "REPLACE_PROJECTID",
+      storageBucket: "REPLACE_STORAGEBUCKET.appspot.com",
+      messagingSenderId: "REPLACE_SENDERID",
+      appId: "REPLACE_APPID",
+      // IMPORTANT: copy databaseURL from your Firebase Realtime Database settings
+      databaseURL: "https://YOUR_PROJECT-default-rtdb.europe-west1.firebasedatabase.app/"
+    };
+    // --------------------------------------------------------
 
-const DAYS = ["So","Mo","Di","Mi","Do","Fr","Sa"];
-const timerEl = document.getElementById("timer");
-const nextWhen = document.getElementById("nextWhen");
-const listEl = document.getElementById("scheduleList");
-const formEl = document.getElementById("scheduleForm");
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const adminPanel = document.getElementById("adminPanel");
-const adminNavLink = document.getElementById("adminNavLink");
-const liveToggleContainer = document.getElementById("liveToggleContainer");
-const liveToggle = document.getElementById("liveToggle");
-const twitchEmbed = document.getElementById("twitchEmbed");
-const countdownLabel = document.getElementById("countdownLabel");
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
-let scheduleCache = [];
-let liveStatus = false;
+    // Ranks: Upper-1 .. Upper-6 (top), Lower-1 .. Lower-6 (lower)
+    const RANKS = [
+      ...Array.from({length:6}, (_,i)=>`Upper-${i+1}`), // Upper-1 ... Upper-6
+      ...Array.from({length:6}, (_,i)=>`Lower-${i+1}`)  // Lower-1 ... Lower-6
+    ];
+    // For display order in UI we'll render Upper-6..Upper-1 then Lower-1..Lower-6 visually.
+    // But internal keys are above.
 
-// Twitch / Countdown anzeigen
-function updateStreamDisplay() {
-  if(liveStatus){
-    twitchEmbed.style.display = "block";
-    countdownLabel.style.display = "none";
-    timerEl.style.display = "none";
-    nextWhen.style.display = "none";
-  } else {
-    twitchEmbed.style.display = "none";
-    countdownLabel.style.display = "inline";
-    timerEl.style.display = "block";
-    nextWhen.style.display = "block";
-  }
-}
+    // ---------- DOM refs ----------
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userInfo = document.getElementById('userInfo');
+    const userName = document.getElementById('userName');
+    const userEmail = document.getElementById('userEmail');
+    const userAvatar = document.getElementById('userAvatar');
+    const adminPanelToggle = document.getElementById('adminPanelToggle');
+    const openAdminBtn = document.getElementById('openAdminBtn');
+    const adminModal = document.getElementById('adminModal');
+    const closeAdminBtn = document.getElementById('closeAdminBtn');
+    const adminPanelElem = document.getElementById('adminPanel');
+    const usersSelect = document.getElementById('usersSelect');
+    const rankSelect = document.getElementById('rankSelect');
+    const addPlayerBtn = document.getElementById('addPlayerBtn');
+    const playersManageList = document.getElementById('playersManageList');
+    const adminNavLink = document.getElementById('adminNavLink');
 
-// Live-Toggle ändern
-liveToggle.addEventListener("change", async () => {
-  liveStatus = liveToggle.checked;
-  await set(ref(db, "liveStatus"), liveStatus);
-  updateStreamDisplay();
-});
+    const ranksContainer = document.getElementById('ranks');
+    const container = document.querySelector('.container');
 
-// Live-Status aus DB beobachten
-onValue(ref(db, "liveStatus"), snap => {
-  liveStatus = snap.val() || false;
-  liveToggle.checked = liveStatus;
-  updateStreamDisplay();
-});
+    let currentUser = null;
+    let isAdmin = false;
 
-// Login / Logout
-loginBtn.addEventListener("click", async () => {
-  try { await signInWithPopup(auth, provider); } catch(e){ alert(e.message); }
-});
+    // ---------- helper funcs ----------
+    function emailToKey(email){
+      return email.replaceAll('.', ',');
+    }
 
-logoutBtn.addEventListener("click", async () => {
-  try { await signOut(auth); } catch(e){ alert(e.message); }
-});
+    function prettyRankName(rank){
+      // rank like "Upper-1" -> "Upper Moon 1"
+      const [type, num] = rank.split('-');
+      return `${type === 'Upper' ? 'Upper Moon' : 'Lower Moon'} ${num}`;
+    }
 
-// Auth-State prüfen
-onAuthStateChanged(auth, async (user) => {
-  if(user){
-    const emailKey = user.email.replace(/\./g,",");
-    const adminRef = ref(db, "admins/" + emailKey);
-    try {
-      const snap = await get(adminRef);
-      if(snap.exists()){
-        // ✅ Admin
-        adminPanel.style.display = "block";
-        formEl.style.display = "block";
-        liveToggleContainer.style.display = "block";
-        loginBtn.style.display = "none";
-        logoutBtn.style.display = "inline-block";
-        adminNavLink.style.display = "inline-block";
-      } else {
-        // ❌ Eingeloggt, aber kein Admin
-        adminPanel.style.display = "none";
-        formEl.style.display = "none";
-        liveToggleContainer.style.display = "none";
-        loginBtn.style.display = "none";
-        logoutBtn.style.display = "inline-block";
-        adminNavLink.style.display = "none";
+    // ---------- render ranks UI ----------
+    function buildRankSections(){
+      ranksContainer.innerHTML = '';
+      // Render Upper 6..1 first (visual top on page)
+      const upper = RANKS.slice(0,6).slice().reverse(); // Upper-6..Upper-1
+      const lower = RANKS.slice(6); // Lower-1..Lower-6
+      const all = [...upper, ...lower];
+
+      all.forEach(rank=>{
+        const section = document.createElement('div');
+        section.className = 'rank-section';
+        section.dataset.rank = rank;
+        section.innerHTML = `
+          <div class="rank-header">
+            <h3>${prettyRankName(rank)}</h3>
+            <div class="rank-actions" data-rank="${rank}"></div>
+          </div>
+          <ul class="players-list" id="list-${rank}"></ul>
+        `;
+        ranksContainer.appendChild(section);
+      });
+    }
+
+    buildRankSections();
+
+    // ---------- listen to players in DB ----------
+    const playersRef = ref(db, 'players');
+    onValue(playersRef, snap=>{
+      const val = snap.val() || {};
+      // val is { uid: { uid, rank, addedAt }, ... }
+      // Clear each list
+      RANKS.forEach(r=>{
+        const listEl = document.getElementById(`list-${r}`);
+        if(listEl) listEl.innerHTML = '';
+      });
+
+      // Sort players by rank group then by addedAt
+      const players = Object.values(val);
+      players.sort((a,b)=>{
+        if(a.rank === b.rank) return (a.addedAt||0) - (b.addedAt||0);
+        return RANKS.indexOf(a.rank) - RANKS.indexOf(b.rank);
+      });
+
+      players.forEach(p=>{
+        const listEl = document.getElementById(`list-${p.rank}`);
+        if(!listEl) return;
+        const li = document.createElement('li');
+        li.className = 'player-item';
+        li.dataset.uid = p.uid;
+        li.innerHTML = `
+          <div class="player-info">
+            <div class="player-name" title="${p.displayName || p.email}">${p.displayName || p.email}</div>
+            <div class="player-meta">${p.email || ''}</div>
+          </div>
+          <div class="player-actions">
+            ${isAdmin ? `
+              <button class="btn tiny promote" data-uid="${p.uid}">▲</button>
+              <button class="btn tiny demote" data-uid="${p.uid}">▼</button>
+              <button class="btn tiny remove" data-uid="${p.uid}">✖</button>
+            ` : ''}
+          </div>
+        `;
+        listEl.appendChild(li);
+      });
+
+      // If admin, update management list
+      if(isAdmin){
+        renderPlayersManageList(val);
       }
-    } catch(err){ console.error("Admin-Check fehlgeschlagen", err); }
-  } else {
-    // ❌ Nicht eingeloggt
-    adminPanel.style.display = "none";
-    formEl.style.display = "none";
-    liveToggleContainer.style.display = "none";
-    loginBtn.style.display = "inline-block";
-    logoutBtn.style.display = "none";
-    adminNavLink.style.display = "none";
-  }
-});
-
-// Schedule aus DB
-const scheduleRef = ref(db, "schedule");
-onValue(scheduleRef, snap => {
-  const val = snap.val();
-  scheduleCache = Array.isArray(val) ? val : (val ? Object.values(val) : []);
-  renderSchedule();
-});
-
-async function saveSchedule(newSchedule){
-  await set(scheduleRef, newSchedule);
-}
-
-// Admin-Formular
-formEl.addEventListener("submit", async (e)=>{
-  e.preventDefault();
-  const day = parseInt(e.target.day.value,10);
-  const time = e.target.time.value;
-  if(!time) return;
-  const updated = [...scheduleCache, {day, time}].sort((a,b)=>a.day-b.day || a.time.localeCompare(b.time));
-  try{
-    await saveSchedule(updated);
-    e.target.reset();
-  }catch(err){ alert("Speichern fehlgeschlagen: "+err.message); }
-});
-
-// Alle löschen Button
-document.getElementById("clearAll").addEventListener("click", async ()=>{
-  if(!confirm("Wirklich alle Termine löschen?")) return;
-  try{ await saveSchedule([]); }catch(err){ alert(err.message); }
-});
-
-// Schedule anzeigen
-function renderSchedule(){
-  listEl.innerHTML = "";
-  if(!scheduleCache.length){
-    listEl.innerHTML = '<li style="opacity:.8">Keine Termine eingetragen.</li>';
-  } else {
-    scheduleCache.forEach((item,idx)=>{
-      const li = document.createElement("li");
-      li.style.cssText = "margin:.4rem 0;padding:.6rem .8rem;background:#1b1b25;border-radius:8px;display:flex;justify-content:space-between;align-items:center;";
-      li.innerHTML = `<span>${DAYS[item.day]} um ${item.time}</span>`;
-      const del = document.createElement("button");
-      del.className = "btn btn-outline";
-      del.textContent = "Löschen";
-      del.onclick = async ()=>{
-        const updated = scheduleCache.slice();
-        updated.splice(idx,1);
-        try{ await saveSchedule(updated);}catch(err){alert(err.message);}
-      };
-      li.appendChild(del);
-      listEl.appendChild(li);
     });
-  }
-  const next = getNextStream(scheduleCache);
-  nextWhen.textContent = next ? formatNext(next) : "Kein Stream geplant";
-}
 
-// Timer Funktionen
-function getNextStream(schedule){
-  if(!schedule || !schedule.length) return null;
-  const now = new Date();
-  const candidates = schedule.map(({day,time})=>{
-    const [h,m] = time.split(":").map(Number);
-    const d = new Date(now);
-    d.setHours(0,0,0,0);
-    d.setDate(now.getDate() + ((day+7-d.getDay())%7));
-    d.setHours(h,m,0,0);
-    if(d <= now) d.setDate(d.getDate()+7);
-    return d;
-  });
-  candidates.sort((a,b)=>a-b);
-  return candidates[0] || null;
-}
+    // ---------- users list (registered users) ----------
+    const usersRef = ref(db, 'users');
+    onValue(usersRef, snap=>{
+      const val = snap.val() || {};
+      // rebuild usersSelect
+      usersSelect.innerHTML = '';
+      const usersArr = Object.values(val).sort((a,b)=> (a.displayName||a.email).localeCompare(b.displayName||b.email));
+      usersArr.forEach(u=>{
+        const opt = document.createElement('option');
+        opt.value = u.uid;
+        opt.textContent = `${u.displayName || u.email} — ${u.email}`;
+        opt.dataset.email = u.email;
+        usersSelect.appendChild(opt);
+      });
+      // ranks select
+      rankSelect.innerHTML = '';
+      RANKS.forEach(r=>{
+        const o = document.createElement('option');
+        o.value = r;
+        o.textContent = prettyRankName(r);
+        rankSelect.appendChild(o);
+      });
+    });
 
-function formatNext(dt){
-  const dd = DAYS[dt.getDay()];
-  const hh = dt.getHours().toString().padStart(2,"0");
-  const mm = dt.getMinutes().toString().padStart(2,"0");
-  const ddm = dt.toLocaleDateString(undefined, {day:"2-digit", month:"2-digit"});
-  return `${dd}, ${ddm} – ${hh}:${mm}`;
-}
+    // ---------- add player (admin) ----------
+    addPlayerBtn.addEventListener('click', async ()=>{
+      if(!isAdmin) return alert('Nur Admins können Spieler hinzufügen.');
+      const uid = usersSelect.value;
+      const rank = rankSelect.value;
+      if(!uid) return alert('Wähle zuerst einen registrierten Nutzer.');
+      // fetch user info
+      const userSnap = (await get(ref(db, `users/${uid}`))).val();
+      if(!userSnap) return alert('Der ausgewählte Nutzer ist nicht registriert (muss sich einmal anmelden).');
+      const playerObj = {
+        uid,
+        displayName: userSnap.displayName || userSnap.email,
+        email: userSnap.email,
+        rank,
+        addedAt: Date.now()
+      };
+      await set(ref(db, `players/${uid}`), playerObj);
+    });
 
-function tick(){
-  const next = getNextStream(scheduleCache);
-  if(!next){ timerEl.textContent = "Kein Stream geplant"; return; }
-  const diff = next - new Date();
-  if(diff <= 0){ timerEl.textContent = "Live!"; return; }
-  const totalSec = Math.floor(diff/1000);
-  const hours = Math.floor(totalSec/3600);
-  const minutes = Math.floor((totalSec%3600)/60);
-  const seconds = totalSec%60;
-  timerEl.textContent = `${hours.toString().padStart(2,"0")}:${minutes.toString().padStart(2,"0")}:${seconds.toString().padStart(2,"0")}`;
-}
+    // ---------- players manage list UI for admin ----------
+    function renderPlayersManageList(playersObj){
+      playersManageList.innerHTML = '';
+      const playersArr = Object.values(playersObj || {}).sort((a,b)=> RANKS.indexOf(a.rank) - RANKS.indexOf(b.rank) || (a.addedAt||0) - (b.addedAt||0));
+      playersArr.forEach(p=>{
+        const row = document.createElement('div');
+        row.className = 'manage-row';
+        row.innerHTML = `
+          <div class="manage-left">
+            <strong>${p.displayName || p.email}</strong>
+            <div class="muted">${p.email}</div>
+            <div class="muted">Rank: ${prettyRankName(p.rank)}</div>
+          </div>
+          <div class="manage-actions">
+            <button class="btn tiny promote" data-uid="${p.uid}">Promote</button>
+            <button class="btn tiny demote" data-uid="${p.uid}">Demote</button>
+            <button class="btn tiny remove" data-uid="${p.uid}">Remove</button>
+          </div>
+        `;
+        // attach listeners
+        const promoteBtn = row.querySelector('.promote');
+        const demoteBtn = row.querySelector('.demote');
+        const removeBtn = row.querySelector('.remove');
 
-setInterval(tick,1000);
-tick();
-</script>
+        promoteBtn.addEventListener('click', ()=> changePlayerRank(p.uid, 'up'));
+        demoteBtn.addEventListener('click', ()=> changePlayerRank(p.uid, 'down'));
+        removeBtn.addEventListener('click', async ()=>{
+          if(!confirm(`Spieler ${p.displayName || p.email} wirklich entfernen?`)) return;
+          await remove(ref(db, `players/${p.uid}`));
+        });
 
+        playersManageList.appendChild(row);
+      });
+    }
+
+    // ---------- change player rank logic ----------
+    async function changePlayerRank(uid, dir){
+      if(!isAdmin) return;
+      const pSnap = (await get(ref(db, `players/${uid}`))).val();
+      if(!pSnap) return alert('Spieler nicht gefunden.');
+      const idx = RANKS.indexOf(pSnap.rank);
+      if(idx === -1) return;
+      let newIdx = idx + (dir === 'up' ? -1 : 1); // up => move higher in array (smaller index)
+      // clamp
+      newIdx = Math.max(0, Math.min(RANKS.length - 1, newIdx));
+      if(newIdx === idx) return; // no change
+      const newRank = RANKS[newIdx];
+      await update(ref(db, `players/${uid}`), { rank: newRank });
+    }
+
+    // ---------- admin checks, login flow ----------
+    loginBtn.addEventListener('click', async ()=>{
+      try {
+        await signInWithPopup(auth, provider);
+      } catch(err){ alert('Login fehlgeschlagen: ' + err.message); }
+    });
+
+    logoutBtn.addEventListener('click', async ()=>{
+      try { await signOut(auth); } catch(err){ alert(err.message); }
+    });
+
+    // helper to show/hide admin modal
+    openAdminBtn?.addEventListener('click', ()=> {
+      adminModal.style.display = 'block';
+      adminModal.setAttribute('aria-hidden', 'false');
+    });
+    closeAdminBtn?.addEventListener('click', ()=> {
+      adminModal.style.display = 'none';
+      adminModal.setAttribute('aria-hidden', 'true');
+    });
+    // clicking outside modal closes it
+    adminModal.addEventListener('click', (e)=>{
+      if(e.target === adminModal) { adminModal.style.display = 'none'; }
+    });
+
+    // When auth state changes
+    onAuthStateChanged(auth, async (user)=>{
+      currentUser = user;
+      if(user){
+        // store user in /users if not exists
+        const uobj = {
+          uid: user.uid,
+          displayName: user.displayName || null,
+          email: user.email || null,
+          photoURL: user.photoURL || null,
+          createdAt: Date.now()
+        };
+        await set(ref(db, `users/${user.uid}`), uobj);
+
+        // update UI
+        userInfo.style.display = 'flex';
+        userName.textContent = user.displayName || 'Unnamed';
+        userEmail.textContent = user.email || '';
+        userAvatar.src = user.photoURL || '';
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+
+        // Check admins node
+        const adminKey = emailToKey(user.email || '');
+        const adminSnap = await get(ref(db, `admins/${adminKey}`));
+        isAdmin = !!adminSnap.val();
+        // toggle admin area
+        if(isAdmin){
+          adminPanelToggle.style.display = 'block';
+          adminNavLink.style.display = 'inline-block';
+          // show panel quickly
+          adminPanelElem.style.display = 'block';
+          // fill some lists already handled by onValue listeners
+        } else {
+          adminPanelToggle.style.display = 'none';
+          adminNavLink.style.display = 'none';
+          adminPanelElem.style.display = 'none';
+        }
+      } else {
+        // logged out
+        currentUser = null;
+        isAdmin = false;
+        userInfo.style.display = 'none';
+        loginBtn.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
+        adminPanelToggle.style.display = 'none';
+        adminNavLink.style.display = 'none';
+        adminPanelElem.style.display = 'none';
+      }
+    });
+
+    // ---------- small UI event delegation for promote/demote/remove from lists ----------
+    document.addEventListener('click', async (e)=>{
+      const t = e.target;
+      if(t.matches('.player-item .promote') || t.matches('.manage-row .promote')){
+        const uid = t.dataset.uid;
+        await changePlayerRank(uid, 'up');
+      } else if(t.matches('.player-item .demote') || t.matches('.manage-row .demote')){
+        const uid = t.dataset.uid;
+        await changePlayerRank(uid, 'down');
+      } else if(t.matches('.player-item .remove') || t.matches('.manage-row .remove')){
+        const uid = t.dataset.uid;
+        if(!confirm('Spieler wirklich entfernen?')) return;
+        await remove(ref(db, `players/${uid}`));
+      }
+    });
+
+    // ---------- initial tick / helpful UI ----------
+    // create a helpful placeholder if DB is empty (optional)
+    // (no automatic writes here)
+  </script>
 </body>
 </html>
