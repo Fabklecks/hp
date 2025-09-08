@@ -6,10 +6,32 @@
   <title>Demon Slayer Ranks</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    .main-demon { color: red; font-weight: bold; }
-    .main-demon-slayer { color: blue; font-weight: bold; }
-    .rank-section { margin-bottom: 20px; }
-    .rank-section h3 { margin-bottom: 5px; }
+    /* Grundstyles */
+    body { font-family: Arial, sans-serif; background-color: #111; color: #eee; margin: 0; padding: 0;}
+    .container { max-width: 900px; margin: auto; padding: 20px;}
+    h2 { text-align: center; margin-bottom: 20px; }
+
+    /* Rangliste */
+    .rank-section { margin-bottom: 20px; opacity: 0; transform: translateY(20px); transition: all 0.5s ease; }
+    .rank-section.show { opacity: 1; transform: translateY(0); }
+    .rank-section h3 { margin-bottom: 10px; color: #ffcc00; }
+    .rank-section ul { list-style: none; padding: 0; }
+
+    /* Mains */
+    .main-demon { color: red; font-weight: bold; transition: all 0.3s ease; }
+    .main-demon-slayer { color: blue; font-weight: bold; transition: all 0.3s ease; }
+    li:hover { transform: scale(1.05); transition: all 0.2s ease; cursor: pointer; }
+
+    /* Buttons & Inputs */
+    .btn { padding: 8px 16px; margin: 5px; border: none; cursor: pointer; border-radius: 5px; }
+    .btn-primary { background-color: #ff6600; color: white; }
+    .btn-outline { background-color: transparent; color: white; border: 1px solid white; }
+    input[type="text"] { padding: 8px; width: 100%; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 10px; }
+
+    /* Admin Panel */
+    #adminPanel { margin-top: 20px; }
+    #mainInputContainer { margin-top: 10px; display: none; }
+
   </style>
 </head>
 <body>
@@ -26,7 +48,7 @@
     </div>
   </header>
 
-  <!-- Nickname Eingabe für alle Spieler -->
+  <!-- Nickname Eingabe -->
   <section id="nicknameSection" class="section" style="display:none;">
     <div class="container">
       <h2>Wähle einen Nickname</h2>
@@ -49,9 +71,7 @@
       <div id="adminPanel" style="display:none;">
         <h2>Admin Panel</h2>
         <form id="playerForm">
-          <select id="playerSelect">
-            <option value="" disabled selected>Spieler auswählen</option>
-          </select>
+          <input type="text" id="playerNameInput" placeholder="Nickname des Spielers eingeben" />
 
           <select id="playerRank">
             <option value="Lower Moon 6">Lower Moon 6</option>
@@ -73,11 +93,11 @@
             <button type="button" id="demonSlayerBtn">Demon Slayer</button>
           </div>
 
-          <div id="mainInputContainer" style="margin-top:10px; display:none;">
+          <div id="mainInputContainer">
             <input type="text" id="playerMainInput" placeholder="Trage hier die Main(s) ein" />
           </div>
 
-          <button type="submit" class="btn btn-primary" style="margin-top:10px;">Spieler aktualisieren</button>
+          <button type="submit" class="btn btn-primary">Spieler aktualisieren</button>
         </form>
       </div>
     </div>
@@ -119,7 +139,7 @@
       const rankListEl = document.getElementById("rankList");
 
       const playerForm = document.getElementById("playerForm");
-      const playerSelect = document.getElementById("playerSelect");
+      const playerNameInput = document.getElementById("playerNameInput");
       const playerRankSelect = document.getElementById("playerRank");
       const mainInputContainer = document.getElementById("mainInputContainer");
       const playerMainInput = document.getElementById("playerMainInput");
@@ -133,14 +153,13 @@
 
       let mainType = "";
       let currentUser = null;
+      let allPlayers = [];
 
       const playersRef = ref(db, "players");
 
-      // Login / Logout
       loginBtn.addEventListener("click", () => signInWithPopup(auth, provider).catch(console.error));
       logoutBtn.addEventListener("click", () => signOut(auth).catch(console.error));
 
-      // Auth Zustand
       onAuthStateChanged(auth, user => {
         currentUser = user;
         if (user) {
@@ -171,7 +190,6 @@
         }
       });
 
-      // Nickname speichern
       saveNicknameBtn.addEventListener("click", () => {
         const nickname = nicknameInput.value.trim();
         if (!nickname || !currentUser) return alert("Bitte einen gültigen Nickname eingeben.");
@@ -179,96 +197,71 @@
         nicknameSection.style.display = "none";
       });
 
-      // Spieler laden
       onValue(playersRef, snapshot => {
         const data = snapshot.val() || {};
-        const playersMap = {};
-        Object.keys(data).forEach(id => {
-          const p = data[id];
-          if (p) {
-            playersMap[id] = {
-              id,
-              nickname: p.nickname || `Spieler-${id.substring(0,5)}`,
-              rank: p.rank || "",
-              mainType: p.mainType || "",
-              mains: Array.isArray(p.mains) ? p.mains : []
-            };
-          }
-        });
-        const players = Object.values(playersMap);
+        allPlayers = Object.keys(data).map(id => ({
+          id,
+          nickname: data[id].nickname || `Spieler-${id.substring(0,5)}`,
+          rank: data[id].rank || "",
+          mainType: data[id].mainType || "",
+          mains: Array.isArray(data[id].mains) ? data[id].mains : []
+        }));
 
-        // Rang sortieren
+        renderRankList();
+      });
+
+      function renderRankList() {
+        rankListEl.innerHTML = "";
         const rankOrder = [
           "Upper Moon 1","Upper Moon 2","Upper Moon 3","Upper Moon 4","Upper Moon 5","Upper Moon 6",
           "Lower Moon 1","Lower Moon 2","Lower Moon 3","Lower Moon 4","Lower Moon 5","Lower Moon 6"
         ];
-        players.sort((a,b) => {
+        const sorted = [...allPlayers].sort((a,b) => {
           const aIndex = rankOrder.indexOf(a.rank) === -1 ? 999 : rankOrder.indexOf(a.rank);
           const bIndex = rankOrder.indexOf(b.rank) === -1 ? 999 : rankOrder.indexOf(b.rank);
           return aIndex - bIndex;
         });
 
-        // Dropdown
-        playerSelect.innerHTML = '<option value="" disabled selected>Spieler auswählen</option>';
-        players.forEach(p => {
-          const option = document.createElement("option");
-          option.value = p.id;
-          option.textContent = p.nickname;
-          playerSelect.appendChild(option);
-        });
-
-        // Admin-Panel Vorschau
-        playerSelect.addEventListener("change", () => {
-          const selected = players.find(pl => pl.id === playerSelect.value);
-          if (selected) {
-            playerRankSelect.value = selected.rank;
-            mainInputContainer.style.display = selected.mains.length ? "block" : "none";
-            playerMainInput.value = selected.mains.join(", ");
-            mainType = selected.mainType || "";
-          }
-        });
-
-        // Rangliste rendern mit farbigen Mains
-        rankListEl.innerHTML = "";
         const groups = {};
-        players.forEach(p => {
+        sorted.forEach(p => {
           if (!groups[p.rank]) groups[p.rank] = [];
           const mainsText = p.mains.map(m => {
-            if(p.mainType === "Demon") return `<span class="main-demon">${m}</span>`;
-            if(p.mainType === "Demon Slayer") return `<span class="main-demon-slayer">${m}</span>`;
+            if(p.mainType === "Demon") return `<span class="main-demon">🔥 ${m}</span>`;
+            if(p.mainType === "Demon Slayer") return `<span class="main-demon-slayer">⚔️ ${m}</span>`;
             return m;
           }).join(", ");
           const displayText = mainsText ? `${p.nickname} (${mainsText})` : p.nickname;
           groups[p.rank].push(displayText);
         });
+
         Object.keys(groups).forEach(rank => {
           const section = document.createElement("div");
           section.className = "rank-section";
           section.innerHTML = `<h3>${rank}</h3><ul>${groups[rank].map(name=>`<li>${name}</li>`).join("")}</ul>`;
           rankListEl.appendChild(section);
+          setTimeout(()=>section.classList.add("show"), 50); // Animation
         });
-      });
+      }
 
-      // Main Buttons
       demonBtn.addEventListener("click", () => { mainType="Demon"; mainInputContainer.style.display="block"; playerMainInput.placeholder="1 Main eingeben"; playerMainInput.value=""; });
       demonSlayerBtn.addEventListener("click", () => { mainType="Demon Slayer"; mainInputContainer.style.display="block"; playerMainInput.placeholder="2 Mains eingeben, getrennt durch Komma"; playerMainInput.value=""; });
 
-      // Spieler aktualisieren
       playerForm.addEventListener("submit", e => {
         e.preventDefault();
-        const playerId = playerSelect.value;
-        const rank = playerRankSelect.value;
-        const mainsText = playerMainInput.value.trim();
-        if (!playerId || !rank || !mainType || !mainsText) return alert("Bitte alle Felder ausfüllen!");
+        const nicknameInputValue = playerNameInput.value.trim();
+        if (!nicknameInputValue || !mainType || !playerMainInput.value.trim() || !playerRankSelect.value) return alert("Bitte alle Felder ausfüllen!");
 
-        let mains = mainsText.split(",").map(m => m.trim());
-        if (mainType==="Demon" && mains.length!==1) return alert("Demon darf nur 1 Main haben!");
-        if (mainType==="Demon Slayer" && mains.length!==2) return alert("Demon Slayer muss genau 2 Mains haben!");
+        const player = allPlayers.find(p => p.nickname.toLowerCase() === nicknameInputValue.toLowerCase());
+        if (!player) return alert("Spieler nicht gefunden!");
 
-        update(ref(db, `players/${playerId}`), { rank, mainType, mains })
-          .then(()=>{ mainInputContainer.style.display="none"; playerMainInput.value=""; mainType=""; })
-          .catch(console.error);
+        let mains = playerMainInput.value.split(",").map(m => m.trim());
+        if(mainType==="Demon" && mains.length!==1) return alert("Demon darf nur 1 Main haben!");
+        if(mainType==="Demon Slayer" && mains.length!==2) return alert("Demon Slayer muss genau 2 Mains haben!");
+
+        update(ref(db, `players/${player.id}`), { rank: playerRankSelect.value, mainType, mains })
+          .then(()=>{ mainInputContainer.style.display="none"; playerMainInput.value=""; mainType=""; });
       });
+
     });
   </script>
 </body>
