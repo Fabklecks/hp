@@ -45,7 +45,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-import { getDatabase, ref, set, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+import { getDatabase, ref, set, remove, onValue, update, get, child } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -74,19 +74,20 @@ const mainFields = document.getElementById("mainFields");
 const addUpdateBtn = document.getElementById("addUpdateBtn");
 const removeBtn = document.getElementById("removeBtn");
 
-let selectedType = "Demon"; // Standard
+let selectedType = "Demon";
 let currentUser = null;
 
+// Login/Logout
 loginBtn.addEventListener("click", () => signInWithPopup(auth, provider));
 logoutBtn.addEventListener("click", () => signOut(auth));
 
+// Typ-Buttons
 btnDemon.addEventListener("click", ()=>{
   selectedType="Demon";
   btnDemon.classList.add("selected");
   btnDemonSlayer.classList.remove("selected");
   mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1">`;
 });
-
 btnDemonSlayer.addEventListener("click", ()=>{
   selectedType="Demon Slayer";
   btnDemonSlayer.classList.add("selected");
@@ -95,6 +96,7 @@ btnDemonSlayer.addEventListener("click", ()=>{
   <label>Main Character 2:</label><input type="text" id="main2" placeholder="Main 2">`;
 });
 
+// Auth state
 onAuthStateChanged(auth, (user)=>{
   currentUser = user;
   if(user){
@@ -111,12 +113,9 @@ onAuthStateChanged(auth, (user)=>{
   }
 });
 
-// **Button Listener für Add/Update**
-addUpdateBtn.addEventListener("click", ()=>{
-  if(!currentUser){
-    alert("Bitte zuerst einloggen!");
-    return;
-  }
+// Spieler hinzufügen/aktualisieren
+addUpdateBtn.addEventListener("click", async ()=>{
+  if(!currentUser){ alert("Bitte zuerst einloggen!"); return; }
   const name = document.getElementById("playerName").value.trim();
   const main1 = document.getElementById("main1") ? document.getElementById("main1").value.trim() : "";
   const main2 = document.getElementById("main2") ? document.getElementById("main2").value.trim() : "";
@@ -129,21 +128,33 @@ addUpdateBtn.addEventListener("click", ()=>{
   const mains = selectedType==="Demon" ? [main1] : [main1, main2];
   const playerData = { name, type: selectedType, mains, rank: "Lower Moon 6" };
 
-  console.log("Speichere Spieler:", playerData);
-  set(ref(db,'players/'+name), playerData)
-    .then(()=>alert("Spieler gespeichert!"))
-    .catch(err=>alert("Fehler: "+err.message));
+  try{
+    await set(ref(db,'players/'+name), playerData);
+    alert("Spieler gespeichert!");
+    loadPlayers(); // sofort aktualisieren
+  } catch(err){ alert("Fehler: "+err.message); }
 });
 
-// Remove Spieler
-removeBtn.addEventListener("click", ()=>{
+// Spieler entfernen
+removeBtn.addEventListener("click", async ()=>{
   const name = existingPlayers.value;
   if(!name) return;
-  remove(ref(db,'players/'+name))
-    .then(()=>alert("Spieler entfernt!"))
-    .catch(err=>alert(err.message));
+  try{
+    await remove(ref(db,'players/'+name));
+    alert("Spieler entfernt!");
+    loadPlayers();
+  } catch(err){ alert("Fehler: "+err.message); }
 });
 
+// Spieler laden und Rangliste + Dropdown updaten
+async function loadPlayers(){
+  const snapshot = await get(ref(db,'players/'));
+  const players = snapshot.val() || {};
+  updateDropdown(players);
+  renderRanking(players);
+}
+
+// Dropdown updaten
 function updateDropdown(players){
   existingPlayers.innerHTML="";
   Object.keys(players).forEach(key=>{
@@ -154,12 +165,13 @@ function updateDropdown(players){
   });
 }
 
+// Rangliste rendern
 function renderRanking(players){
   rankingList.innerHTML="";
   const sorted = Object.values(players).sort((a,b)=>{
     const rankOrder = r => {
-      let [moon,num] = r.rank.split(" ");
-      num = parseInt(num);
+      let moon = r.rank.split(" ")[0];
+      let num = parseInt(r.rank.split(" ")[1]) || 6;
       return (moon==="Upper"?0:1)*10 + num;
     }
     return rankOrder(a)-rankOrder(b);
@@ -169,19 +181,12 @@ function renderRanking(players){
     const li = document.createElement("li");
     li.draggable=true;
     li.dataset.name=player.name;
-    li.className = player.rank.startsWith("Upper")? "upper":"lower";
+    li.className = player.rank.startsWith("Upper")?"upper":"lower";
     li.innerHTML=`<span class="player-name">${player.name}</span> <span class="player-rank">${player.rank}</span> <span class="player-mains">${player.mains.join(", ")}</span>`;
     rankingList.appendChild(li);
   });
-
   enableDragAndDrop();
 }
-
-onValue(ref(db,'players/'), snapshot=>{
-  const players = snapshot.val() || {};
-  updateDropdown(players);
-  renderRanking(players);
-});
 
 // Drag & Drop
 function enableDragAndDrop(){
@@ -227,6 +232,9 @@ function updateRanksFirebase(){
     update(ref(db,'players/'+playerName), {rank});
   });
 }
+
+// initial load
+loadPlayers();
 </script>
 
 </body>
