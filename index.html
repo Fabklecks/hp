@@ -54,7 +54,7 @@
 <button type="button" id="demonSlayerBtn" class="btn btn-outline">Demon Slayer</button>
 </div>
 
-<div id="mainInputContainer">
+<div id="mainInputContainer" style="display:none;">
 <input type="text" id="playerMainInput" placeholder="Trage hier die Main(s) ein" />
 </div>
 
@@ -134,8 +134,8 @@ adminPanel.style.display="none"; document.getElementById("adminNavLink").style.d
 }
 });
 
-// Spieler laden
-onValue(playersRef,snapshot=>{
+// Spieler laden und automatisch rendern
+onValue(playersRef, snapshot=>{
 const data=snapshot.val()||{};
 allPlayers=Object.keys(data).map(id=>({
 id,name:data[id].name||"Unbekannt",rank:data[id].rank||"",mainType:data[id].mainType||"",mains:Array.isArray(data[id].mains)?data[id].mains:[]
@@ -151,24 +151,21 @@ demonSlayerBtn.addEventListener("click",()=>{mainType="Demon Slayer"; mainInputC
 playerForm.addEventListener("submit", e=>{
 e.preventDefault();
 const playerName=playerNameInput.value.trim();
-if(!playerName || !playerRankSelect.value || !mainType || !playerMainInput.value.trim()) 
-  return alert("Bitte alle Felder ausfüllen!");
+if(!playerName || !playerRankSelect.value || !mainType || !playerMainInput.value.trim()) return alert("Bitte alle Felder ausfüllen!");
 let mains=playerMainInput.value.split(",").map(m=>m.trim());
 if(mainType==="Demon" && mains.length!==1) return alert("Demon darf nur 1 Main haben!");
 if(mainType==="Demon Slayer" && mains.length!==2) return alert("Demon Slayer muss genau 2 Mains haben!");
 let player = allPlayers.find(p=>p.name.toLowerCase()===playerName.toLowerCase());
 
 if(!player){
-  // Neuer Spieler
   const newPlayerRef = push(playersRef);
   set(newPlayerRef, {name:playerName, rank:playerRankSelect.value, mainType:mainType, mains:mains})
   .then(()=>{playerNameInput.value=""; playerMainInput.value=""; mainInputContainer.style.display="none"; mainType="";})
-  .catch(err=>console.error(err));
+  .catch(console.error);
 } else {
-  // Existierender Spieler aktualisieren
   update(ref(db, `players/${player.id}`), {rank:playerRankSelect.value, mainType:mainType, mains:mains})
   .then(()=>{playerNameInput.value=""; playerMainInput.value=""; mainInputContainer.style.display="none"; mainType="";})
-  .catch(err=>console.error(err));
+  .catch(console.error);
 }
 });
 
@@ -197,6 +194,13 @@ update(ref(db,`players/${player.id}`),{rank:rankOrder[newIdx]});
 rankUpBtn.addEventListener("click",()=>changeRank(true));
 rankDownBtn.addEventListener("click",()=>changeRank(false));
 
+// Scroll Animation
+const observer=new IntersectionObserver((entries)=>{
+entries.forEach(entry=>{
+if(entry.isIntersecting){entry.target.classList.add('scroll-show'); observer.unobserve(entry.target);}
+});
+},{threshold:0.2});
+
 // Rangliste rendern
 function renderRanks(){
 rankListEl.innerHTML="";
@@ -220,33 +224,11 @@ const section=document.createElement("div");
 section.className="rank-section";
 section.innerHTML=`<h3>${rank}</h3><ul>${groups[rank].map(n=>`<li>${n}</li>`).join("")}</ul>`;
 rankListEl.appendChild(section);
-observeRanks();
+observer.observe(section);
 });
 }
-
-// Scroll Animation
-const observer=new IntersectionObserver((entries)=>{
-entries.forEach(entry=>{
-if(entry.isIntersecting){entry.target.classList.add('scroll-show'); observer.unobserve(entry.target);}
-});
-},{threshold:0.2});
-function observeRanks(){document.querySelectorAll('.rank-section').forEach(s=>observer.observe(s));}
 
 }); // Ende DOMContentLoaded
-
-// Flammenpartikel erzeugen
-const rankList = document.getElementById('rankList');
-for(let i=0;i<30;i++){ // 30 Flammen
-  const flame = document.createElement('div');
-  flame.classList.add('flame');
-  flame.style.left = Math.random()*100 + "%";
-  flame.style.animationDuration = 3 + Math.random()*2 + "s";
-  flame.style.animationDelay = Math.random()*5 + "s";
-  flame.style.width = 5 + Math.random()*10 + "px";
-  flame.style.height = 20 + Math.random()*20 + "px";
-  rankList.appendChild(flame);
-}
-
 </script>
 
 </body>
