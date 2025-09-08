@@ -5,120 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Demon Slayer Ranks</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    // Firebase Imports
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { getDatabase, ref, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-    // Deine Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
-      authDomain: "demonslayerranks.firebaseapp.com",
-      databaseURL: "https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app/",
-      projectId: "demonslayerranks",
-      storageBucket: "demonslayerranks.firebasestorage.app",
-      messagingSenderId: "244021550640",
-      appId: "1:244021550640:web:4d2a3c7a52c205f5e997f5",
-      measurementId: "G-WH3WQBKPX4"
-    };
-
-    // Init Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-    const db = getDatabase(app);
-
-    // Admin-Liste (hier Emails eintragen)
-    const ADMINS = ["fabioasik221206@gmail.com", "redgamepvp474@gmail.com"];
-
-    // Elemente
-    const loginBtn = document.getElementById("loginBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const adminPanel = document.getElementById("adminPanel");
-    const rankListEl = document.getElementById("rankList");
-    const playerForm = document.getElementById("playerForm");
-    const playerNameInput = document.getElementById("playerName");
-    const playerRankSelect = document.getElementById("playerRank");
-
-    // Login
-    loginBtn.addEventListener("click", () => {
-      signInWithPopup(auth, provider);
-    });
-
-    // Logout
-    logoutBtn.addEventListener("click", () => {
-      signOut(auth);
-    });
-
-    // Auth-Zustand
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        const email = user.email;
-        loginBtn.style.display = "none";
-        logoutBtn.style.display = "inline-block";
-
-        if (ADMINS.includes(email)) {
-          adminPanel.style.display = "block";
-        } else {
-          adminPanel.style.display = "none";
-        }
-      } else {
-        loginBtn.style.display = "inline-block";
-        logoutBtn.style.display = "none";
-        adminPanel.style.display = "none";
-      }
-    });
-
-    // Spieler anzeigen (dynamisch, nur belegte Ränge)
-    function renderRanks(players) {
-      rankListEl.innerHTML = "";
-
-      // Gruppieren
-      const groups = {};
-      players.forEach(p => {
-        if (!groups[p.rank]) groups[p.rank] = [];
-        groups[p.rank].push(p.name);
-      });
-
-      // Rendern nur wenn Spieler vorhanden
-      Object.keys(groups).forEach(rank => {
-        const section = document.createElement("div");
-        section.className = "rank-section";
-        section.innerHTML = `
-          <h3>${rank}</h3>
-          <ul>
-            ${groups[rank].map(name => `<li>${name}</li>`).join("")}
-          </ul>
-        `;
-        rankListEl.appendChild(section);
-      });
-    }
-
-    // Spieler aus DB laden
-    const playersRef = ref(db, "players");
-    onValue(playersRef, snapshot => {
-      const data = snapshot.val() || {};
-      const players = Object.keys(data).map(id => ({
-        id,
-        name: data[id].name,
-        rank: data[id].rank
-      }));
-      renderRanks(players);
-    });
-
-    // Spieler hinzufügen
-    playerForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const name = playerNameInput.value.trim();
-      const rank = playerRankSelect.value;
-
-      if (name && rank) {
-        push(playersRef, { name, rank });
-        playerNameInput.value = "";
-      }
-    });
-  </script>
 </head>
 <body>
   <!-- Header -->
@@ -148,7 +34,12 @@
       <div id="adminPanel" style="display:none;">
         <h2>Admin Panel</h2>
         <form id="playerForm">
-          <input type="text" id="playerName" placeholder="Spielername" required />
+          <!-- Spieler auswählen -->
+          <select id="playerSelect">
+            <option value="" disabled selected>Spieler auswählen</option>
+          </select>
+
+          <!-- Rang auswählen -->
           <select id="playerRank">
             <option value="Lower Moon 6">Lower Moon 6</option>
             <option value="Lower Moon 5">Lower Moon 5</option>
@@ -163,7 +54,15 @@
             <option value="Upper Moon 2">Upper Moon 2</option>
             <option value="Upper Moon 1">Upper Moon 1</option>
           </select>
-          <button type="submit" class="btn btn-primary">Spieler hinzufügen</button>
+
+          <!-- Main auswählen -->
+          <select id="playerMain">
+            <option value="" disabled selected>Main auswählen</option>
+            <option value="2 Demon Slayer">2 Demon Slayer</option>
+            <option value="1 Demon">1 Demon</option>
+          </select>
+
+          <button type="submit" class="btn btn-primary">Spieler aktualisieren</button>
         </form>
       </div>
     </div>
@@ -174,5 +73,133 @@
       &copy; Abonniert mich lol – J.O.K.R auf Youtube
     </div>
   </footer>
+
+  <!-- Firebase & Admin Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
+      authDomain: "demonslayerranks.firebaseapp.com",
+      databaseURL: "https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app/",
+      projectId: "demonslayerranks",
+      storageBucket: "demonslayerranks.firebasestorage.app",
+      messagingSenderId: "244021550640",
+      appId: "1:244021550640:web:4d2a3c7a52c205f5e997f5",
+      measurementId: "G-WH3WQBKPX4"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    const db = getDatabase(app);
+
+    const ADMINS = ["fabioasik221206@gmail.com", "redgamepvp474@gmail.com"];
+
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const adminPanel = document.getElementById("adminPanel");
+    const rankListEl = document.getElementById("rankList");
+
+    const playerForm = document.getElementById("playerForm");
+    const playerSelect = document.getElementById("playerSelect");
+    const playerRankSelect = document.getElementById("playerRank");
+    const playerMainSelect = document.getElementById("playerMain");
+
+    const playersRef = ref(db, "players");
+
+    // Login / Logout
+    loginBtn.addEventListener("click", () => {
+      signInWithPopup(auth, provider)
+        .catch(err => console.error("Login-Fehler:", err));
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      signOut(auth).catch(err => console.error("Logout-Fehler:", err));
+    });
+
+    // Auth-Zustand
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
+
+        if (ADMINS.includes(user.email)) {
+          adminPanel.style.display = "block";
+          document.getElementById("adminNavLink").style.display = "inline-block";
+        } else {
+          adminPanel.style.display = "none";
+          document.getElementById("adminNavLink").style.display = "none";
+        }
+      } else {
+        loginBtn.style.display = "inline-block";
+        logoutBtn.style.display = "none";
+        adminPanel.style.display = "none";
+        document.getElementById("adminNavLink").style.display = "none";
+      }
+    });
+
+    // Spieler aus DB laden
+    onValue(playersRef, snapshot => {
+      const data = snapshot.val() || {};
+      const players = Object.keys(data).map(id => ({
+        id,
+        name: data[id].name,
+        rank: data[id].rank,
+        main: data[id].main || ""
+      }));
+
+      // Dropdown aktualisieren
+      playerSelect.innerHTML = '<option value="" disabled selected>Spieler auswählen</option>';
+      players.forEach(p => {
+        const option = document.createElement("option");
+        option.value = p.id;
+        option.textContent = p.name;
+        playerSelect.appendChild(option);
+      });
+
+      // Rangliste rendern
+      renderRanks(players);
+    });
+
+    // Spieler aktualisieren
+    playerForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const playerId = playerSelect.value;
+      const rank = playerRankSelect.value;
+      const main = playerMainSelect.value;
+
+      if (playerId && rank && main) {
+        const playerRef = ref(db, `players/${playerId}`);
+        update(playerRef, { rank, main })
+          .then(() => console.log("Spieler aktualisiert"))
+          .catch(err => console.error("Fehler beim Aktualisieren:", err));
+      }
+    });
+
+    // Rangliste rendern
+    function renderRanks(players) {
+      rankListEl.innerHTML = "";
+      const groups = {};
+      players.forEach(p => {
+        if (!groups[p.rank]) groups[p.rank] = [];
+        groups[p.rank].push(`${p.name} (${p.main})`);
+      });
+
+      Object.keys(groups).forEach(rank => {
+        const section = document.createElement("div");
+        section.className = "rank-section";
+        section.innerHTML = `
+          <h3>${rank}</h3>
+          <ul>
+            ${groups[rank].map(name => `<li>${name}</li>`).join("")}
+          </ul>
+        `;
+        rankListEl.appendChild(section);
+      });
+    }
+  </script>
 </body>
 </html>
