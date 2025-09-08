@@ -45,7 +45,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-import { getDatabase, ref, set, remove, onValue, update, get, child } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+import { getDatabase, ref, set, remove, get, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -103,6 +103,7 @@ onAuthStateChanged(auth, (user)=>{
     document.getElementById("userEmail").innerText = user.email;
     if(user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com"){
       adminPanel.style.display = "block";
+      loadPlayers();
     } else {
       adminPanel.style.display = "none";
       alert("Du bist kein Admin!");
@@ -131,7 +132,7 @@ addUpdateBtn.addEventListener("click", async ()=>{
   try{
     await set(ref(db,'players/'+name), playerData);
     alert("Spieler gespeichert!");
-    loadPlayers(); // sofort aktualisieren
+    loadPlayers();
   } catch(err){ alert("Fehler: "+err.message); }
 });
 
@@ -146,21 +147,32 @@ removeBtn.addEventListener("click", async ()=>{
   } catch(err){ alert("Fehler: "+err.message); }
 });
 
-// Spieler laden und Rangliste + Dropdown updaten
+// Spieler laden
 async function loadPlayers(){
-  const snapshot = await get(ref(db,'players/'));
-  const players = snapshot.val() || {};
-  updateDropdown(players);
-  renderRanking(players);
+  try {
+    const snapshot = await get(ref(db,'players/'));
+    const data = snapshot.val();
+    if(!data) return;
+
+    // Spielername schon im Objekt, einfach Object.values
+    const players = Object.values(data);
+
+    console.log("Players geladen:", players);
+
+    updateDropdown(players);
+    renderRanking(players);
+  } catch(err){
+    console.error("Fehler beim Laden:", err);
+  }
 }
 
 // Dropdown updaten
 function updateDropdown(players){
   existingPlayers.innerHTML="";
-  Object.keys(players).forEach(key=>{
+  players.forEach(player=>{
     const opt = document.createElement("option");
-    opt.value = key;
-    opt.innerText = key;
+    opt.value = player.name;
+    opt.innerText = player.name;
     existingPlayers.appendChild(opt);
   });
 }
@@ -168,7 +180,7 @@ function updateDropdown(players){
 // Rangliste rendern
 function renderRanking(players){
   rankingList.innerHTML="";
-  const sorted = Object.values(players).sort((a,b)=>{
+  const sorted = players.sort((a,b)=>{
     const rankOrder = r => {
       let moon = r.rank.split(" ")[0];
       let num = parseInt(r.rank.split(" ")[1]) || 6;
@@ -232,9 +244,6 @@ function updateRanksFirebase(){
     update(ref(db,'players/'+playerName), {rank});
   });
 }
-
-// initial load
-loadPlayers();
 </script>
 
 </body>
