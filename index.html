@@ -55,14 +55,18 @@
             <option value="Upper Moon 1">Upper Moon 1</option>
           </select>
 
-          <!-- Main auswählen -->
-          <select id="playerMain">
-            <option value="" disabled selected>Main auswählen</option>
-            <option value="2 Demon Slayer">2 Demon Slayer</option>
-            <option value="1 Demon">1 Demon</option>
-          </select>
+          <!-- Buttons für Main -->
+          <div style="margin-top:10px;">
+            <button type="button" id="demonBtn">Demon</button>
+            <button type="button" id="demonSlayerBtn">Demon Slayer</button>
+          </div>
 
-          <button type="submit" class="btn btn-primary">Spieler aktualisieren</button>
+          <!-- Textfeld für Mains -->
+          <div id="mainInputContainer" style="margin-top:10px; display:none;">
+            <input type="text" id="playerMainInput" placeholder="Trage hier die Main(s) ein" />
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="margin-top:10px;">Spieler aktualisieren</button>
         </form>
       </div>
     </div>
@@ -106,18 +110,22 @@
     const playerForm = document.getElementById("playerForm");
     const playerSelect = document.getElementById("playerSelect");
     const playerRankSelect = document.getElementById("playerRank");
-    const playerMainSelect = document.getElementById("playerMain");
+    const mainInputContainer = document.getElementById("mainInputContainer");
+    const playerMainInput = document.getElementById("playerMainInput");
+
+    const demonBtn = document.getElementById("demonBtn");
+    const demonSlayerBtn = document.getElementById("demonSlayerBtn");
+
+    let mainType = "";
 
     const playersRef = ref(db, "players");
 
     // Login / Logout
     loginBtn.addEventListener("click", () => {
-      signInWithPopup(auth, provider)
-        .catch(err => console.error("Login-Fehler:", err));
+      signInWithPopup(auth, provider).catch(err => console.error(err));
     });
-
     logoutBtn.addEventListener("click", () => {
-      signOut(auth).catch(err => console.error("Logout-Fehler:", err));
+      signOut(auth).catch(err => console.error(err));
     });
 
     // Auth-Zustand
@@ -148,7 +156,8 @@
         id,
         name: data[id].name,
         rank: data[id].rank,
-        main: data[id].main || ""
+        mainType: data[id].mainType || "",
+        mains: data[id].mains || []
       }));
 
       // Dropdown aktualisieren
@@ -164,19 +173,53 @@
       renderRanks(players);
     });
 
+    // Main Buttons
+    demonBtn.addEventListener("click", () => {
+      mainType = "Demon";
+      mainInputContainer.style.display = "block";
+      playerMainInput.placeholder = "1 Main eingeben";
+      playerMainInput.value = "";
+    });
+
+    demonSlayerBtn.addEventListener("click", () => {
+      mainType = "Demon Slayer";
+      mainInputContainer.style.display = "block";
+      playerMainInput.placeholder = "2 Mains eingeben, getrennt durch Komma";
+      playerMainInput.value = "";
+    });
+
     // Spieler aktualisieren
     playerForm.addEventListener("submit", e => {
       e.preventDefault();
       const playerId = playerSelect.value;
       const rank = playerRankSelect.value;
-      const main = playerMainSelect.value;
+      const mainsText = playerMainInput.value.trim();
 
-      if (playerId && rank && main) {
-        const playerRef = ref(db, `players/${playerId}`);
-        update(playerRef, { rank, main })
-          .then(() => console.log("Spieler aktualisiert"))
-          .catch(err => console.error("Fehler beim Aktualisieren:", err));
+      if (!playerId || !rank || !mainType || !mainsText) {
+        alert("Bitte alle Felder ausfüllen!");
+        return;
       }
+
+      let mains = mainsText.split(",").map(m => m.trim());
+
+      if (mainType === "Demon" && mains.length !== 1) {
+        alert("Demon darf nur 1 Main haben!");
+        return;
+      }
+      if (mainType === "Demon Slayer" && mains.length !== 2) {
+        alert("Demon Slayer muss genau 2 Mains haben!");
+        return;
+      }
+
+      const playerRef = ref(db, `players/${playerId}`);
+      update(playerRef, { rank, mainType, mains })
+        .then(() => {
+          console.log("Spieler aktualisiert");
+          mainInputContainer.style.display = "none";
+          playerMainInput.value = "";
+          mainType = "";
+        })
+        .catch(err => console.error(err));
     });
 
     // Rangliste rendern
@@ -185,7 +228,7 @@
       const groups = {};
       players.forEach(p => {
         if (!groups[p.rank]) groups[p.rank] = [];
-        groups[p.rank].push(`${p.name} (${p.main})`);
+        groups[p.rank].push(`${p.name} (${p.mains.join(", ")})`);
       });
 
       Object.keys(groups).forEach(rank => {
