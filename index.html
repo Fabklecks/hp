@@ -3,206 +3,199 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Demon Slayer Ranks</title>
-<link rel="stylesheet" href="styles.css">
+<title>Demon Slayer Hinokami Chronicles 2 Ranking</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="header">
-<div class="container header-container">
-<div class="logo">Demon Slayer Ranks</div>
-<nav class="nav">
-<a href="#ranks">Rangliste</a>
-<a href="#admin" id="adminNavLink" style="display:none;">Admin</a>
-<button id="loginBtn" class="btn btn-primary">Login</button>
-<button id="logoutBtn" class="btn btn-outline" style="display:none;">Logout</button>
-</nav>
-</div>
-</header>
 
-<section id="ranks" class="section">
-<div class="container">
-<h2>Rangliste</h2>
-<div id="rankList" class="rank-list"></div>
-</div>
-</section>
+<h1>Demon Slayer Rangliste made by J.0.K.R</h1>
 
-<section id="admin" class="section">
-<div class="container">
-<div id="adminPanel" style="display:none;">
-<h2>Admin Panel</h2>
-<form id="playerForm">
-<input type="text" id="playerNameInput" placeholder="Spielername">
-<select id="playerRank">
-<option value="Lower Moon 6">Lower Moon 6</option>
-<option value="Lower Moon 5">Lower Moon 5</option>
-<option value="Lower Moon 4">Lower Moon 4</option>
-<option value="Lower Moon 3">Lower Moon 3</option>
-<option value="Lower Moon 2">Lower Moon 2</option>
-<option value="Lower Moon 1">Lower Moon 1</option>
-<option value="Upper Moon 6">Upper Moon 6</option>
-<option value="Upper Moon 5">Upper Moon 5</option>
-<option value="Upper Moon 4">Upper Moon 4</option>
-<option value="Upper Moon 3">Upper Moon 3</option>
-<option value="Upper Moon 2">Upper Moon 2</option>
-<option value="Upper Moon 1">Upper Moon 1</option>
-</select>
-
-<div style="margin-top:10px;">
-<button type="button" id="demonBtn" class="btn btn-outline">Demon</button>
-<button type="button" id="demonSlayerBtn" class="btn btn-outline">Demon Slayer</button>
+<div class="login-area">
+  <button id="loginBtn">Login</button>
+  <button id="logoutBtn">Logout</button>
+  <span id="userEmail">Nicht eingeloggt</span>
 </div>
 
-<div id="mainInputContainer" style="margin-top:10px; display:none;">
-<input type="text" id="playerMainInput" placeholder="Main(s) eingeben">
+<div id="adminPanel" class="admin-panel">
+  <h2>Spieler verwalten</h2>
+
+  <label>Spielername:</label>
+  <input type="text" id="playerName" placeholder="Spielername">
+
+  <label>Typ:</label>
+  <div class="type-options">
+    <input type="radio" name="type" value="Demon" checked>Demon
+    <input type="radio" name="type" value="Demon Slayer">Demon Slayer
+  </div>
+
+  <label>Main Character 1:</label>
+  <input type="text" id="main1" placeholder="Main 1">
+  <label>Main Character 2 (nur Demon Slayer):</label>
+  <input type="text" id="main2" placeholder="Main 2">
+
+  <button onclick="addOrUpdatePlayer()">Spieler hinzufügen/aktualisieren</button>
+  <br>
+  <label>Bestehenden Spieler auswählen:</label>
+  <select id="existingPlayers"></select>
+  <button onclick="removePlayer()">Spieler entfernen</button>
 </div>
 
-<div style="margin-top:10px;">
-<button type="submit" class="btn btn-primary">Spieler erstellen / aktualisieren</button>
-<button type="button" id="deletePlayerBtn" class="btn btn-outline">Spieler löschen</button>
-</div>
-</form>
-</div>
-</div>
-</section>
-
-<footer class="footer">
-<div class="container">&copy; Demon Slayer Ranks</div>
-</footer>
+<h2>Rangliste der Monde</h2>
+<ul id="rankingList" class="ranking-list"></ul>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+import { getDatabase, ref, set, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 
 const firebaseConfig = {
-apiKey:"AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
-authDomain:"demonslayerranks.firebaseapp.com",
-databaseURL:"https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app/",
-projectId:"demonslayerranks",
-storageBucket:"demonslayerranks.firebasedatabase.app",
-messagingSenderId:"244021550640",
-appId:"1:244021550640:web:4d2a3c7a52c205f5e997f5"
+  apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
+  authDomain: "demonslayerranks.firebaseapp.com",
+  databaseURL: "https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app/",
+  projectId: "demonslayerranks",
+  storageBucket: "demonslayerranks.firebasedatabase.app",
+  messagingSenderId: "244021550640",
+  appId: "1:244021550640:web:4d2a3c7a52c205f5e997f5"
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
 const db = getDatabase(app);
+const auth = getAuth();
+const provider = new GoogleAuthProvider();
 
-const ADMINS = ["fabioasik221206@gmail.com","cand7105@gmail.com"];
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const adminPanel = document.getElementById("adminPanel");
+const rankingList = document.getElementById("rankingList");
+const existingPlayers = document.getElementById("existingPlayers");
 
-document.addEventListener("DOMContentLoaded", () => {
-  const loginBtn = document.getElementById("loginBtn");
-  const logoutBtn = document.getElementById("logoutBtn");
-  const adminPanel = document.getElementById("adminPanel");
-  const rankListEl = document.getElementById("rankList");
-  const playerForm = document.getElementById("playerForm");
-  const playerNameInput = document.getElementById("playerNameInput");
-  const playerRankSelect = document.getElementById("playerRank");
-  const mainInputContainer = document.getElementById("mainInputContainer");
-  const playerMainInput = document.getElementById("playerMainInput");
-  const demonBtn = document.getElementById("demonBtn");
-  const demonSlayerBtn = document.getElementById("demonSlayerBtn");
-  const deletePlayerBtn = document.getElementById("deletePlayerBtn");
+loginBtn.addEventListener("click", () => signInWithPopup(auth, provider));
+logoutBtn.addEventListener("click", () => signOut(auth));
 
-  let mainType = "";
-  const rankOrder = ["Upper Moon 1","Upper Moon 2","Upper Moon 3","Upper Moon 4","Upper Moon 5","Upper Moon 6","Lower Moon 1","Lower Moon 2","Lower Moon 3","Lower Moon 4","Lower Moon 5","Lower Moon 6"];
-  let players = {}; // Live Objekt von Firebase
-
-  const playersRef = ref(db, "players");
-
-  // Login / Logout
-  loginBtn.addEventListener("click", () => signInWithPopup(auth, provider).catch(console.error));
-  logoutBtn.addEventListener("click", () => signOut(auth).catch(console.error));
-
-  onAuthStateChanged(auth, user => {
-    if(user){
-      loginBtn.style.display="none";
-      logoutBtn.style.display="inline-block";
-      if(ADMINS.includes(user.email)){
-        adminPanel.style.display="block";
-        document.getElementById("adminNavLink").style.display="inline-block";
-      } else {
-        adminPanel.style.display="none";
-        document.getElementById("adminNavLink").style.display="none";
-      }
+onAuthStateChanged(auth, (user) => {
+  if(user){
+    document.getElementById("userEmail").innerText = user.email;
+    if(user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com"){
+      adminPanel.style.display = "block";
     } else {
-      loginBtn.style.display="inline-block";
-      logoutBtn.style.display="none";
-      adminPanel.style.display="none";
-      document.getElementById("adminNavLink").style.display="none";
+      adminPanel.style.display = "none";
     }
-  });
-
-  // Spieler live laden
-  onValue(playersRef, snapshot => {
-    players = snapshot.val() || {};
-    renderRanks();
-  });
-
-  // Main Buttons
-  demonBtn.addEventListener("click", ()=> { mainType="Demon"; mainInputContainer.style.display="block"; playerMainInput.placeholder="1 Main eingeben"; playerMainInput.value="";});
-  demonSlayerBtn.addEventListener("click", ()=> { mainType="Demon Slayer"; mainInputContainer.style.display="block"; playerMainInput.placeholder="2 Mains eingeben, getrennt durch Komma"; playerMainInput.value="";});
-
-  // Spieler erstellen/aktualisieren
-  playerForm.addEventListener("submit", e => {
-    e.preventDefault();
-    const name = playerNameInput.value.trim();
-    const rank = playerRankSelect.value;
-    const mains = playerMainInput.value.split(",").map(m => m.trim()).filter(m=>m);
-    if(!name || !rank || !mainType || mains.length === 0) return alert("Bitte alle Felder ausfüllen!");
-    if(mainType === "Demon" && mains.length !==1) return alert("Demon muss genau 1 Main haben!");
-    if(mainType === "Demon Slayer" && mains.length !==2) return alert("Demon Slayer muss genau 2 Mains haben!");
-
-    // Prüfen ob Spieler existiert
-    let existingId = null;
-    for(const id in players){
-      if(players[id].name.toLowerCase() === name.toLowerCase()) existingId = id;
-    }
-
-    if(existingId){
-      set(ref(db, `players/${existingId}`), {name, rank, mainType, mains});
-    } else {
-      const newPlayerRef = push(playersRef);
-      set(newPlayerRef, {name, rank, mainType, mains});
-    }
-
-    playerNameInput.value="";
-    playerMainInput.value="";
-    mainInputContainer.style.display="none";
-    mainType="";
-  });
-
-  // Spieler löschen
-  deletePlayerBtn.addEventListener("click", ()=>{
-    const name = playerNameInput.value.trim();
-    if(!name) return alert("Bitte Spielername eingeben!");
-    let idToDelete = null;
-    for(const id in players){
-      if(players[id].name.toLowerCase() === name.toLowerCase()) idToDelete = id;
-    }
-    if(idToDelete) remove(ref(db, `players/${idToDelete}`));
-    playerNameInput.value="";
-  });
-
-  // Rangliste rendern
-  function renderRanks(){
-    rankListEl.innerHTML="";
-    const sorted = Object.values(players).sort((a,b)=>{
-      const ai = rankOrder.indexOf(a.rank) === -1 ? 999 : rankOrder.indexOf(a.rank);
-      const bi = rankOrder.indexOf(b.rank) === -1 ? 999 : rankOrder.indexOf(b.rank);
-      return ai - bi;
-    });
-
-    sorted.forEach(p => {
-      const div = document.createElement("div");
-      div.className = "rank-section";
-      const mainsText = p.mains.map(m=>p.mainType==="Demon"?`<span class="main-demon">🔥 ${m}</span>`:`<span class="main-demon-slayer">⚔️ ${m}</span>`).join(", ");
-      div.innerHTML = `<h3>${p.rank}</h3><p>${p.name} ${mainsText}</p>`;
-      rankListEl.appendChild(div);
-    });
+  } else {
+    document.getElementById("userEmail").innerText = "Nicht eingeloggt";
+    adminPanel.style.display = "none";
   }
 });
+
+function addOrUpdatePlayer(){
+  const name = document.getElementById("playerName").value.trim();
+  const type = document.querySelector('input[name="type"]:checked').value;
+  const main1 = document.getElementById("main1").value.trim();
+  const main2 = document.getElementById("main2").value.trim();
+
+  if(!name || !main1 || (type==="Demon Slayer" && !main2)){
+    alert("Bitte alle Felder ausfüllen!");
+    return;
+  }
+
+  const playerData = { name, type, mains: type==="Demon"? [main1]: [main1, main2], rank: "Lower Moon 6" };
+  set(ref(db,'players/'+name), playerData)
+    .then(()=>alert("Spieler gespeichert!"))
+    .catch(err=>alert(err.message));
+}
+
+function removePlayer(){
+  const name = existingPlayers.value;
+  if(!name) return;
+  remove(ref(db,'players/'+name))
+    .then(()=>alert("Spieler entfernt!"))
+    .catch(err=>alert(err.message));
+}
+
+function updateDropdown(players){
+  existingPlayers.innerHTML="";
+  Object.keys(players).forEach(key=>{
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.innerText = key;
+    existingPlayers.appendChild(opt);
+  });
+}
+
+function renderRanking(players){
+  rankingList.innerHTML="";
+  const sorted = Object.values(players).sort((a,b)=>{
+    const rankOrder = r => {
+      let [moon,num] = r.rank.split(" ");
+      num = parseInt(num);
+      return (moon==="Upper"?0:1)*10 + num;
+    }
+    return rankOrder(a)-rankOrder(b);
+  });
+
+  sorted.forEach(player=>{
+    const li = document.createElement("li");
+    li.draggable=true;
+    li.dataset.name=player.name;
+    li.className = player.rank.startsWith("Upper")? "upper":"lower";
+    li.innerHTML=`<span class="player-name">${player.name}</span> <span class="player-rank">${player.rank}</span> <span class="player-mains">${player.mains.join(", ")}</span>`;
+    rankingList.appendChild(li);
+  });
+
+  enableDragAndDrop();
+}
+
+onValue(ref(db,'players/'), snapshot=>{
+  const players = snapshot.val() || {};
+  updateDropdown(players);
+  renderRanking(players);
+});
+
+// Drag & Drop mit Animation
+function enableDragAndDrop(){
+  let dragged=null;
+
+  rankingList.querySelectorAll('li').forEach(item=>{
+    item.addEventListener('dragstart', e=>{
+      dragged=item;
+      item.classList.add('dragging');
+    });
+    item.addEventListener('dragend', e=>{
+      dragged=null;
+      item.classList.remove('dragging');
+      updateRanksFirebase();
+    });
+    item.addEventListener('dragover', e=>{
+      e.preventDefault();
+      const after = getDragAfterElement(rankingList,e.clientY);
+      if(after==null) rankingList.appendChild(dragged);
+      else rankingList.insertBefore(dragged, after);
+    });
+  });
+}
+
+function getDragAfterElement(container,y){
+  const draggableElements = [...container.querySelectorAll('li:not(.dragging)')];
+  return draggableElements.reduce((closest, child)=>{
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height/2;
+    if(offset<0 && offset>closest.offset) return {offset:offset, element:child};
+    else return closest;
+  }, {offset:-Infinity}).element;
+}
+
+function updateRanksFirebase(){
+  const lis = rankingList.querySelectorAll('li');
+  lis.forEach((li,i)=>{
+    const playerName = li.dataset.name;
+    const moon = i<6?"Upper Moon":"Lower Moon";
+    const num = i<6?i+1:i-5;
+    const rank = moon+" "+num;
+    li.className = moon==="Upper Moon"?"upper":"lower";
+    li.querySelector(".player-rank").innerText = rank;
+    update(ref(db,'players/'+playerName), {rank});
+  });
+}
 </script>
+
 </body>
 </html>
