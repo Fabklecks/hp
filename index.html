@@ -1,438 +1,218 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>DSHC2 - Rangliste</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demon Slayer – Rank System</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-grid">
-      <div class="brand">
-        <h1>Demon Slayer • Hinokami Chronicles 2</h1>
-        <p class="tagline">Ranking-Übersicht & Admin-Panel</p>
-      </div>
-
-      <div class="auth-area" id="authArea">
-        <div id="userInfo" class="user-info" style="display:none;">
-          <img id="userAvatar" alt="avatar" class="avatar" />
-          <div>
-            <div id="userName"></div>
-            <small id="userEmail"></small>
-          </div>
-        </div>
-
-        <div class="auth-buttons">
-          <button id="loginBtn" class="btn">Mit Google anmelden</button>
-          <button id="logoutBtn" class="btn btn-ghost" style="display:none;">Abmelden</button>
-        </div>
-      </div>
+  <header class="header">
+    <div class="container header-container">
+      <div class="logo">鬼滅の刃 Ranks</div>
+      <nav class="nav">
+        <a href="#ranks">Rangliste</a>
+        <a href="#admin" id="adminNavLink" style="display:none;">Admin</a>
+      </nav>
     </div>
   </header>
 
-  <main class="container main-grid">
-    <aside class="sidebar">
-      <h2>Ränge</h2>
-      <ul class="ranks-legend">
-        <li><strong>Upper Moon</strong> 1 → 6 (Top)</li>
-        <li><strong>Lower Moon</strong> 1 → 6</li>
-      </ul>
-
-      <div class="note">
-        <p>Hinweis: Spieler müssen sich erst einmalig anmelden, bevor sie dem Ranking hinzugefügt werden können.</p>
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container hero-container">
+        <h1>Demon Slayer Hinokami Chronicles 2 – Rangsystem</h1>
+        <p>Hier kannst du sehen, welcher Spieler welchen Rang erreicht hat.  
+           Basierend auf den Dämonenrängen: <strong>Lower Moon 1-6</strong> und <strong>Upper Moon 1-6</strong>.</p>
       </div>
+    </section>
 
-      <div id="adminPanelToggle" style="display:none;">
-        <button id="openAdminBtn" class="btn btn-block">Admin-Panel öffnen</button>
+    <!-- Rankliste -->
+    <section class="section" id="ranks">
+      <div class="container">
+        <h2>🏆 Rangliste</h2>
+        <ul id="playerList" class="rank-list"></ul>
       </div>
-    </aside>
+    </section>
 
-    <section class="content">
-      <section class="ranks" id="ranks">
-        <!-- Ranks werden hier dynamisch erzeugt -->
-      </section>
+    <!-- Admin Panel -->
+    <section class="section admin-panel" id="adminPanel" style="display:none;">
+      <div class="container">
+        <h2>⚔️ Admin Panel</h2>
+        <div class="auth-buttons">
+          <button id="loginBtn" class="btn btn-primary">Mit Google anmelden</button>
+          <button id="logoutBtn" class="btn btn-outline" style="display:none;">Abmelden</button>
+        </div>
+
+        <form id="addPlayerForm" class="form" style="display:none;">
+          <h3>Neuen Spieler hinzufügen</h3>
+          <input type="text" id="playerName" placeholder="Spielername" required>
+          <select id="playerRank">
+            <optgroup label="Lower Moons">
+              <option value="Lower 6">Lower Moon 6</option>
+              <option value="Lower 5">Lower Moon 5</option>
+              <option value="Lower 4">Lower Moon 4</option>
+              <option value="Lower 3">Lower Moon 3</option>
+              <option value="Lower 2">Lower Moon 2</option>
+              <option value="Lower 1">Lower Moon 1</option>
+            </optgroup>
+            <optgroup label="Upper Moons">
+              <option value="Upper 6">Upper Moon 6</option>
+              <option value="Upper 5">Upper Moon 5</option>
+              <option value="Upper 4">Upper Moon 4</option>
+              <option value="Upper 3">Upper Moon 3</option>
+              <option value="Upper 2">Upper Moon 2</option>
+              <option value="Upper 1">Upper Moon 1</option>
+            </optgroup>
+          </select>
+          <button type="submit" class="btn btn-primary">Hinzufügen</button>
+        </form>
+
+        <ul id="adminPlayerList" class="rank-list"></ul>
+      </div>
     </section>
   </main>
 
-  <!-- Admin Modal / Panel -->
-  <div id="adminModal" class="modal" aria-hidden="true">
-    <div class="modal-content">
-      <button class="modal-close" id="closeAdminBtn">&times;</button>
-      <h3>Admin Panel</h3>
-
-      <section class="admin-section">
-        <h4>Registrierte Nutzer</h4>
-        <p>Wähle einen registrierten Nutzer (muss sich vorher mit Google angemeldet haben) und füge ihn in ein Ranking ein.</p>
-        <div class="form-row">
-          <select id="usersSelect"></select>
-          <select id="rankSelect"></select>
-          <button id="addPlayerBtn" class="btn">Spieler hinzufügen</button>
-        </div>
-      </section>
-
-      <section class="admin-section">
-        <h4>Manage Players</h4>
-        <p>Wähle einen Spieler aus der Rangliste zum verschieben oder entfernen.</p>
-        <div id="playersManageList" class="players-manage-list"></div>
-      </section>
-
-      <section class="admin-section">
-        <h4>Admin-Verwaltung</h4>
-        <p>Admins werden in der Realtime-DB unter <code>/admins</code> als Schlüssel (email mit Punkt -> komma) gespeichert.</p>
-        <p>Beispiel: <code>/admins/fabioasik221206@gmail,com: true</code></p>
-      </section>
-    </div>
-  </div>
-
-  <footer class="site-footer">
-    <div class="container">
-      <small>© 2025 DSHC2 • Demo-Projekt</small>
+  <footer class="footer">
+    <div class="container footer-container">
+      <p>© 2025 Demon Slayer Ranks – Alle Rechte vorbehalten</p>
     </div>
   </footer>
 
-  <!-- Firebase + App Script -->
+  <!-- Firebase -->
   <script type="module">
-    /****************************************************************
-     * IMPORTANT:
-     * - Set your Firebase config below (apiKey, authDomain, databaseURL etc.)
-     * - Make sure Realtime Database rules allow reads/writes as you expect.
-     * - Create a node /admins in your DB and add admin emails (dots replaced by commas).
-     *
-     * Realtime DB structure used:
-     * /users/{uid} = { uid, displayName, email, photoURL, createdAt }
-     * /players/{uid} = { uid, rank: "Upper-1" | "Lower-6" ... , addedAt }
-     * /admins/{email-with-dots-replaced-by-commas} = true
-     ****************************************************************/
-
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-    import {
-      getDatabase, ref, set, get, onValue, push, remove, update
-    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
-    import {
-      getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut
-    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+    import { getDatabase, ref, set, push, get, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-    // ---------- FIREBASE CONFIG: REPLACE WITH YOURS ----------
     const firebaseConfig = {
-      apiKey: "REPLACE_WITH_YOUR_APIKEY",
-      authDomain: "REPLACE_WITH_AUTHDOMAIN.firebaseapp.com",
-      projectId: "REPLACE_PROJECTID",
-      storageBucket: "REPLACE_STORAGEBUCKET.appspot.com",
-      messagingSenderId: "REPLACE_SENDERID",
-      appId: "REPLACE_APPID",
-      // IMPORTANT: copy databaseURL from your Firebase Realtime Database settings
-      databaseURL: "https://YOUR_PROJECT-default-rtdb.europe-west1.firebasedatabase.app/"
+      apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
+      authDomain: "demonslayerranks.firebaseapp.com",
+      databaseURL: "https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app/",
+      projectId: "demonslayerranks",
+      storageBucket: "demonslayerranks.firebasestorage.app",
+      messagingSenderId: "244021550640",
+      appId: "1:244021550640:web:4d2a3c7a52c205f5e997f5",
+      measurementId: "G-WH3WQBKPX4"
     };
-    // --------------------------------------------------------
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // Ranks: Upper-1 .. Upper-6 (top), Lower-1 .. Lower-6 (lower)
-    const RANKS = [
-      ...Array.from({length:6}, (_,i)=>`Upper-${i+1}`), // Upper-1 ... Upper-6
-      ...Array.from({length:6}, (_,i)=>`Lower-${i+1}`)  // Lower-1 ... Lower-6
-    ];
-    // For display order in UI we'll render Upper-6..Upper-1 then Lower-1..Lower-6 visually.
-    // But internal keys are above.
+    const playerList = document.getElementById("playerList");
+    const adminPlayerList = document.getElementById("adminPlayerList");
+    const addPlayerForm = document.getElementById("addPlayerForm");
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const adminPanel = document.getElementById("adminPanel");
+    const adminNavLink = document.getElementById("adminNavLink");
 
-    // ---------- DOM refs ----------
-    const loginBtn = document.getElementById('loginBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const userInfo = document.getElementById('userInfo');
-    const userName = document.getElementById('userName');
-    const userEmail = document.getElementById('userEmail');
-    const userAvatar = document.getElementById('userAvatar');
-    const adminPanelToggle = document.getElementById('adminPanelToggle');
-    const openAdminBtn = document.getElementById('openAdminBtn');
-    const adminModal = document.getElementById('adminModal');
-    const closeAdminBtn = document.getElementById('closeAdminBtn');
-    const adminPanelElem = document.getElementById('adminPanel');
-    const usersSelect = document.getElementById('usersSelect');
-    const rankSelect = document.getElementById('rankSelect');
-    const addPlayerBtn = document.getElementById('addPlayerBtn');
-    const playersManageList = document.getElementById('playersManageList');
-    const adminNavLink = document.getElementById('adminNavLink');
-
-    const ranksContainer = document.getElementById('ranks');
-    const container = document.querySelector('.container');
-
-    let currentUser = null;
-    let isAdmin = false;
-
-    // ---------- helper funcs ----------
-    function emailToKey(email){
-      return email.replaceAll('.', ',');
-    }
-
-    function prettyRankName(rank){
-      // rank like "Upper-1" -> "Upper Moon 1"
-      const [type, num] = rank.split('-');
-      return `${type === 'Upper' ? 'Upper Moon' : 'Lower Moon'} ${num}`;
-    }
-
-    // ---------- render ranks UI ----------
-    function buildRankSections(){
-      ranksContainer.innerHTML = '';
-      // Render Upper 6..1 first (visual top on page)
-      const upper = RANKS.slice(0,6).slice().reverse(); // Upper-6..Upper-1
-      const lower = RANKS.slice(6); // Lower-1..Lower-6
-      const all = [...upper, ...lower];
-
-      all.forEach(rank=>{
-        const section = document.createElement('div');
-        section.className = 'rank-section';
-        section.dataset.rank = rank;
-        section.innerHTML = `
-          <div class="rank-header">
-            <h3>${prettyRankName(rank)}</h3>
-            <div class="rank-actions" data-rank="${rank}"></div>
-          </div>
-          <ul class="players-list" id="list-${rank}"></ul>
-        `;
-        ranksContainer.appendChild(section);
-      });
-    }
-
-    buildRankSections();
-
-    // ---------- listen to players in DB ----------
-    const playersRef = ref(db, 'players');
-    onValue(playersRef, snap=>{
-      const val = snap.val() || {};
-      // val is { uid: { uid, rank, addedAt }, ... }
-      // Clear each list
-      RANKS.forEach(r=>{
-        const listEl = document.getElementById(`list-${r}`);
-        if(listEl) listEl.innerHTML = '';
-      });
-
-      // Sort players by rank group then by addedAt
-      const players = Object.values(val);
-      players.sort((a,b)=>{
-        if(a.rank === b.rank) return (a.addedAt||0) - (b.addedAt||0);
-        return RANKS.indexOf(a.rank) - RANKS.indexOf(b.rank);
-      });
-
-      players.forEach(p=>{
-        const listEl = document.getElementById(`list-${p.rank}`);
-        if(!listEl) return;
-        const li = document.createElement('li');
-        li.className = 'player-item';
-        li.dataset.uid = p.uid;
-        li.innerHTML = `
-          <div class="player-info">
-            <div class="player-name" title="${p.displayName || p.email}">${p.displayName || p.email}</div>
-            <div class="player-meta">${p.email || ''}</div>
-          </div>
-          <div class="player-actions">
-            ${isAdmin ? `
-              <button class="btn tiny promote" data-uid="${p.uid}">▲</button>
-              <button class="btn tiny demote" data-uid="${p.uid}">▼</button>
-              <button class="btn tiny remove" data-uid="${p.uid}">✖</button>
-            ` : ''}
-          </div>
-        `;
-        listEl.appendChild(li);
-      });
-
-      // If admin, update management list
-      if(isAdmin){
-        renderPlayersManageList(val);
-      }
+    // Login / Logout
+    loginBtn.addEventListener("click", async () => {
+      try { await signInWithPopup(auth, provider); } catch(e){ alert(e.message); }
+    });
+    logoutBtn.addEventListener("click", async () => {
+      try { await signOut(auth); } catch(e){ alert(e.message); }
     });
 
-    // ---------- users list (registered users) ----------
-    const usersRef = ref(db, 'users');
-    onValue(usersRef, snap=>{
-      const val = snap.val() || {};
-      // rebuild usersSelect
-      usersSelect.innerHTML = '';
-      const usersArr = Object.values(val).sort((a,b)=> (a.displayName||a.email).localeCompare(b.displayName||b.email));
-      usersArr.forEach(u=>{
-        const opt = document.createElement('option');
-        opt.value = u.uid;
-        opt.textContent = `${u.displayName || u.email} — ${u.email}`;
-        opt.dataset.email = u.email;
-        usersSelect.appendChild(opt);
-      });
-      // ranks select
-      rankSelect.innerHTML = '';
-      RANKS.forEach(r=>{
-        const o = document.createElement('option');
-        o.value = r;
-        o.textContent = prettyRankName(r);
-        rankSelect.appendChild(o);
-      });
-    });
-
-    // ---------- add player (admin) ----------
-    addPlayerBtn.addEventListener('click', async ()=>{
-      if(!isAdmin) return alert('Nur Admins können Spieler hinzufügen.');
-      const uid = usersSelect.value;
-      const rank = rankSelect.value;
-      if(!uid) return alert('Wähle zuerst einen registrierten Nutzer.');
-      // fetch user info
-      const userSnap = (await get(ref(db, `users/${uid}`))).val();
-      if(!userSnap) return alert('Der ausgewählte Nutzer ist nicht registriert (muss sich einmal anmelden).');
-      const playerObj = {
-        uid,
-        displayName: userSnap.displayName || userSnap.email,
-        email: userSnap.email,
-        rank,
-        addedAt: Date.now()
-      };
-      await set(ref(db, `players/${uid}`), playerObj);
-    });
-
-    // ---------- players manage list UI for admin ----------
-    function renderPlayersManageList(playersObj){
-      playersManageList.innerHTML = '';
-      const playersArr = Object.values(playersObj || {}).sort((a,b)=> RANKS.indexOf(a.rank) - RANKS.indexOf(b.rank) || (a.addedAt||0) - (b.addedAt||0));
-      playersArr.forEach(p=>{
-        const row = document.createElement('div');
-        row.className = 'manage-row';
-        row.innerHTML = `
-          <div class="manage-left">
-            <strong>${p.displayName || p.email}</strong>
-            <div class="muted">${p.email}</div>
-            <div class="muted">Rank: ${prettyRankName(p.rank)}</div>
-          </div>
-          <div class="manage-actions">
-            <button class="btn tiny promote" data-uid="${p.uid}">Promote</button>
-            <button class="btn tiny demote" data-uid="${p.uid}">Demote</button>
-            <button class="btn tiny remove" data-uid="${p.uid}">Remove</button>
-          </div>
-        `;
-        // attach listeners
-        const promoteBtn = row.querySelector('.promote');
-        const demoteBtn = row.querySelector('.demote');
-        const removeBtn = row.querySelector('.remove');
-
-        promoteBtn.addEventListener('click', ()=> changePlayerRank(p.uid, 'up'));
-        demoteBtn.addEventListener('click', ()=> changePlayerRank(p.uid, 'down'));
-        removeBtn.addEventListener('click', async ()=>{
-          if(!confirm(`Spieler ${p.displayName || p.email} wirklich entfernen?`)) return;
-          await remove(ref(db, `players/${p.uid}`));
-        });
-
-        playersManageList.appendChild(row);
-      });
-    }
-
-    // ---------- change player rank logic ----------
-    async function changePlayerRank(uid, dir){
-      if(!isAdmin) return;
-      const pSnap = (await get(ref(db, `players/${uid}`))).val();
-      if(!pSnap) return alert('Spieler nicht gefunden.');
-      const idx = RANKS.indexOf(pSnap.rank);
-      if(idx === -1) return;
-      let newIdx = idx + (dir === 'up' ? -1 : 1); // up => move higher in array (smaller index)
-      // clamp
-      newIdx = Math.max(0, Math.min(RANKS.length - 1, newIdx));
-      if(newIdx === idx) return; // no change
-      const newRank = RANKS[newIdx];
-      await update(ref(db, `players/${uid}`), { rank: newRank });
-    }
-
-    // ---------- admin checks, login flow ----------
-    loginBtn.addEventListener('click', async ()=>{
-      try {
-        await signInWithPopup(auth, provider);
-      } catch(err){ alert('Login fehlgeschlagen: ' + err.message); }
-    });
-
-    logoutBtn.addEventListener('click', async ()=>{
-      try { await signOut(auth); } catch(err){ alert(err.message); }
-    });
-
-    // helper to show/hide admin modal
-    openAdminBtn?.addEventListener('click', ()=> {
-      adminModal.style.display = 'block';
-      adminModal.setAttribute('aria-hidden', 'false');
-    });
-    closeAdminBtn?.addEventListener('click', ()=> {
-      adminModal.style.display = 'none';
-      adminModal.setAttribute('aria-hidden', 'true');
-    });
-    // clicking outside modal closes it
-    adminModal.addEventListener('click', (e)=>{
-      if(e.target === adminModal) { adminModal.style.display = 'none'; }
-    });
-
-    // When auth state changes
-    onAuthStateChanged(auth, async (user)=>{
-      currentUser = user;
+    // Auth check
+    onAuthStateChanged(auth, async (user) => {
       if(user){
-        // store user in /users if not exists
-        const uobj = {
-          uid: user.uid,
-          displayName: user.displayName || null,
-          email: user.email || null,
-          photoURL: user.photoURL || null,
-          createdAt: Date.now()
-        };
-        await set(ref(db, `users/${user.uid}`), uobj);
-
-        // update UI
-        userInfo.style.display = 'flex';
-        userName.textContent = user.displayName || 'Unnamed';
-        userEmail.textContent = user.email || '';
-        userAvatar.src = user.photoURL || '';
-        loginBtn.style.display = 'none';
-        logoutBtn.style.display = 'inline-block';
-
-        // Check admins node
-        const adminKey = emailToKey(user.email || '');
-        const adminSnap = await get(ref(db, `admins/${adminKey}`));
-        isAdmin = !!adminSnap.val();
-        // toggle admin area
-        if(isAdmin){
-          adminPanelToggle.style.display = 'block';
-          adminNavLink.style.display = 'inline-block';
-          // show panel quickly
-          adminPanelElem.style.display = 'block';
-          // fill some lists already handled by onValue listeners
+        const emailKey = user.email.replace(/\./g, ",");
+        const adminRef = ref(db, "admins/" + emailKey);
+        const snap = await get(adminRef);
+        if(snap.exists()){
+          adminPanel.style.display = "block";
+          adminNavLink.style.display = "inline-block";
+          loginBtn.style.display = "none";
+          logoutBtn.style.display = "inline-block";
+          addPlayerForm.style.display = "block";
+          loadAdminList();
         } else {
-          adminPanelToggle.style.display = 'none';
-          adminNavLink.style.display = 'none';
-          adminPanelElem.style.display = 'none';
+          adminPanel.style.display = "none";
+          adminNavLink.style.display = "none";
         }
       } else {
-        // logged out
-        currentUser = null;
-        isAdmin = false;
-        userInfo.style.display = 'none';
-        loginBtn.style.display = 'inline-block';
-        logoutBtn.style.display = 'none';
-        adminPanelToggle.style.display = 'none';
-        adminNavLink.style.display = 'none';
-        adminPanelElem.style.display = 'none';
+        adminPanel.style.display = "none";
+        adminNavLink.style.display = "none";
+        loginBtn.style.display = "inline-block";
+        logoutBtn.style.display = "none";
       }
     });
 
-    // ---------- small UI event delegation for promote/demote/remove from lists ----------
-    document.addEventListener('click', async (e)=>{
-      const t = e.target;
-      if(t.matches('.player-item .promote') || t.matches('.manage-row .promote')){
-        const uid = t.dataset.uid;
-        await changePlayerRank(uid, 'up');
-      } else if(t.matches('.player-item .demote') || t.matches('.manage-row .demote')){
-        const uid = t.dataset.uid;
-        await changePlayerRank(uid, 'down');
-      } else if(t.matches('.player-item .remove') || t.matches('.manage-row .remove')){
-        const uid = t.dataset.uid;
-        if(!confirm('Spieler wirklich entfernen?')) return;
-        await remove(ref(db, `players/${uid}`));
+    // Spieler hinzufügen
+    addPlayerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("playerName").value.trim();
+      const rank = document.getElementById("playerRank").value;
+      if(!name) return;
+      const newRef = push(ref(db, "players"));
+      await set(newRef, { name, rank });
+      addPlayerForm.reset();
+    });
+
+    // Spieler Liste laden (öffentlich)
+    onValue(ref(db, "players"), (snap) => {
+      playerList.innerHTML = "";
+      if(snap.exists()){
+        const players = Object.values(snap.val());
+        players.sort((a,b) => a.rank.localeCompare(b.rank));
+        players.forEach(p => {
+          const li = document.createElement("li");
+          li.textContent = `${p.name} – ${p.rank}`;
+          playerList.appendChild(li);
+        });
+      } else {
+        playerList.innerHTML = "<li>Keine Spieler vorhanden.</li>";
       }
     });
 
-    // ---------- initial tick / helpful UI ----------
-    // create a helpful placeholder if DB is empty (optional)
-    // (no automatic writes here)
+    // Admin Liste laden
+    function loadAdminList(){
+      onValue(ref(db, "players"), (snap) => {
+        adminPlayerList.innerHTML = "";
+        if(snap.exists()){
+          const data = snap.val();
+          Object.entries(data).forEach(([id,player]) => {
+            const li = document.createElement("li");
+            li.innerHTML = `
+              ${player.name} – ${player.rank}
+              <div>
+                <button class="btn btn-small promote">▲</button>
+                <button class="btn btn-small demote">▼</button>
+                <button class="btn btn-small danger">X</button>
+              </div>
+            `;
+            // Aufstieg
+            li.querySelector(".promote").onclick = () => {
+              update(ref(db, "players/" + id), { rank: promoteRank(player.rank) });
+            };
+            // Abstieg
+            li.querySelector(".demote").onclick = () => {
+              update(ref(db, "players/" + id), { rank: demoteRank(player.rank) });
+            };
+            // Löschen
+            li.querySelector(".danger").onclick = () => {
+              remove(ref(db, "players/" + id));
+            };
+            adminPlayerList.appendChild(li);
+          });
+        }
+      });
+    }
+
+    // Hilfsfunktionen für Ränge
+    const allRanks = ["Lower 6","Lower 5","Lower 4","Lower 3","Lower 2","Lower 1","Upper 6","Upper 5","Upper 4","Upper 3","Upper 2","Upper 1"];
+    function promoteRank(rank){
+      const i = allRanks.indexOf(rank);
+      return i > 0 ? allRanks[i-1] : rank;
+    }
+    function demoteRank(rank){
+      const i = allRanks.indexOf(rank);
+      return i < allRanks.length-1 ? allRanks[i+1] : rank;
+    }
   </script>
 </body>
 </html>
