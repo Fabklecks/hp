@@ -7,87 +7,81 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
 <header class="header">
-  <div class="container header-container">
-    <div class="logo">Demon Slayer Ranks</div>
-    <nav class="nav">
-      <a href="#ranks">Rangliste</a>
-      <a href="#admin" id="adminNavLink" style="display:none;">Admin</a>
-      <button id="loginBtn" class="btn btn-primary">Login</button>
-      <button id="logoutBtn" class="btn btn-outline" style="display:none;">Logout</button>
-    </nav>
-  </div>
+<div class="container header-container">
+<div class="logo">Demon Slayer Ranks</div>
+<nav class="nav">
+<a href="#ranks">Rangliste</a>
+<a href="#admin" id="adminNavLink" style="display:none;">Admin</a>
+<button id="loginBtn" class="btn btn-primary">Login</button>
+<button id="logoutBtn" class="btn btn-outline" style="display:none;">Logout</button>
+</nav>
+</div>
 </header>
 
 <section id="ranks" class="section">
-  <div class="container">
-    <h2>Rangliste</h2>
-    <div id="rankList" class="rank-list"></div>
-  </div>
+<div class="container">
+<h2>Rangliste</h2>
+<div id="rankList" class="rank-list"></div>
+</div>
 </section>
 
 <section id="admin" class="section">
-  <div class="container">
-    <div id="adminPanel" style="display:none;">
-      <h2>Admin Panel</h2>
-      <form id="playerForm">
-        <input type="text" id="playerNameInput" placeholder="Spielername eingeben">
+<div class="container">
+<div id="adminPanel" style="display:none;">
+<h2>Admin Panel</h2>
+<form id="playerForm">
+<input type="text" id="playerNameInput" placeholder="Spielername">
+<select id="playerRank">
+<option value="Lower Moon 6">Lower Moon 6</option>
+<option value="Lower Moon 5">Lower Moon 5</option>
+<option value="Lower Moon 4">Lower Moon 4</option>
+<option value="Lower Moon 3">Lower Moon 3</option>
+<option value="Lower Moon 2">Lower Moon 2</option>
+<option value="Lower Moon 1">Lower Moon 1</option>
+<option value="Upper Moon 6">Upper Moon 6</option>
+<option value="Upper Moon 5">Upper Moon 5</option>
+<option value="Upper Moon 4">Upper Moon 4</option>
+<option value="Upper Moon 3">Upper Moon 3</option>
+<option value="Upper Moon 2">Upper Moon 2</option>
+<option value="Upper Moon 1">Upper Moon 1</option>
+</select>
 
-        <select id="playerRank">
-          <option value="Lower Moon 6">Lower Moon 6</option>
-          <option value="Lower Moon 5">Lower Moon 5</option>
-          <option value="Lower Moon 4">Lower Moon 4</option>
-          <option value="Lower Moon 3">Lower Moon 3</option>
-          <option value="Lower Moon 2">Lower Moon 2</option>
-          <option value="Lower Moon 1">Lower Moon 1</option>
-          <option value="Upper Moon 6">Upper Moon 6</option>
-          <option value="Upper Moon 5">Upper Moon 5</option>
-          <option value="Upper Moon 4">Upper Moon 4</option>
-          <option value="Upper Moon 3">Upper Moon 3</option>
-          <option value="Upper Moon 2">Upper Moon 2</option>
-          <option value="Upper Moon 1">Upper Moon 1</option>
-        </select>
+<div style="margin-top:10px;">
+<button type="button" id="demonBtn" class="btn btn-outline">Demon</button>
+<button type="button" id="demonSlayerBtn" class="btn btn-outline">Demon Slayer</button>
+</div>
 
-        <div style="margin-top:10px;">
-          <button type="button" id="demonBtn" class="btn btn-outline">Demon</button>
-          <button type="button" id="demonSlayerBtn" class="btn btn-outline">Demon Slayer</button>
-        </div>
+<div id="mainInputContainer" style="margin-top:10px; display:none;">
+<input type="text" id="playerMainInput" placeholder="Main(s) eingeben">
+</div>
 
-        <div id="mainInputContainer" style="margin-top:10px; display:none;">
-          <input type="text" id="playerMainInput" placeholder="Trage hier die Main(s) ein">
-        </div>
-
-        <div style="margin-top:10px;">
-          <button type="submit" class="btn btn-primary">Spieler erstellen / aktualisieren</button>
-          <button type="button" id="deletePlayerBtn" class="btn btn-outline">Spieler löschen</button>
-          <button type="button" id="rankUpBtn" class="btn btn-outline">Rang ↑</button>
-          <button type="button" id="rankDownBtn" class="btn btn-outline">Rang ↓</button>
-        </div>
-      </form>
-    </div>
-  </div>
+<div style="margin-top:10px;">
+<button type="submit" class="btn btn-primary">Spieler erstellen / aktualisieren</button>
+<button type="button" id="deletePlayerBtn" class="btn btn-outline">Spieler löschen</button>
+</div>
+</form>
+</div>
+</div>
 </section>
 
 <footer class="footer">
-  <div class="container">
-    &copy; Abonniert J.O.K.R auf Youtube!
-  </div>
+<div class="container">&copy; Demon Slayer Ranks</div>
 </footer>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getDatabase, ref, onValue, update, set, remove, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getDatabase, ref, onValue, set, remove, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey:"AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
-  authDomain:"demonslayerranks.firebaseapp.com",
-  databaseURL:"https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app/",
-  projectId:"demonslayerranks",
-  storageBucket:"demonslayerranks.firebasedatabase.app",
-  messagingSenderId:"244021550640",
-  appId:"1:244021550640:web:4d2a3c7a52c205f5e997f5"
+apiKey:"AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
+authDomain:"demonslayerranks.firebaseapp.com",
+databaseURL:"https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app/",
+projectId:"demonslayerranks",
+storageBucket:"demonslayerranks.firebasedatabase.app",
+messagingSenderId:"244021550640",
+appId:"1:244021550640:web:4d2a3c7a52c205f5e997f5"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -97,148 +91,117 @@ const db = getDatabase(app);
 
 const ADMINS = ["fabioasik221206@gmail.com","cand7105@gmail.com"];
 
-document.addEventListener("DOMContentLoaded", ()=>{
-  const loginBtn=document.getElementById("loginBtn");
-  const logoutBtn=document.getElementById("logoutBtn");
-  const adminPanel=document.getElementById("adminPanel");
-  const rankListEl=document.getElementById("rankList");
-  const playerForm=document.getElementById("playerForm");
-  const playerNameInput=document.getElementById("playerNameInput");
-  const playerRankSelect=document.getElementById("playerRank");
-  const mainInputContainer=document.getElementById("mainInputContainer");
-  const playerMainInput=document.getElementById("playerMainInput");
-  const demonBtn=document.getElementById("demonBtn");
-  const demonSlayerBtn=document.getElementById("demonSlayerBtn");
-  const deletePlayerBtn=document.getElementById("deletePlayerBtn");
-  const rankUpBtn=document.getElementById("rankUpBtn");
-  const rankDownBtn=document.getElementById("rankDownBtn");
+document.addEventListener("DOMContentLoaded", () => {
+  const loginBtn = document.getElementById("loginBtn");
+  const logoutBtn = document.getElementById("logoutBtn");
+  const adminPanel = document.getElementById("adminPanel");
+  const rankListEl = document.getElementById("rankList");
+  const playerForm = document.getElementById("playerForm");
+  const playerNameInput = document.getElementById("playerNameInput");
+  const playerRankSelect = document.getElementById("playerRank");
+  const mainInputContainer = document.getElementById("mainInputContainer");
+  const playerMainInput = document.getElementById("playerMainInput");
+  const demonBtn = document.getElementById("demonBtn");
+  const demonSlayerBtn = document.getElementById("demonSlayerBtn");
+  const deletePlayerBtn = document.getElementById("deletePlayerBtn");
 
-  let mainType="";
-  let allPlayers=[];
-  const playersRef=ref(db,"players");
-  const rankOrder=["Upper Moon 1","Upper Moon 2","Upper Moon 3","Upper Moon 4","Upper Moon 5","Upper Moon 6","Lower Moon 1","Lower Moon 2","Lower Moon 3","Lower Moon 4","Lower Moon 5","Lower Moon 6"];
+  let mainType = "";
+  const rankOrder = ["Upper Moon 1","Upper Moon 2","Upper Moon 3","Upper Moon 4","Upper Moon 5","Upper Moon 6","Lower Moon 1","Lower Moon 2","Lower Moon 3","Lower Moon 4","Lower Moon 5","Lower Moon 6"];
+  let players = {}; // Live Objekt von Firebase
+
+  const playersRef = ref(db, "players");
 
   // Login / Logout
-  loginBtn.addEventListener("click",()=>signInWithPopup(auth,provider).catch(console.error));
-  logoutBtn.addEventListener("click",()=>signOut(auth).catch(console.error));
-  onAuthStateChanged(auth,user=>{
+  loginBtn.addEventListener("click", () => signInWithPopup(auth, provider).catch(console.error));
+  logoutBtn.addEventListener("click", () => signOut(auth).catch(console.error));
+
+  onAuthStateChanged(auth, user => {
     if(user){
-      loginBtn.style.display="none"; logoutBtn.style.display="inline-block";
+      loginBtn.style.display="none";
+      logoutBtn.style.display="inline-block";
       if(ADMINS.includes(user.email)){
-        adminPanel.style.display="block"; document.getElementById("adminNavLink").style.display="inline-block";
-      }else{
-        adminPanel.style.display="none"; document.getElementById("adminNavLink").style.display="none";
+        adminPanel.style.display="block";
+        document.getElementById("adminNavLink").style.display="inline-block";
+      } else {
+        adminPanel.style.display="none";
+        document.getElementById("adminNavLink").style.display="none";
       }
-    }else{
-      loginBtn.style.display="inline-block"; logoutBtn.style.display="none";
-      adminPanel.style.display="none"; document.getElementById("adminNavLink").style.display="none";
+    } else {
+      loginBtn.style.display="inline-block";
+      logoutBtn.style.display="none";
+      adminPanel.style.display="none";
+      document.getElementById("adminNavLink").style.display="none";
     }
   });
 
-  // Spieler laden und immer live rendern
-  onValue(playersRef, snapshot=>{
-    const data = snapshot.val() || {};
-    allPlayers = Object.keys(data).map(id=>({
-      id,name:data[id].name||"Unbekannt",rank:data[id].rank||"",mainType:data[id].mainType||"",mains:Array.isArray(data[id].mains)?data[id].mains:[]
-    }));
+  // Spieler live laden
+  onValue(playersRef, snapshot => {
+    players = snapshot.val() || {};
     renderRanks();
   });
 
   // Main Buttons
-  demonBtn.addEventListener("click",()=>{mainType="Demon"; mainInputContainer.style.display="block"; playerMainInput.placeholder="1 Main eingeben"; playerMainInput.value="";});
-  demonSlayerBtn.addEventListener("click",()=>{mainType="Demon Slayer"; mainInputContainer.style.display="block"; playerMainInput.placeholder="2 Mains eingeben, getrennt durch Komma"; playerMainInput.value="";});
+  demonBtn.addEventListener("click", ()=> { mainType="Demon"; mainInputContainer.style.display="block"; playerMainInput.placeholder="1 Main eingeben"; playerMainInput.value="";});
+  demonSlayerBtn.addEventListener("click", ()=> { mainType="Demon Slayer"; mainInputContainer.style.display="block"; playerMainInput.placeholder="2 Mains eingeben, getrennt durch Komma"; playerMainInput.value="";});
 
   // Spieler erstellen/aktualisieren
-  playerForm.addEventListener("submit", e=>{
+  playerForm.addEventListener("submit", e => {
     e.preventDefault();
-    const playerName=playerNameInput.value.trim();
-    if(!playerName || !playerRankSelect.value || !mainType || !playerMainInput.value.trim()) return alert("Bitte alle Felder ausfüllen!");
-    let mains=playerMainInput.value.split(",").map(m=>m.trim());
-    if(mainType==="Demon" && mains.length!==1) return alert("Demon darf nur 1 Main haben!");
-    if(mainType==="Demon Slayer" && mains.length!==2) return alert("Demon Slayer muss genau 2 Mains haben!");
-    let player = allPlayers.find(p=>p.name.toLowerCase()===playerName.toLowerCase());
+    const name = playerNameInput.value.trim();
+    const rank = playerRankSelect.value;
+    const mains = playerMainInput.value.split(",").map(m => m.trim()).filter(m=>m);
+    if(!name || !rank || !mainType || mains.length === 0) return alert("Bitte alle Felder ausfüllen!");
+    if(mainType === "Demon" && mains.length !==1) return alert("Demon muss genau 1 Main haben!");
+    if(mainType === "Demon Slayer" && mains.length !==2) return alert("Demon Slayer muss genau 2 Mains haben!");
 
-    if(!player){
-      const newPlayerRef = push(playersRef);
-      set(newPlayerRef,{name:playerName,rank:playerRankSelect.value,mainType, mains});
-    }else{
-      update(ref(db, `players/${player.id}`), {rank:playerRankSelect.value, mainType, mains});
+    // Prüfen ob Spieler existiert
+    let existingId = null;
+    for(const id in players){
+      if(players[id].name.toLowerCase() === name.toLowerCase()) existingId = id;
     }
 
-    playerNameInput.value=""; playerMainInput.value=""; mainInputContainer.style.display="none"; mainType="";
+    if(existingId){
+      set(ref(db, `players/${existingId}`), {name, rank, mainType, mains});
+    } else {
+      const newPlayerRef = push(playersRef);
+      set(newPlayerRef, {name, rank, mainType, mains});
+    }
+
+    playerNameInput.value="";
+    playerMainInput.value="";
+    mainInputContainer.style.display="none";
+    mainType="";
   });
 
   // Spieler löschen
-  deletePlayerBtn.addEventListener("click",()=>{
-    const playerName=playerNameInput.value.trim();
-    if(!playerName) return alert("Bitte Spielername eingeben!");
-    const player=allPlayers.find(p=>p.name.toLowerCase()===playerName.toLowerCase());
-    if(!player) return alert("Spieler nicht gefunden!");
-    remove(ref(db,`players/${player.id}`));
+  deletePlayerBtn.addEventListener("click", ()=>{
+    const name = playerNameInput.value.trim();
+    if(!name) return alert("Bitte Spielername eingeben!");
+    let idToDelete = null;
+    for(const id in players){
+      if(players[id].name.toLowerCase() === name.toLowerCase()) idToDelete = id;
+    }
+    if(idToDelete) remove(ref(db, `players/${idToDelete}`));
     playerNameInput.value="";
   });
-
-  // Rang hoch/runter
-  function changeRank(up=true){
-    const playerName=playerNameInput.value.trim();
-    if(!playerName) return alert("Bitte Spielername eingeben!");
-    const player=allPlayers.find(p=>p.name.toLowerCase()===playerName.toLowerCase());
-    if(!player) return alert("Spieler nicht gefunden!");
-    let idx=rankOrder.indexOf(player.rank);
-    if(idx===-1) idx=rankOrder.length-1;
-    let newIdx=up?idx-1:idx+1;
-    if(newIdx<0||newIdx>=rankOrder.length) return;
-    update(ref(db,`players/${player.id}`),{rank:rankOrder[newIdx]});
-  }
-  rankUpBtn.addEventListener("click",()=>changeRank(true));
-  rankDownBtn.addEventListener("click",()=>changeRank(false));
-
-  // Scroll Animation
-  const observer = new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){entry.target.classList.add('scroll-show'); observer.unobserve(entry.target);}
-    });
-  }, {threshold:0.2});
 
   // Rangliste rendern
   function renderRanks(){
     rankListEl.innerHTML="";
-    const sorted=[...allPlayers].sort((a,b)=>{
-      const aI=rankOrder.indexOf(a.rank)===-1?999:rankOrder.indexOf(a.rank);
-      const bI=rankOrder.indexOf(b.rank)===-1?999:rankOrder.indexOf(b.rank);
-      return aI-bI;
-    });
-    const groups={};
-    sorted.forEach(p=>{
-      if(!groups[p.rank]) groups[p.rank]=[];
-      const mainsText=p.mains.map(m=>{
-        if(p.mainType==="Demon") return `<span class="main-demon">🔥 ${m}</span>`;
-        if(p.mainType==="Demon Slayer") return `<span class="main-demon-slayer">⚔️ ${m}</span>`;
-        return m;
-      }).join(", ");
-      groups[p.rank].push(`${p.name} ${mainsText}`);
-    });
-    Object.keys(groups).forEach(rank=>{
-      const section=document.createElement("div");
-      section.className="rank-section";
-      section.innerHTML=`<h3>${rank}</h3><ul>${groups[rank].map(n=>`<li>${n}</li>`).join("")}</ul>`;
-      rankListEl.appendChild(section);
-      observer.observe(section);
+    const sorted = Object.values(players).sort((a,b)=>{
+      const ai = rankOrder.indexOf(a.rank) === -1 ? 999 : rankOrder.indexOf(a.rank);
+      const bi = rankOrder.indexOf(b.rank) === -1 ? 999 : rankOrder.indexOf(b.rank);
+      return ai - bi;
     });
 
-    // Flammen erstellen
-    for(let i=0;i<30;i++){
-      const flame = document.createElement('div');
-      flame.classList.add('flame');
-      flame.style.left = Math.random()*100 + "%";
-      flame.style.animationDuration = 3 + Math.random()*2 + "s";
-      flame.style.animationDelay = Math.random()*5 + "s";
-      flame.style.width = 5 + Math.random()*10 + "px";
-      flame.style.height = 20 + Math.random()*20 + "px";
-      rankListEl.appendChild(flame);
-    }
+    sorted.forEach(p => {
+      const div = document.createElement("div");
+      div.className = "rank-section";
+      const mainsText = p.mains.map(m=>p.mainType==="Demon"?`<span class="main-demon">🔥 ${m}</span>`:`<span class="main-demon-slayer">⚔️ ${m}</span>`).join(", ");
+      div.innerHTML = `<h3>${p.rank}</h3><p>${p.name} ${mainsText}</p>`;
+      rankListEl.appendChild(div);
+    });
   }
-
 });
 </script>
 </body>
