@@ -151,14 +151,25 @@ demonSlayerBtn.addEventListener("click",()=>{mainType="Demon Slayer"; mainInputC
 playerForm.addEventListener("submit", e=>{
 e.preventDefault();
 const playerName=playerNameInput.value.trim();
-if(!playerName || !playerRankSelect.value || !mainType || !playerMainInput.value.trim()) return alert("Bitte alle Felder ausfüllen!");
+if(!playerName || !playerRankSelect.value || !mainType || !playerMainInput.value.trim()) 
+  return alert("Bitte alle Felder ausfüllen!");
 let mains=playerMainInput.value.split(",").map(m=>m.trim());
 if(mainType==="Demon" && mains.length!==1) return alert("Demon darf nur 1 Main haben!");
 if(mainType==="Demon Slayer" && mains.length!==2) return alert("Demon Slayer muss genau 2 Mains haben!");
-let player=allPlayers.find(p=>p.name.toLowerCase()===playerName.toLowerCase());
-if(!player) player={id:push(playersRef).key,name:playerName};
-update(ref(db,`players/${player.id}`),{name:playerName,rank:playerRankSelect.value,mainType,mains});
-playerNameInput.value=""; playerMainInput.value=""; mainType=""; mainInputContainer.style.display="none";
+let player = allPlayers.find(p=>p.name.toLowerCase()===playerName.toLowerCase());
+
+if(!player){
+  // Neuer Spieler
+  const newPlayerRef = push(playersRef);
+  set(newPlayerRef, {name:playerName, rank:playerRankSelect.value, mainType:mainType, mains:mains})
+  .then(()=>{playerNameInput.value=""; playerMainInput.value=""; mainInputContainer.style.display="none"; mainType="";})
+  .catch(err=>console.error(err));
+} else {
+  // Existierender Spieler aktualisieren
+  update(ref(db, `players/${player.id}`), {rank:playerRankSelect.value, mainType:mainType, mains:mains})
+  .then(()=>{playerNameInput.value=""; playerMainInput.value=""; mainInputContainer.style.display="none"; mainType="";})
+  .catch(err=>console.error(err));
+}
 });
 
 // Spieler löschen
@@ -220,7 +231,22 @@ if(entry.isIntersecting){entry.target.classList.add('scroll-show'); observer.uno
 });
 },{threshold:0.2});
 function observeRanks(){document.querySelectorAll('.rank-section').forEach(s=>observer.observe(s));}
-});
+
+}); // Ende DOMContentLoaded
+
+// Flammenpartikel erzeugen
+const rankList = document.getElementById('rankList');
+for(let i=0;i<30;i++){ // 30 Flammen
+  const flame = document.createElement('div');
+  flame.classList.add('flame');
+  flame.style.left = Math.random()*100 + "%";
+  flame.style.animationDuration = 3 + Math.random()*2 + "s";
+  flame.style.animationDelay = Math.random()*5 + "s";
+  flame.style.width = 5 + Math.random()*10 + "px";
+  flame.style.height = 20 + Math.random()*20 + "px";
+  rankList.appendChild(flame);
+}
+
 </script>
 
 </body>
