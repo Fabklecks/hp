@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Demon Slayer 2</title>
+<title>Abonniert J.O.K.R auf Youtube</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Demon Slayer Rangliste made by J.O.K.R</h1>
+<h1>Demon Slayer 2 Ranking made by J.O.K.R</h1>
 
 <div class="login-area">
   <button id="loginBtn">Login</button>
@@ -40,7 +40,7 @@
   <button id="removeBtn" class="action-btn">Spieler entfernen</button>
 </div>
 
-<h2>Rangliste der Monde</h2>
+<h2>Live-Rangliste (Drag & Drop)</h2>
 <ul id="rankingList" class="ranking-list"></ul>
 
 <script type="module">
@@ -103,12 +103,14 @@ onAuthStateChanged(auth, (user)=>{
     document.getElementById("userEmail").innerText = user.email;
     if(user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com"){
       adminPanel.style.display = "block";
-      loadPlayers(); // WICHTIG: erst nach Login laden
+      loadPlayers(); // ✅ erst nach Login laden
     } else {
       adminPanel.style.display = "none";
+      alert("Du bist kein Admin!");
     }
   } else {
     adminPanel.style.display = "none";
+    document.getElementById("userEmail").innerText = "Nicht eingeloggt";
   }
 });
 
@@ -129,7 +131,7 @@ addUpdateBtn.addEventListener("click", async ()=>{
 
   try{
     await set(ref(db,'players/'+name), playerData);
-    loadPlayers(); // sofort anzeigen
+    loadPlayers(); // sofort aktualisieren
   } catch(err){ alert("Fehler: "+err.message); }
 });
 
@@ -151,11 +153,11 @@ async function loadPlayers(){
     const data = snapshot.val();
     if(!data) return;
 
-    const players = Object.values(data); // Name ist bereits im Objekt
+    const players = Object.values(data); // Name schon im Objekt
     updateDropdown(players);
     renderRanking(players);
   } catch(err){
-    console.error("Fehler beim Laden:", err);
+    console.error("Fehler beim Laden der Spieler:", err);
   }
 }
 
