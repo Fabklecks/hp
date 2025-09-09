@@ -314,6 +314,188 @@
             border-color: #ff4500;
             color: white;
         }
+        
+        /* Regelwerk Styles */
+        .rules-menu {
+            position: fixed;
+            top: 50%;
+            right: -350px;
+            transform: translateY(-50%);
+            width: 350px;
+            height: 80vh;
+            background: rgba(30, 30, 46, 0.98);
+            border-radius: 10px 0 0 10px;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .rules-menu.open {
+            right: 0;
+        }
+        
+        .rules-toggle {
+            position: absolute;
+            left: -40px;
+            top: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 100, 255, 0.8);
+            border-radius: 5px 0 0 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .rules-menu h3 {
+            color: #4a86e8;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(74, 134, 232, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .rules-content {
+            padding: 10px;
+        }
+        
+        .rule-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            border-left: 3px solid #4a86e8;
+        }
+        
+        .rule-number {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            background: #4a86e8;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .rule-title {
+            font-weight: bold;
+            color: #4a86e8;
+            margin-bottom: 5px;
+        }
+        
+        .rule-description {
+            color: #ccc;
+            font-size: 0.9rem;
+            margin-left: 35px;
+        }
+        
+        /* Rules Modal */
+        .rules-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .rules-modal.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .rules-modal-content {
+            background: rgba(30, 30, 46, 0.95);
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            border-radius: 10px;
+            padding: 30px;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 0 20px rgba(74, 134, 232, 0.5);
+        }
+        
+        .rules-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 69, 0, 0.8);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .rules-modal h2 {
+            color: #4a86e8;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(74, 134, 232, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .accept-rules-btn {
+            display: block;
+            margin: 30px auto 0;
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #4a86e8, #3a66b8);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .accept-rules-btn:hover {
+            background: linear-gradient(45deg, #3a66b8, #2a4688);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .rules-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #4a86e8, #3a66b8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 900;
+            transition: all 0.3s;
+        }
+        
+        .rules-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -344,6 +526,229 @@
             <span>Developer:</span>
             <a href="https://www.youtube.com/@J.O.K.R" target="_blank">J.O.K.R</a>
         </div>
+    </div>
+
+    <!-- Regelwerk Menu -->
+    <div class="rules-menu" id="rulesMenu">
+        <div class="rules-toggle" id="rulesToggle">
+            <i class="fas fa-chevron-left"></i>
+        </div>
+        <h3><i class="fas fa-book"></i> Regelwerk</h3>
+        
+        <div class="rules-content">
+            <div class="rule-item">
+                <span class="rule-number">1</span>
+                <span class="rule-title">Sauberes Match</span>
+                <div class="rule-description">
+                    Keine Lags, kein Pausieren, keine Unterbrechungen. Alles, was den Kampf stört, macht das Match ungültig. In diesem Fall muss der Kampf wiederholt oder verschoben werden.
+                </div>
+            </div>
+            
+            <div class="rule-item">
+                <span class="rule-number">2</span>
+                <span class="rule-title">Herausforderungen</span>
+                <div class="rule-description">
+                    Wenn jemand herausgefordert wird, hat der Herausgeforderte eine Woche Zeit, einen Termin zu festigen. Wird das nicht gemacht, wird derjenige sofort runtergestuft.
+                </div>
+            </div>
+            
+            <div class="rule-item">
+                <span class="rule-number">3</span>
+                <span class="rule-title">Absolute Stille</span>
+                <div class="rule-description">
+                    Während des Matches dürfen nur die beiden Kämpfer sprechen. Es muss volle Konzentration gewährleistet werden.
+                </div>
+            </div>
+            
+            <div class="rule-item">
+                <span class="rule-number">4</span>
+                <span class="rule-title">Charakterwahl</span>
+                <div class="rule-description">
+                    Es dürfen nur Mains des jeweiligen Spielers benutzt werden.
+                </div>
+            </div>
+            
+            <div class="rule-item">
+                <span class="rule-number">5</span>
+                <span class="rule-title">Kein Überspringen</span>
+                <div class="rule-description">
+                    Wenn du z. B. auf Rang 5 bist, musst du zuerst Rang 4 besiegen, um aufzusteigen. Ausnahmen sind hier jedoch möglich (siehe Regel 12).
+                </div>
+            </div>
+            
+            <div class="rule-item">
+                <span class="rule-number">6</span>
+                <span class="rule-title">Zeitlimit für Herausforderungen</span>
+                <div class="rule-description">
+                    Jeder Spieler darf nur eine bestimmte Anzahl an Challenges pro Tag starten (z. B. maximal 3). So vermeidet man Spam-Herausforderungen.
+                </div>
+            </div>
+            
+            <div class="rule-item">
+                <span class="rule-number">7</span>
+                <span class="rule-title">Fairness-Kontrolle</span>
+                <div class="rule-description">
+                    Wenn es Unklarheiten oder Streit über das Ergebnis gibt, entscheidet ein Admin. Beweise (Screenshots oder Videoaufnahme) sind erlaubt, um den Sieg zu bestätigen.
+                </div>
+            </div>
+            
+            <div class="rule-item">
+                <span class="rule-number">8</span>
+                <span class="rule-title">Reaktionszeit auf Herausforderungen</span>
+                <div class="rule-description">
+                    Schnellstmöglich Bescheid geben - jeder will weiter kommen.
+                </div>
+            </div>
+            
+            <div class="rule-item">
+                <span class="rule-number">9</span>
+                <span class="rule-title">Verbindliche Plattform & Modus</span>
+                <div class="rule-description">
+                    Es wird nur in einem festgelegten Modus gespielt (z. B. 2 Runden, kein Handicap). Keine benutzerdefinierten Perks erlaubt.
+                </div>
+            </div>
+            
+            <div class="rule-item">
+                <span class="rule-number">10</span>
+                <span class="rule-title">Rematch-Regel</span>
+                <div class="rule-description">
+                    Wenn ein Kampf aufgrund von technischen Problemen unterbrochen wird, wird er nur einmal wiederholt. Bei erneutem Problem wird der Kampf auf einen anderen Zeitpunkt verschoben.
+                </div>
+            </div>
+            
+            <div class="rule-item">
+                <span class="rule-number">11</span>
+                <span class="rule-title">Schutz vor Dauerherausforderungen</span>
+                <div class="rule-description">
+                    Ein Gewinner darf nicht sofort erneut von demselben Spieler herausgefordert werden. Cooldown: 24 Stunden zwischen den gleichen Spielern.
+                </div>
+            </div>
+            
+            <div class="rule-item">
+                <span class="rule-number">12</span>
+                <span class="rule-title">Ausnahmen</span>
+                <div class="rule-description">
+                    Bei besonderen Umständen kann man Kämpfe skipen und höher Rangige herausfordern, wenn sie einverstanden sind.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Regelwerk Modal (für Erstbesucher) -->
+    <div class="rules-modal" id="rulesModal">
+        <div class="rules-modal-content">
+            <div class="rules-modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </div>
+            <h2><i class="fas fa-scroll"></i> Regelwerk - Bitte lesen und akzeptieren</h2>
+            
+            <div class="rules-content">
+                <div class="rule-item">
+                    <span class="rule-number">1</span>
+                    <span class="rule-title">Sauberes Match</span>
+                    <div class="rule-description">
+                        Keine Lags, kein Pausieren, keine Unterbrechungen. Alles, was den Kampf stört, macht das Match ungültig. In diesem Fall muss der Kampf wiederholt oder verschoben werden.
+                    </div>
+                </div>
+                
+                <div class="rule-item">
+                    <span class="rule-number">2</span>
+                    <span class="rule-title">Herausforderungen</span>
+                    <div class="rule-description">
+                        Wenn jemand herausgefordert wird, hat der Herausgeforderte eine Woche Zeit, einen Termin zu festigen. Wird das nicht gemacht, wird derjenige sofort runtergestuft.
+                    </div>
+                </div>
+                
+                <div class="rule-item">
+                    <span class="rule-number">3</span>
+                    <span class="rule-title">Absolute Stille</span>
+                    <div class="rule-description">
+                        Während des Matches dürfen nur die beiden Kämpfer sprechen. Es muss volle Konzentration gewährleistet werden.
+                    </div>
+                </div>
+                
+                <div class="rule-item">
+                    <span class="rule-number">4</span>
+                    <span class="rule-title">Charakterwahl</span>
+                    <div class="rule-description">
+                        Es dürfen nur Mains des jeweiligen Spielers benutzt werden.
+                    </div>
+                </div>
+                
+                <div class="rule-item">
+                    <span class="rule-number">5</span>
+                    <span class="rule-title">Kein Überspringen</span>
+                    <div class="rule-description">
+                        Wenn du z. B. auf Rang 5 bist, musst du zuerst Rang 4 besiegen, um aufzusteigen. Ausnahmen sind hier jedoch möglich (siehe Regel 12).
+                    </div>
+                </div>
+                
+                <div class="rule-item">
+                    <span class="rule-number">6</span>
+                    <span class="rule-title">Zeitlimit für Herausforderungen</span>
+                    <div class="rule-description">
+                        Jeder Spieler darf nur eine bestimmte Anzahl an Challenges pro Tag starten (z. B. maximal 3). So vermeidet man Spam-Herausforderungen.
+                    </div>
+                </div>
+                
+                <div class="rule-item">
+                    <span class="rule-number">7</span>
+                    <span class="rule-title">Fairness-Kontrolle</span>
+                    <div class="rule-description">
+                        Wenn es Unklarheiten oder Streit über das Ergebnis gibt, entscheidet ein Admin. Beweise (Screenshots oder Videoaufnahme) sind erlaubt, um den Sieg zu bestätigen.
+                    </div>
+                </div>
+                
+                <div class="rule-item">
+                    <span class="rule-number">8</span>
+                    <span class="rule-title">Reaktionszeit auf Herausforderungen</span>
+                    <div class="rule-description">
+                        Schnellstmöglich Bescheid geben - jeder will weiter kommen.
+                    </div>
+                </div>
+                
+                <div class="rule-item">
+                    <span class="rule-number">9</span>
+                    <span class="rule-title">Verbindliche Plattform & Modus</span>
+                    <div class="rule-description">
+                        Es wird nur in einem festgelegten Modus gespielt (z. B. 2 Runden, kein Handicap). Keine benutzerdefinierten Perks erlaubt.
+                    </div>
+                </div>
+                
+                <div class="rule-item">
+                    <span class="rule-number">10</span>
+                    <span class="rule-title">Rematch-Regel</span>
+                    <div class="rule-description">
+                        Wenn ein Kampf aufgrund von technischen Problemen unterbrochen wird, wird er nur einmal wiederholt. Bei erneutem Problem wird der Kampf auf einen anderen Zeitpunkt verschoben.
+                    </div>
+                </div>
+                
+                <div class="rule-item">
+                    <span class="rule-number">11</span>
+                    <span class="rule-title">Schutz vor Dauerherausforderungen</span>
+                    <div class="rule-description">
+                        Ein Gewinner darf nicht sofort erneut von demselben Spieler herausgefordert werden. Cooldown: 24 Stunden zwischen den gleichen Spielern.
+                    </div>
+                </div>
+                
+                <div class="rule-item">
+                    <span class="rule-number">12</span>
+                    <span class="rule-title">Ausnahmen</span>
+                    <div class="rule-description">
+                        Bei besonderen Umständen kann man Kämpfe skipen und höher Rangige herausfordern, wenn sie einverstanden sind.
+                    </div>
+                </div>
+            </div>
+            
+            <button class="accept-rules-btn" id="acceptRulesBtn">
+                <i class="fas fa-check-circle"></i> Regeln akzeptieren
+            </button>
+        </div>
+    </div>
+
+    <!-- Regelwerk Button (feststehend) -->
+    <div class="rules-button" id="rulesButton">
+        <i class="fas fa-book"></i>
     </div>
 
     <div class="container">
@@ -448,7 +853,7 @@
             </section>
 
             <section class="ranking-section">
-                <h2><i class="fas fa-trophy"></i>Rangliste</h2>
+                <h2><i class="fas fa-trophy"></i> Rangliste</h2>
                 
                 <div id="localDataInfo" class="local-data-info" style="display: none;">
                     <h4><i class="fas fa-database"></i> Lokale Daten</h4>
@@ -558,6 +963,12 @@
     const editMain1 = document.getElementById('editMain1');
     const editMain2 = document.getElementById('editMain2');
     const editMain2Field = document.getElementById('editMain2Field');
+    const rulesMenu = document.getElementById('rulesMenu');
+    const rulesToggle = document.getElementById('rulesToggle');
+    const rulesButton = document.getElementById('rulesButton');
+    const rulesModal = document.getElementById('rulesModal');
+    const modalClose = document.getElementById('modalClose');
+    const acceptRulesBtn = document.getElementById('acceptRulesBtn');
 
     let selectedType = "Demon";
     let selectedRank = "Upper Rank 1";
@@ -589,6 +1000,30 @@
         socialMenu.classList.toggle('open');
         menuToggle.innerHTML = socialMenu.classList.contains('open') ? 
             '<i class="fas fa-chevron-left"></i>' : '<i class="fas fa-chevron-right"></i>';
+    });
+
+    // Regelwerk Toggle
+    rulesToggle.addEventListener('click', () => {
+        rulesMenu.classList.toggle('open');
+        rulesToggle.innerHTML = rulesMenu.classList.contains('open') ? 
+            '<i class="fas fa-chevron-right"></i>' : '<i class="fas fa-chevron-left"></i>';
+    });
+
+    // Regelwerk Button
+    rulesButton.addEventListener('click', () => {
+        rulesMenu.classList.add('open');
+        rulesToggle.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    });
+
+    // Modal schließen
+    modalClose.addEventListener('click', () => {
+        rulesModal.classList.remove('visible');
+    });
+
+    // Regeln akzeptieren
+    acceptRulesBtn.addEventListener('click', () => {
+        localStorage.setItem('rulesAccepted', 'true');
+        rulesModal.classList.remove('visible');
     });
 
     // Typ Buttons
@@ -1207,6 +1642,15 @@
     window.addEventListener('load', () => {
         // Prüfe zuerst die Verbindung
         loadPlayers();
+        
+        // Prüfe, ob Regeln bereits akzeptiert wurden
+        const rulesAccepted = localStorage.getItem('rulesAccepted');
+        if (!rulesAccepted) {
+            // Zeige das Regelwerk-Modal an, wenn noch nicht akzeptiert
+            setTimeout(() => {
+                rulesModal.classList.add('visible');
+            }, 1000);
+        }
     });
     </script>
 </body>
