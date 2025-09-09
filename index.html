@@ -8,189 +8,272 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Zusätzliche Styles für die neuen Funktionen */
-        .social-sidebar {
-            position: fixed;
-            left: -250px;
-            top: 0;
-            height: 100%;
-            width: 250px;
-            background: rgba(30, 30, 46, 0.95);
-            backdrop-filter: blur(10px);
-            transition: left 0.3s ease;
-            z-index: 1000;
-            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            overflow-y: auto;
-        }
-        
-        .social-sidebar.open {
-            left: 0;
-        }
-        
-        .sidebar-toggle {
-            position: fixed;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255, 69, 0, 0.8);
+        /* Zusätzliche Styles für die Fallback-Lösung */
+        .demo-mode-banner {
+            background: linear-gradient(45deg, #ff8c00, #ff4500);
             color: white;
-            border: none;
-            border-radius: 0 5px 5px 0;
-            padding: 15px 5px;
+            padding: 10px 20px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+        
+        .firebase-error {
+            background: rgba(255, 69, 0, 0.1);
+            border: 1px solid rgba(255, 69, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .firebase-error h3 {
+            color: #ff4500;
+            margin-bottom: 10px;
+        }
+        
+        .local-data-info {
+            background: rgba(255, 165, 0, 0.1);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .local-data-info h4 {
+            color: #ff8c00;
+            margin-bottom: 10px;
+        }
+        
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: 15px;
+        }
+        
+        .online-status {
+            background: rgba(52, 168, 83, 0.2);
+            color: #34A853;
+        }
+        
+        .offline-status {
+            background: rgba(234, 67, 53, 0.2);
+            color: #EA4335;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .online-indicator {
+            background: #34A853;
+            box-shadow: 0 0 5px #34A853;
+        }
+        
+        .offline-indicator {
+            background: #EA4335;
+            box-shadow: 0 0 5px #EA4335;
+        }
+        
+        /* Neue Styles für Rang-Auswahl */
+        .rank-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .rank-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .rank-option {
+            padding: 8px 12px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             cursor: pointer;
-            z-index: 999;
+            text-align: center;
             transition: all 0.3s;
         }
         
-        .sidebar-toggle:hover {
-            background: rgba(255, 69, 0, 1);
-            left: 5px;
+        .rank-option:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
         
-        .social-header {
+        .rank-option.selected {
+            background: rgba(255, 69, 0, 0.3);
+            border-color: #ff4500;
+        }
+        
+        .upper-rank {
+            color: #ff6b6b;
+        }
+        
+        .lower-rank {
+            color: #70a1ff;
+        }
+        
+        /* Drag & Drop Styles */
+        .ranking-list.dragging {
+            cursor: grabbing;
+        }
+        
+        .ranking-item.dragging {
+            opacity: 0.5;
+            background: rgba(255, 165, 0, 0.2);
+        }
+        
+        .ranking-item.drag-over {
+            border-top: 3px solid #ff4500;
+        }
+        
+        .drag-handle {
+            cursor: grab;
+            margin-right: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            transition: color 0.3s;
+        }
+        
+        .drag-handle:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .ranking-item {
+            transition: transform 0.3s, background-color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .admin-drag-info {
+            background: rgba(255, 165, 0, 0.1);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
             text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
         }
         
-        .social-header h3 {
+        /* Social Menu Styles */
+        .social-menu {
+            position: fixed;
+            top: 50%;
+            left: -250px;
+            transform: translateY(-50%);
+            width: 250px;
+            background: rgba(30, 30, 46, 0.95);
+            border-radius: 0 10px 10px 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .social-menu.open {
+            left: 0;
+        }
+        
+        .menu-toggle {
+            position: absolute;
+            right: -40px;
+            top: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 69, 0, 0.8);
+            border-radius: 0 5px 5px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .social-menu h3 {
             color: #ff8c00;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 140, 0, 0.3);
+            padding-bottom: 10px;
         }
         
         .social-item {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
-            padding: 12px;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
             background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            transition: all 0.3s;
+            transition: background 0.3s;
         }
         
         .social-item:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px);
+            background: rgba(255, 69, 0, 0.1);
         }
         
-        .social-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 69, 0, 0.2);
-            border-radius: 50%;
-            margin-right: 15px;
-            font-size: 1.2rem;
+        .social-item i {
+            width: 20px;
+            text-align: center;
+            color: #ff8c00;
         }
         
-        .social-info {
+        .social-item a {
+            color: white;
+            text-decoration: none;
             flex: 1;
         }
         
-        .social-info h4 {
-            margin-bottom: 5px;
-            color: #ff8c00;
-        }
-        
-        .social-info a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-        
-        .social-info a:hover {
-            color: #ff8c00;
+        .social-item a:hover {
             text-decoration: underline;
         }
         
-        /* Verbesserte Drag & Drop Hitbox */
-        .drag-drop-area {
-            height: 20px;
-            background: rgba(255, 69, 0, 0.1);
-            border-radius: 3px;
-            margin: 5px 0;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .drag-drop-area::before {
-            content: "↓ Platzieren ↓";
-            color: rgba(255, 69, 0, 0.5);
-            font-size: 0.7rem;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .drag-drop-area.drag-over {
-            background: rgba(255, 69, 0, 0.3);
-            height: 40px;
-        }
-        
-        .drag-drop-area.drag-over::before {
-            opacity: 1;
-        }
-        
-        /* Edit-Button für Mains */
+        /* Edit Mains Button */
         .edit-mains-btn {
-            background: rgba(255, 165, 0, 0.2);
-            border: 1px solid rgba(255, 165, 0, 0.3);
-            color: #ffa500;
-            border-radius: 4px;
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #ffc107;
             padding: 5px 10px;
-            margin-left: 10px;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.3s;
             font-size: 0.8rem;
+            margin-left: 10px;
+            transition: all 0.3s;
         }
         
         .edit-mains-btn:hover {
-            background: rgba(255, 165, 0, 0.3);
+            background: rgba(255, 193, 7, 0.3);
         }
         
-        /* Formular zum Bearbeiten der Mains */
-        .edit-mains-form {
-            display: none;
-            background: rgba(30, 30, 46, 0.9);
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-            border: 1px solid rgba(255, 165, 0, 0.3);
-        }
-        
-        .edit-mains-form input {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            background: rgba(10, 10, 20, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* Drop Zone for Drag & Drop */
+        .drop-zone {
+            height: 20px;
+            background: rgba(255, 69, 0, 0.1);
             border-radius: 4px;
-            color: white;
+            margin: 5px 0;
+            transition: background 0.3s;
         }
         
-        .edit-mains-form button {
-            padding: 8px 15px;
-            background: rgba(255, 165, 0, 0.3);
-            border: 1px solid rgba(255, 165, 0, 0.5);
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .edit-mains-form button:hover {
-            background: rgba(255, 165, 0, 0.5);
-        }
-        
-        /* Anpassungen für Login/Logout Buttons */
-        #loginBtn, #logoutBtn {
-            transition: all 0.3s;
+        .drop-zone.active {
+            background: rgba(255, 69, 0, 0.3);
+            border: 2px dashed #ff4500;
         }
     </style>
 </head>
@@ -204,37 +287,25 @@
         <div class="flame"></div>
     </div>
 
-    <!-- Social Media Sidebar -->
-    <div class="social-sidebar" id="socialSidebar">
-        <div class="social-header">
-            <h3><i class="fas fa-share-alt"></i> Social Links</h3>
-            <p>Folge uns auf YouTube</p>
+    <!-- Social Media Menu -->
+    <div class="social-menu" id="socialMenu">
+        <div class="menu-toggle" id="menuToggle">
+            <i class="fas fa-chevron-right"></i>
+        </div>
+        <h3><i class="fas fa-share-alt"></i> Social Links</h3>
+        
+        <div class="social-item">
+            <i class="fab fa-youtube"></i>
+            <span>J.O.K.R:</span>
+            <a href="https://www.youtube.com/@J.O.K.R" target="_blank">YouTube</a>
         </div>
         
         <div class="social-item">
-            <div class="social-icon">
-                <i class="fab fa-youtube"></i>
-            </div>
-            <div class="social-info">
-                <h4>J.O.K.R (Creator)</h4>
-                <a href="https://www.youtube.com/@J.O.K.R" target="_blank">youtube.com/@J.O.K.R</a>
-            </div>
-        </div>
-        
-        <div class="social-item">
-            <div class="social-icon">
-                <i class="fab fa-youtube"></i>
-            </div>
-            <div class="social-info">
-                <h4>Mikato (Projektleiter)</h4>
-                <a href="https://www.youtube.com/@Mikato-o" target="_blank">youtube.com/@Mikato-o</a>
-            </div>
+            <i class="fab fa-youtube"></i>
+            <span>Mikato:</span>
+            <a href="https://www.youtube.com/@Mikato-o" target="_blank">YouTube</a>
         </div>
     </div>
-
-    <button class="sidebar-toggle" id="sidebarToggle">
-        <i class="fas fa-chevron-right"></i>
-    </button>
 
     <div class="container">
         <header>
@@ -286,18 +357,18 @@
                     <label>Rang auswählen:</label>
                     <div class="rank-selection">
                         <div class="rank-options">
-                            <div class="rank-option upper-moon" data-rank="Upper Rank 1">Upper Rank 1</div>
-                            <div class="rank-option upper-moon" data-rank="Upper Rank 2">Upper Rank 2</div>
-                            <div class="rank-option upper-moon" data-rank="Upper Rank 3">Upper Rank 3</div>
-                            <div class="rank-option upper-moon" data-rank="Upper Rank 4">Upper Rank 4</div>
-                            <div class="rank-option upper-moon" data-rank="Upper Rank 5">Upper Rank 5</div>
-                            <div class="rank-option upper-moon" data-rank="Upper Rank 6">Upper Rank 6</div>
-                            <div class="rank-option lower-moon" data-rank="Lower Rank 1">Lower Rank 1</div>
-                            <div class="rank-option lower-moon" data-rank="Lower Rank 2">Lower Rank 2</div>
-                            <div class="rank-option lower-moon" data-rank="Lower Rank 3">Lower Rank 3</div>
-                            <div class="rank-option lower-moon" data-rank="Lower Rank 4">Lower Rank 4</div>
-                            <div class="rank-option lower-moon" data-rank="Lower Rank 5">Lower Rank 5</div>
-                            <div class="rank-option lower-moon" data-rank="Lower Rank 6">Lower Rank 6</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 1">Upper Rank 1</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 2">Upper Rank 2</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 3">Upper Rank 3</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 4">Upper Rank 4</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 5">Upper Rank 5</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 6">Upper Rank 6</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 1">Lower Rank 1</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 2">Lower Rank 2</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 3">Lower Rank 3</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 4">Lower Rank 4</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 5">Lower Rank 5</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 6">Lower Rank 6</div>
                         </div>
                     </div>
                 </div>
@@ -310,6 +381,12 @@
                 </div>
                 
                 <button id="removeBtn" class="action-btn btn-danger"><i class="fas fa-trash-alt"></i> Spieler entfernen</button>
+                
+                <div class="form-group" id="editMainsSection" style="display: none;">
+                    <h3>Mains bearbeiten</h3>
+                    <div id="editMainsFields"></div>
+                    <button id="saveMainsBtn" class="action-btn btn-primary"><i class="fas fa-save"></i> Mains speichern</button>
+                </div>
             </section>
 
             <section class="ranking-section">
@@ -325,10 +402,10 @@
                 </div>
                 
                 <div class="ranking-header">
-                    <span>RANG</span>
-                    <span>NAME</span>
-                    <span>TYP</span>
-                    <span>MAIN CHARACTERS</span>
+                    <span>Rang</span>
+                    <span>Name</span>
+                    <span>Typ</span>
+                    <span>Main Characters</span>
                 </div>
                 <ul id="rankingList" class="ranking-list"></ul>
             </section>
@@ -417,8 +494,11 @@
     const connectionStatus = document.getElementById("connectionStatus");
     const rankOptions = document.querySelectorAll('.rank-option');
     const adminDragInfo = document.getElementById('adminDragInfo');
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    const socialSidebar = document.getElementById('socialSidebar');
+    const socialMenu = document.getElementById('socialMenu');
+    const menuToggle = document.getElementById('menuToggle');
+    const editMainsSection = document.getElementById('editMainsSection');
+    const editMainsFields = document.getElementById('editMainsFields');
+    const saveMainsBtn = document.getElementById('saveMainsBtn');
 
     let selectedType = "Demon";
     let selectedRank = "Upper Rank 1";
@@ -427,17 +507,7 @@
     let usingDemoData = false;
     let isAdmin = false;
     let dragSourceElement = null;
-    let editingPlayer = null;
-
-    // Sidebar Toggle
-    sidebarToggle.addEventListener('click', () => {
-        socialSidebar.classList.toggle('open');
-        if (socialSidebar.classList.contains('open')) {
-            sidebarToggle.innerHTML = '<i class="fas fa-chevron-left"></i>';
-        } else {
-            sidebarToggle.innerHTML = '<i class="fas fa-chevron-right"></i>';
-        }
-    });
+    let currentlyEditingPlayer = null;
 
     // Login / Logout
     loginBtn.addEventListener("click", () => {
@@ -452,6 +522,13 @@
         if (auth) {
             signOut(auth);
         }
+    });
+
+    // Social Menu Toggle
+    menuToggle.addEventListener('click', () => {
+        socialMenu.classList.toggle('open');
+        menuToggle.innerHTML = socialMenu.classList.contains('open') ? 
+            '<i class="fas fa-chevron-left"></i>' : '<i class="fas fa-chevron-right"></i>';
     });
 
     // Typ Buttons
@@ -490,11 +567,11 @@
             currentUser = user;
             if(user){
                 document.getElementById("userEmail").innerHTML = `<i class="fas fa-user"></i> ${user.email}`;
-                isAdmin = (user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com");
-                
                 // Login/Logout Buttons anpassen
-                loginBtn.style.display = "none";
-                logoutBtn.style.display = "flex";
+                document.getElementById("loginBtn").style.display = "none";
+                document.getElementById("logoutBtn").style.display = "flex";
+                
+                isAdmin = (user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com");
                 
                 if(isAdmin){
                     adminPanel.style.display = "block";
@@ -511,8 +588,8 @@
                 }
             } else {
                 // Login/Logout Buttons anpassen
-                loginBtn.style.display = "flex";
-                logoutBtn.style.display = "none";
+                document.getElementById("loginBtn").style.display = "flex";
+                document.getElementById("logoutBtn").style.display = "none";
                 
                 adminPanel.classList.remove("visible");
                 adminDragInfo.style.display = "none";
@@ -532,48 +609,17 @@
         demoModeBanner.style.display = "block";
         usingDemoData = true;
         updateConnectionStatus(false);
+        
+        // Buttons anpassen für Offline-Modus
+        document.getElementById("loginBtn").style.display = "flex";
+        document.getElementById("logoutBtn").style.display = "none";
     }
 
     // Drag & Drop Funktionen
     function initDragAndDrop() {
         const items = rankingList.querySelectorAll('.ranking-item');
         
-        // Lösche alle vorhandenen Drag-Drop-Bereiche
-        rankingList.querySelectorAll('.drag-drop-area').forEach(area => area.remove());
-        
-        // Erstelle Drag-Drop-Bereiche zwischen den Elementen
-        items.forEach((item, index) => {
-            // Erstelle einen Drag-Drop-Bereich vor jedem Element (außer dem ersten)
-            if (index > 0) {
-                const dragArea = document.createElement('div');
-                dragArea.className = 'drag-drop-area';
-                dragArea.dataset.position = index;
-                rankingList.insertBefore(dragArea, item);
-                
-                // Event-Listener für Drag & Drop
-                dragArea.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    dragArea.classList.add('drag-over');
-                });
-                
-                dragArea.addEventListener('dragleave', (e) => {
-                    dragArea.classList.remove('drag-over');
-                });
-                
-                dragArea.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    dragArea.classList.remove('drag-over');
-                    
-                    if (dragSourceElement) {
-                        // Element an der richtigen Position einfügen
-                        rankingList.insertBefore(dragSourceElement, dragArea.nextSibling);
-                        
-                        // Ränge aktualisieren
-                        updateRanksAfterDrag();
-                    }
-                });
-            }
-            
+        items.forEach(item => {
             // Handle für Drag & Drop hinzufügen
             if (isAdmin) {
                 const dragHandle = document.createElement('span');
@@ -588,47 +634,51 @@
                     dragSourceElement = item;
                     e.dataTransfer.setData('text/plain', item.dataset.name);
                     item.classList.add('dragging');
+                    setTimeout(() => item.style.display = 'none', 0);
                 });
                 
                 item.addEventListener('dragend', (e) => {
                     item.classList.remove('dragging');
-                    rankingList.querySelectorAll('.drag-drop-area').forEach(area => {
-                        area.classList.remove('drag-over');
+                    item.style.display = 'flex';
+                    rankingList.querySelectorAll('.ranking-item').forEach(i => {
+                        i.classList.remove('drag-over');
                     });
+                });
+                
+                item.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+                
+                item.addEventListener('dragenter', (e) => {
+                    e.preventDefault();
+                    item.classList.add('drag-over');
+                });
+                
+                item.addEventListener('dragleave', (e) => {
+                    item.classList.remove('drag-over');
+                });
+                
+                item.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    item.classList.remove('drag-over');
+                    
+                    if (dragSourceElement !== item) {
+                        // Element verschieben
+                        if (dragSourceElement.nextSibling === item) {
+                            rankingList.insertBefore(dragSourceElement, item.nextSibling);
+                        } else {
+                            rankingList.insertBefore(dragSourceElement, item);
+                        }
+                        
+                        // Ränge aktualisieren
+                        updateRanksAfterDrag();
+                    }
                 });
             } else {
                 // Entferne Drag & Drop Funktionen, wenn nicht Admin
                 item.setAttribute('draggable', 'false');
                 const handle = item.querySelector('.drag-handle');
                 if (handle) handle.remove();
-            }
-        });
-        
-        // Füge einen Bereich nach dem letzten Element hinzu
-        const lastDragArea = document.createElement('div');
-        lastDragArea.className = 'drag-drop-area';
-        lastDragArea.dataset.position = items.length;
-        rankingList.appendChild(lastDragArea);
-        
-        lastDragArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            lastDragArea.classList.add('drag-over');
-        });
-        
-        lastDragArea.addEventListener('dragleave', (e) => {
-            lastDragArea.classList.remove('drag-over');
-        });
-        
-        lastDragArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            lastDragArea.classList.remove('drag-over');
-            
-            if (dragSourceElement) {
-                // Element am Ende einfügen
-                rankingList.appendChild(dragSourceElement);
-                
-                // Ränge aktualisieren
-                updateRanksAfterDrag();
             }
         });
     }
@@ -656,7 +706,7 @@
             // Rang in der Anzeige aktualisieren
             const rankElement = item.querySelector('.player-rank');
             rankElement.textContent = rank;
-            rankElement.className = `player-rank ${rank.startsWith("Upper") ? "upper-moon" : "lower-moon"}`;
+            rankElement.className = `player-rank ${rank.startsWith("Upper") ? "upper-rank" : "lower-rank"}`;
         });
         
         // Datenbank aktualisieren (wenn online)
@@ -686,9 +736,6 @@
             localStorage.setItem('demonSlayerPlayers', JSON.stringify(playersObj));
             showNotification("Rangliste lokal aktualisiert (Offline-Modus).", "info");
         }
-        
-        // Drag & Drop neu initialisieren
-        initDragAndDrop();
     }
 
     // Rang basierend auf Position bestimmen
@@ -709,98 +756,6 @@
         ];
         
         return ranks[position] || "Lower Rank 6";
-    }
-
-    // Mains bearbeiten Funktion
-    function setupEditMains() {
-        document.querySelectorAll('.edit-mains-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const playerItem = btn.closest('.ranking-item');
-                const playerName = playerItem.dataset.name;
-                const mainsText = playerItem.querySelector('.player-mains').textContent;
-                
-                // Formular anzeigen
-                let form = playerItem.querySelector('.edit-mains-form');
-                if (!form) {
-                    form = document.createElement('div');
-                    form.className = 'edit-mains-form';
-                    form.innerHTML = `
-                        <input type="text" class="edit-main1" placeholder="Main 1">
-                        <input type="text" class="edit-main2" placeholder="Main 2 (optional)">
-                        <button class="save-mains-btn">Speichern</button>
-                        <button class="cancel-mains-btn">Abbrechen</button>
-                    `;
-                    playerItem.appendChild(form);
-                    
-                    // Event-Listener für Formular
-                    form.querySelector('.save-mains-btn').addEventListener('click', () => {
-                        saveMains(playerName, form);
-                    });
-                    
-                    form.querySelector('.cancel-mains-btn').addEventListener('click', () => {
-                        form.style.display = 'none';
-                    });
-                }
-                
-                // Bestehende Werte setzen
-                const mains = mainsText.split(', ');
-                form.querySelector('.edit-main1').value = mains[0] || '';
-                form.querySelector('.edit-main2').value = mains[1] || '';
-                
-                form.style.display = 'block';
-            });
-        });
-    }
-
-    // Mains speichern
-    async function saveMains(playerName, form) {
-        const main1 = form.querySelector('.edit-main1').value.trim();
-        const main2 = form.querySelector('.edit-main2').value.trim();
-        
-        if (!main1) {
-            showNotification("Bitte mindestens einen Main Character angeben!", "error");
-            return;
-        }
-        
-        const mains = main2 ? [main1, main2] : [main1];
-        
-        try {
-            // Spielerdaten laden
-            let playerData;
-            if (db && isOnline) {
-                const snapshot = await get(ref(db, 'players/' + playerName));
-                playerData = snapshot.val();
-            } else {
-                const localPlayers = JSON.parse(localStorage.getItem('demonSlayerPlayers') || '{}');
-                playerData = localPlayers[playerName];
-            }
-            
-            if (playerData) {
-                // Mains aktualisieren
-                playerData.mains = mains;
-                
-                // In Datenbank speichern
-                if (db && isOnline) {
-                    await set(ref(db, 'players/' + playerName), playerData);
-                    showNotification("Mains erfolgreich aktualisiert!", "success");
-                }
-                
-                // Lokal speichern
-                const localPlayers = JSON.parse(localStorage.getItem('demonSlayerPlayers') || '{}');
-                localPlayers[playerName] = playerData;
-                localStorage.setItem('demonSlayerPlayers', JSON.stringify(localPlayers));
-                
-                // UI aktualisieren
-                const mainsElement = document.querySelector(`.ranking-item[data-name="${playerName}"] .player-mains`);
-                mainsElement.textContent = mains.join(', ');
-                
-                // Formular ausblenden
-                form.style.display = 'none';
-            }
-        } catch (err) {
-            showNotification("Fehler beim Speichern: " + err.message, "error");
-        }
     }
 
     // Spieler hinzufügen/aktualisieren
@@ -829,7 +784,7 @@
 
         try{
             await set(ref(db,'players/'+name), playerData);
-            showNotification("Spieler erfolgreich hinzugefügt/aktualisiert!", "success");
+            showNotification("Spieler erfolgreicht hinzugefügt/aktualisiert!", "success");
             document.getElementById("playerName").value = "";
             document.getElementById("main1").value = "";
             if(main2) document.getElementById("main2").value = "";
@@ -1038,7 +993,7 @@
             li.style.animationDelay = `${index * 0.1}s`;
             
             li.innerHTML=`
-                <span class="player-rank ${player.rank.startsWith("Upper")?"upper-moon":"lower-moon"}">${player.rank}</span>
+                <span class="player-rank ${player.rank.startsWith("Upper")?"upper-rank":"lower-rank"}">${player.rank}</span>
                 <span class="player-name">${player.name}</span>
                 <span class="player-type ${player.type === 'Demon' ? 'demon-type' : 'slayer-type'}">${player.type}</span>
                 <span class="player-mains">${player.mains.join(", ")}</span>
@@ -1049,7 +1004,10 @@
                 const editButton = document.createElement('button');
                 editButton.className = 'edit-mains-btn';
                 editButton.innerHTML = '<i class="fas fa-edit"></i> Bearbeiten';
-                li.querySelector('.player-mains').after(editButton);
+                editButton.addEventListener('click', () => {
+                    editPlayerMains(player);
+                });
+                li.querySelector('.player-mains').appendChild(editButton);
             }
             
             rankingList.appendChild(li);
@@ -1057,12 +1015,104 @@
         
         // Drag & Drop initialisieren
         initDragAndDrop();
-        
-        // Edit-Buttons initialisieren
-        if (isAdmin) {
-            setupEditMains();
-        }
     }
+
+    // Mains eines Spielers bearbeiten
+    function editPlayerMains(player) {
+        currentlyEditingPlayer = player;
+        editMainsSection.style.display = 'block';
+        editMainsFields.innerHTML = '';
+        
+        // Felder für die Mains erstellen
+        const mains = player.mains || [];
+        
+        mains.forEach((main, index) => {
+            const inputGroup = document.createElement('div');
+            inputGroup.className = 'form-group';
+            inputGroup.innerHTML = `
+                <label>Main ${index + 1}:</label>
+                <input type="text" class="text-input main-input" value="${main}" data-index="${index}">
+                <button class="action-btn btn-danger remove-main-btn" style="margin-top: 5px; padding: 5px 10px;">
+                    <i class="fas fa-trash"></i> Entfernen
+                </button>
+            `;
+            editMainsFields.appendChild(inputGroup);
+            
+            // Event-Listener für Entfernen-Button
+            const removeBtn = inputGroup.querySelector('.remove-main-btn');
+            removeBtn.addEventListener('click', () => {
+                inputGroup.remove();
+            });
+        });
+        
+        // Button zum Hinzufügen weiterer Mains
+        const addMainBtn = document.createElement('button');
+        addMainBtn.className = 'action-btn btn-primary';
+        addMainBtn.innerHTML = '<i class="fas fa-plus"></i> Main hinzufügen';
+        addMainBtn.addEventListener('click', () => {
+            const inputGroup = document.createElement('div');
+            inputGroup.className = 'form-group';
+            inputGroup.innerHTML = `
+                <label>Main ${editMainsFields.children.length + 1}:</label>
+                <input type="text" class="text-input main-input">
+                <button class="action-btn btn-danger remove-main-btn" style="margin-top: 5px; padding: 5px 10px;">
+                    <i class="fas fa-trash"></i> Entfernen
+                </button>
+            `;
+            editMainsFields.appendChild(inputGroup);
+            
+            // Event-Listener für Entfernen-Button
+            const removeBtn = inputGroup.querySelector('.remove-main-btn');
+            removeBtn.addEventListener('click', () => {
+                inputGroup.remove();
+            });
+        });
+        
+        editMainsFields.appendChild(addMainBtn);
+    }
+
+    // Event-Listener für Speichern-Button
+    saveMainsBtn.addEventListener('click', async () => {
+        if (!currentlyEditingPlayer) return;
+        
+        // Mains aus den Eingabefeldern sammeln
+        const mainInputs = editMainsFields.querySelectorAll('.main-input');
+        const newMains = [];
+        
+        mainInputs.forEach(input => {
+            if (input.value.trim() !== '') {
+                newMains.push(input.value.trim());
+            }
+        });
+        
+        if (newMains.length === 0) {
+            showNotification("Mindestens ein Main Character muss angegeben werden.", "error");
+            return;
+        }
+        
+        // Spieler aktualisieren
+        const updatedPlayer = {
+            ...currentlyEditingPlayer,
+            mains: newMains
+        };
+        
+        try {
+            if (db && isOnline) {
+                await set(ref(db, 'players/' + updatedPlayer.name), updatedPlayer);
+                showNotification("Mains erfolgreich aktualisiert!", "success");
+            }
+            
+            // Lokal speichern
+            savePlayerLocally(updatedPlayer);
+            loadPlayers();
+            
+            // Bearbeitungsmodus beenden
+            editMainsSection.style.display = 'none';
+            currentlyEditingPlayer = null;
+        } catch (err) {
+            showNotification("Fehler beim Aktualisieren: " + err.message, "error");
+        }
+    });
 
     // Benachrichtigungsfunktion
     function showNotification(message, type) {
