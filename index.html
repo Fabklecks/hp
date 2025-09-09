@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Abonniert J.O.K.R auf Youtube</title>
+<title>Demon Slayer Hinokami Chronicles 2 - Rangliste</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Demon Slayer 2 Ranking made by J.O.K.R</h1>
+<h1>Demon Slayer Hinokami Chronicles 2 - Rangliste</h1>
 
 <div class="login-area">
-  <button id="loginBtn">Login</button>
+  <button id="loginBtn">Login (Admin)</button>
   <button id="logoutBtn">Logout</button>
   <span id="userEmail">Nicht eingeloggt</span>
 </div>
 
 <div id="adminPanel" class="admin-panel">
-  <h2>Spieler verwalten</h2>
+  <h2>Spieler verwalten (Admin)</h2>
 
   <label>Spielername:</label>
   <input type="text" id="playerName" placeholder="Spielername">
@@ -40,7 +40,7 @@
   <button id="removeBtn" class="action-btn">Spieler entfernen</button>
 </div>
 
-<h2>Live-Rangliste (Drag & Drop)</h2>
+<h2>Live-Rangliste</h2>
 <ul id="rankingList" class="ranking-list"></ul>
 
 <script type="module">
@@ -48,6 +48,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebas
 import { getDatabase, ref, set, remove, get, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
   authDomain: "demonslayerranks.firebaseapp.com",
@@ -63,6 +64,7 @@ const db = getDatabase(app);
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
 
+// DOM Elemente
 const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const adminPanel = document.getElementById("adminPanel");
@@ -77,11 +79,11 @@ const removeBtn = document.getElementById("removeBtn");
 let selectedType = "Demon";
 let currentUser = null;
 
-// Login/Logout
+// Login / Logout
 loginBtn.addEventListener("click", () => signInWithPopup(auth, provider));
 logoutBtn.addEventListener("click", () => signOut(auth));
 
-// Typ-Buttons
+// Typ Buttons
 btnDemon.addEventListener("click", ()=>{
   selectedType="Demon";
   btnDemon.classList.add("selected");
@@ -96,27 +98,26 @@ btnDemonSlayer.addEventListener("click", ()=>{
   <label>Main Character 2:</label><input type="text" id="main2" placeholder="Main 2">`;
 });
 
-// Auth state
+// Auth Status
 onAuthStateChanged(auth, (user)=>{
   currentUser = user;
   if(user){
     document.getElementById("userEmail").innerText = user.email;
     if(user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com"){
       adminPanel.style.display = "block";
-      loadPlayers(); // ✅ erst nach Login laden
     } else {
       adminPanel.style.display = "none";
-      alert("Du bist kein Admin!");
     }
   } else {
     adminPanel.style.display = "none";
     document.getElementById("userEmail").innerText = "Nicht eingeloggt";
   }
+  loadPlayers(); // Immer Spieler laden, auch wenn nicht eingeloggt
 });
 
 // Spieler hinzufügen/aktualisieren
 addUpdateBtn.addEventListener("click", async ()=>{
-  if(!currentUser){ alert("Bitte zuerst einloggen!"); return; }
+  if(!currentUser){ alert("Nur Admins können Spieler hinzufügen."); return; }
   const name = document.getElementById("playerName").value.trim();
   const main1 = document.getElementById("main1")?.value.trim();
   const main2 = document.getElementById("main2")?.value.trim();
@@ -131,7 +132,7 @@ addUpdateBtn.addEventListener("click", async ()=>{
 
   try{
     await set(ref(db,'players/'+name), playerData);
-    loadPlayers(); // sofort aktualisieren
+    loadPlayers();
   } catch(err){ alert("Fehler: "+err.message); }
 });
 
@@ -145,15 +146,14 @@ removeBtn.addEventListener("click", async ()=>{
   } catch(err){ alert("Fehler: "+err.message); }
 });
 
-// Spieler laden
+// Spieler laden und Rangliste rendern
 async function loadPlayers(){
-  if(!currentUser) return;
   try {
     const snapshot = await get(ref(db,'players/'));
     const data = snapshot.val();
-    if(!data) return;
+    if(!data){ rankingList.innerHTML="<li>Keine Spieler vorhanden</li>"; return; }
 
-    const players = Object.values(data); // Name schon im Objekt
+    const players = Object.values(data);
     updateDropdown(players);
     renderRanking(players);
   } catch(err){
@@ -161,7 +161,7 @@ async function loadPlayers(){
   }
 }
 
-// Dropdown updaten
+// Dropdown für Admin
 function updateDropdown(players){
   existingPlayers.innerHTML="";
   players.forEach(player=>{
@@ -177,8 +177,8 @@ function renderRanking(players){
   rankingList.innerHTML="";
   const sorted = players.sort((a,b)=>{
     const rankOrder = r => {
-      let moon = r.rank.split(" ")[0];
-      let num = parseInt(r.rank.split(" ")[1]) || 6;
+      const [moon,numStr] = r.rank.split(" ");
+      const num = parseInt(numStr) || 6;
       return (moon==="Upper"?0:1)*10 + num;
     }
     return rankOrder(a)-rankOrder(b);
@@ -186,57 +186,10 @@ function renderRanking(players){
 
   sorted.forEach(player=>{
     const li = document.createElement("li");
-    li.draggable=true;
     li.dataset.name=player.name;
     li.className = player.rank.startsWith("Upper")?"upper":"lower";
     li.innerHTML=`<span class="player-name">${player.name}</span> <span class="player-rank">${player.rank}</span> <span class="player-mains">${player.mains.join(", ")}</span>`;
     rankingList.appendChild(li);
-  });
-  enableDragAndDrop();
-}
-
-// Drag & Drop
-function enableDragAndDrop(){
-  let dragged=null;
-  rankingList.querySelectorAll('li').forEach(item=>{
-    item.addEventListener('dragstart', e=>{
-      dragged=item;
-      item.classList.add('dragging');
-    });
-    item.addEventListener('dragend', e=>{
-      dragged=null;
-      item.classList.remove('dragging');
-      updateRanksFirebase();
-    });
-    item.addEventListener('dragover', e=>{
-      e.preventDefault();
-      const after = getDragAfterElement(rankingList,e.clientY);
-      if(after==null) rankingList.appendChild(dragged);
-      else rankingList.insertBefore(dragged, after);
-    });
-  });
-}
-
-function getDragAfterElement(container,y){
-  const draggableElements = [...container.querySelectorAll('li:not(.dragging)')];
-  return draggableElements.reduce((closest, child)=>{
-    const box = child.getBoundingClientRect();
-    const offset = y - box.top - box.height/2;
-    if(offset<0 && offset>closest.offset) return {offset:offset, element:child};
-    else return closest;
-  }, {offset:-Infinity}).element;
-}
-
-function updateRanksFirebase(){
-  const lis = rankingList.querySelectorAll('li');
-  lis.forEach((li,i)=>{
-    const playerName = li.dataset.name;
-    const moon = i<6?"Upper Moon":"Lower Moon";
-    const num = i<6?i+1:i-5;
-    const rank = moon+" "+num;
-    li.className = moon==="Upper Moon"?"upper":"lower";
-    li.querySelector(".player-rank").innerText = rank;
-    update(ref(db,'players/'+playerName), {rank});
   });
 }
 </script>
