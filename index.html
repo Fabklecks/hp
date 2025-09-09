@@ -7,88 +7,6 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* Zusätzliche Styles für die Fallback-Lösung */
-        .demo-mode-banner {
-            background: linear-gradient(45deg, #ff8c00, #ff4500);
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            font-weight: bold;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 0.8; }
-            50% { opacity: 1; }
-            100% { opacity: 0.8; }
-        }
-        
-        .firebase-error {
-            background: rgba(255, 69, 0, 0.1);
-            border: 1px solid rgba(255, 69, 0, 0.3);
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        
-        .firebase-error h3 {
-            color: #ff4500;
-            margin-bottom: 10px;
-        }
-        
-        .local-data-info {
-            background: rgba(255, 165, 0, 0.1);
-            border: 1px solid rgba(255, 165, 0, 0.3);
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        
-        .local-data-info h4 {
-            color: #ff8c00;
-            margin-bottom: 10px;
-        }
-        
-        .connection-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            margin-left: 15px;
-        }
-        
-        .online-status {
-            background: rgba(52, 168, 83, 0.2);
-            color: #34A853;
-        }
-        
-        .offline-status {
-            background: rgba(234, 67, 53, 0.2);
-            color: #EA4335;
-        }
-        
-        .status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        
-        .online-indicator {
-            background: #34A853;
-            box-shadow: 0 0 5px #34A853;
-        }
-        
-        .offline-indicator {
-            background: #EA4335;
-            box-shadow: 0 0 5px #EA4335;
-        }
-    </style>
 </head>
 <body>
     <!-- Hintergrund-Animationen -->
@@ -108,25 +26,12 @@
                 <button id="loginBtn" class="btn-login"><i class="fab fa-google"></i> Login (Admin)</button>
                 <button id="logoutBtn" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 <span id="userEmail"><i class="fas fa-user"></i> Nicht eingeloggt</span>
-                <span id="connectionStatus" class="connection-status offline-status">
-                    <span class="status-indicator offline-indicator"></span>
-                    Offline Modus
-                </span>
             </div>
         </header>
-
-        <div id="demoModeBanner" class="demo-mode-banner" style="display: none;">
-            <i class="fas fa-info-circle"></i> Demo-Modus: Es werden lokale Beispieldaten angezeigt
-        </div>
 
         <main>
             <section id="adminPanel" class="admin-panel card">
                 <h2><i class="fas fa-crown"></i> Spieler verwalten (Admin)</h2>
-
-                <div id="firebaseError" class="firebase-error" style="display: none;">
-                    <h3><i class="fas fa-exclamation-triangle"></i> Firebase-Verbindungsfehler</h3>
-                    <p>Die Verbindung zur Datenbank ist fehlgeschlagen. Änderungen können nicht gespeichert werden.</p>
-                </div>
 
                 <div class="form-group">
                     <label>Spielername:</label>
@@ -158,12 +63,6 @@
 
             <section class="ranking-section">
                 <h2><i class="fas fa-trophy"></i> Live-Rangliste</h2>
-                
-                <div id="localDataInfo" class="local-data-info" style="display: none;">
-                    <h4><i class="fas fa-database"></i> Lokale Daten</h4>
-                    <p>Es werden lokal gespeicherte Daten angezeigt, da keine Verbindung zur Datenbank möglich war.</p>
-                </div>
-                
                 <div class="ranking-header">
                     <span>Rang</span>
                     <span>Name</span>
@@ -176,41 +75,34 @@
         </main>
     </div>
 
-    <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-    import { getDatabase, ref, set, remove, get } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+    <!-- Firebase App Initialisierung (MUSS vor den anderen SDKs stehen) -->
+    <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js"></script>
+    <!-- Firebase Database SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js"></script>
+    <!-- Firebase Auth SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js"></script>
 
-    // Firebase Config
+    <script>
+    // Firebase Konfiguration
     const firebaseConfig = {
         apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
         authDomain: "demonslayerranks.firebaseapp.com",
-        databaseURL: "https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app/",
+        databaseURL: "https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app",
         projectId: "demonslayerranks",
         storageBucket: "demonslayerranks.appspot.com",
         messagingSenderId: "244021550640",
         appId: "1:244021550640:web:4d2a3c7a52c205f5e997f5"
     };
 
-    const demoPlayers = [
-        {name: "Mikato", type: "Demon", mains: ["Yorrichi Type Zero"], rank: "Lower Moon 6"},
-        {name: "Tanjiro", type: "Demon Slayer", mains: ["Water Breathing","Hinokami Kagura"], rank: "Upper Moon 4"},
-        {name: "Nezuko", type: "Demon", mains: ["Blood Demon Art"], rank: "Upper Moon 6"},
-        {name: "Zenitsu", type: "Demon Slayer", mains: ["Thunder Breathing"], rank: "Lower Moon 2"},
-        {name: "Inosuke", type: "Demon Slayer", mains: ["Beast Breathing"], rank: "Lower Moon 3"}
-    ];
+    // Firebase initialisieren
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const auth = firebase.auth();
 
-    let app, db, auth, provider;
-    try {
-        app = initializeApp(firebaseConfig);
-        db = getDatabase(app);
-        auth = getAuth();
-        provider = new GoogleAuthProvider();
-    } catch (err) {
-        console.error("Firebase Init Error:", err);
-    }
+    // Google Auth Provider
+    const provider = new firebase.auth.GoogleAuthProvider();
 
-    // DOM
+    // DOM Elemente
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const adminPanel = document.getElementById("adminPanel");
@@ -221,155 +113,274 @@
     const mainFields = document.getElementById("mainFields");
     const addUpdateBtn = document.getElementById("addUpdateBtn");
     const removeBtn = document.getElementById("removeBtn");
-    const firebaseError = document.getElementById("firebaseError");
-    const localDataInfo = document.getElementById("localDataInfo");
-    const demoModeBanner = document.getElementById("demoModeBanner");
-    const connectionStatus = document.getElementById("connectionStatus");
 
     let selectedType = "Demon";
     let currentUser = null;
-    let usingDemoData = false;
 
-    // Login
-    loginBtn.addEventListener("click", ()=>{ if(auth) signInWithPopup(auth, provider); });
-    logoutBtn.addEventListener("click", ()=>{ if(auth) signOut(auth); });
-
+    // Event-Listener
+    loginBtn.addEventListener("click", signInWithGoogle);
+    logoutBtn.addEventListener("click", signOut);
+    
     // Typ Buttons
     btnDemon.addEventListener("click", ()=>{
-        selectedType="Demon";
+        selectedType = "Demon";
         btnDemon.classList.add("selected");
         btnDemonSlayer.classList.remove("selected");
-        mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">`;
+        mainFields.innerHTML = `<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">`;
     });
+    
     btnDemonSlayer.addEventListener("click", ()=>{
-        selectedType="Demon Slayer";
+        selectedType = "Demon Slayer";
         btnDemonSlayer.classList.add("selected");
         btnDemon.classList.remove("selected");
-        mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">
+        mainFields.innerHTML = `<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">
         <label>Main Character 2:</label><input type="text" id="main2" placeholder="Main 2" class="text-input">`;
     });
 
-    if(auth){
-        onAuthStateChanged(auth,(user)=>{
-            currentUser = user;
-            if(user){
-                document.getElementById("userEmail").innerHTML = `<i class="fas fa-user"></i> ${user.email}`;
-                if(user.email==="fabioasik221206@gmail.com" || user.email==="cand7105@gmail.com"){
-                    adminPanel.style.display="block";
-                } else {
-                    adminPanel.style.display="none";
-                }
-            } else {
-                document.getElementById("userEmail").innerHTML = "<i class=\"fas fa-user\"></i> Nicht eingeloggt";
-                adminPanel.style.display="none";
-            }
-            loadPlayers();
-        });
-    } else {
-        adminPanel.style.display="none";
-        firebaseError.style.display="block";
-        demoModeBanner.style.display="block";
-        usingDemoData=true;
+    // Spieler hinzufügen/aktualisieren
+    addUpdateBtn.addEventListener("click", addOrUpdatePlayer);
+    
+    // Spieler entfernen
+    removeBtn.addEventListener("click", removePlayer);
+
+    // Mit Google anmelden
+    function signInWithGoogle() {
+        auth.signInWithPopup(provider)
+            .then((result) => {
+                // Erfolgreich angemeldet
+                console.log("Erfolgreich angemeldet:", result.user);
+            })
+            .catch((error) => {
+                console.error("Fehler bei der Anmeldung:", error);
+                showNotification("Anmeldung fehlgeschlagen: " + error.message, "error");
+            });
     }
 
-    // Spieler laden
-    async function loadPlayers(){
-        if(db){
-            try{
-                const pathRef = ref(db,'players/');
-                console.log("Firebase Ref:", pathRef);
-                const snapshot = await get(pathRef);
-                console.log("Snapshot exists:", snapshot.exists());
-                console.log("Snapshot val:", snapshot.val());
-                
-                if(snapshot.exists()){
-                    const data = snapshot.val();
-                    const players = Object.values(data);
-                    updateDropdown(players);
-                    renderRanking(players);
-                    updateConnectionStatus(true);
-                    return;
-                }
-            } catch(err){
-                console.error("Fehler beim Laden von Firebase:", err);
-                updateConnectionStatus(false);
+    // Abmelden
+    function signOut() {
+        auth.signOut()
+            .then(() => {
+                console.log("Erfolgreich abgemeldet");
+                showNotification("Erfolgreich abgemeldet", "success");
+            })
+            .catch((error) => {
+                console.error("Fehler beim Abmelden:", error);
+            });
+    }
+
+    // Auth State ändert sich
+    auth.onAuthStateChanged((user) => {
+        currentUser = user;
+        if (user) {
+            document.getElementById("userEmail").innerHTML = `<i class="fas fa-user"></i> ${user.email}`;
+            
+            // Admin-Rechte prüfen
+            if (user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com") {
+                adminPanel.style.display = "block";
+                setTimeout(() => {
+                    adminPanel.classList.add("visible");
+                }, 10);
+            } else {
+                adminPanel.style.display = "none";
             }
-        }
-        // Fallback lokal
-        const localPlayers = loadLocalPlayers();
-        if(localPlayers.length>0){
-            localDataInfo.style.display="block";
-            updateDropdown(localPlayers);
-            renderRanking(localPlayers);
         } else {
-            updateDropdown(demoPlayers);
-            renderRanking(demoPlayers);
-            demoModeBanner.style.display="block";
-            usingDemoData=true;
+            adminPanel.style.display = "none";
+            document.getElementById("userEmail").innerHTML = "<i class=\"fas fa-user\"></i> Nicht eingeloggt";
         }
+        
+        // Spieler laden
+        loadPlayers();
+    });
+
+    // Spieler hinzufügen oder aktualisieren
+    function addOrUpdatePlayer() {
+        if (!currentUser) {
+            showNotification("Bitte zuerst anmelden", "error");
+            return;
+        }
+        
+        // Admin-Rechte prüfen
+        if (currentUser.email !== "fabioasik221206@gmail.com" && currentUser.email !== "cand7105@gmail.com") {
+            showNotification("Nur Administratoren können Spieler hinzufügen", "error");
+            return;
+        }
+        
+        const name = document.getElementById("playerName").value.trim();
+        const main1 = document.getElementById("main1").value.trim();
+        let main2 = "";
+        
+        if (selectedType === "Demon Slayer") {
+            main2 = document.getElementById("main2").value.trim();
+        }
+
+        if (!name || !main1 || (selectedType === "Demon Slayer" && !main2)) {
+            showNotification("Bitte alle Felder ausfüllen!", "error");
+            return;
+        }
+
+        const mains = selectedType === "Demon" ? [main1] : [main1, main2];
+        const playerData = {
+            name: name,
+            type: selectedType,
+            mains: mains,
+            rank: "Lower Moon 6"
+        };
+
+        // Spieler zur Datenbank hinzufügen
+        database.ref('players/' + name).set(playerData)
+            .then(() => {
+                showNotification("Spieler erfolgreich hinzugefügt/aktualisiert!", "success");
+                // Formular zurücksetzen
+                document.getElementById("playerName").value = "";
+                document.getElementById("main1").value = "";
+                if (main2) document.getElementById("main2").value = "";
+            })
+            .catch((error) => {
+                console.error("Fehler beim Speichern des Spielers:", error);
+                showNotification("Fehler beim Speichern: " + error.message, "error");
+            });
+    }
+
+    // Spieler entfernen
+    function removePlayer() {
+        if (!currentUser) {
+            showNotification("Bitte zuerst anmelden", "error");
+            return;
+        }
+        
+        // Admin-Rechte prüfen
+        if (currentUser.email !== "fabioasik221206@gmail.com" && currentUser.email !== "cand7105@gmail.com") {
+            showNotification("Nur Administratoren können Spieler entfernen", "error");
+            return;
+        }
+        
+        const name = existingPlayers.value;
+        if (!name) {
+            showNotification("Bitte einen Spieler auswählen", "error");
+            return;
+        }
+        
+        if (!confirm(`Möchten Sie wirklich "${name}" entfernen?`)) {
+            return;
+        }
+        
+        // Spieler aus der Datenbank entfernen
+        database.ref('players/' + name).remove()
+            .then(() => {
+                showNotification("Spieler erfolgreich entfernt!", "success");
+            })
+            .catch((error) => {
+                console.error("Fehler beim Entfernen des Spielers:", error);
+                showNotification("Fehler beim Entfernen: " + error.message, "error");
+            });
+    }
+
+    // Spieler aus der Datenbank laden
+    function loadPlayers() {
+        database.ref('players').once('value')
+            .then((snapshot) => {
+                const players = [];
+                snapshot.forEach((childSnapshot) => {
+                    players.push(childSnapshot.val());
+                });
+                
+                updateDropdown(players);
+                renderRanking(players);
+            })
+            .catch((error) => {
+                console.error("Fehler beim Laden der Spieler:", error);
+                rankingList.innerHTML = `<li class="error-message">Fehler beim Laden: ${error.message}</li>`;
+                
+                // Firebase Permission Error spezifisch behandeln
+                if (error.code === 'PERMISSION_DENIED') {
+                    showNotification("Berechtigungsfehler: Überprüfen Sie die Firebase-Regeln", "error");
+                }
+            });
+    }
+
+    // Echtzeit-Updates der Rangliste
+    function setupRealtimeUpdates() {
+        database.ref('players').on('value', (snapshot) => {
+            const players = [];
+            snapshot.forEach((childSnapshot) => {
+                players.push(childSnapshot.val());
+            });
+            
+            updateDropdown(players);
+            renderRanking(players);
+        }, (error) => {
+            console.error("Fehler bei Echtzeit-Updates:", error);
+        });
+    }
+
+    // Dropdown für Admin aktualisieren
+    function updateDropdown(players) {
+        existingPlayers.innerHTML = "";
+        players.forEach(player => {
+            const option = document.createElement("option");
+            option.value = player.name;
+            option.textContent = player.name;
+            existingPlayers.appendChild(option);
+        });
     }
 
     // Rangliste rendern
-    function renderRanking(players){
-        rankingList.innerHTML="";
-        if(players.length===0){ rankingList.innerHTML="<li>Keine Spieler vorhanden</li>"; return; }
-        const rankOrder={"Upper Moon 1":1,"Upper Moon 2":2,"Upper Moon 3":3,"Upper Moon 4":4,"Upper Moon 5":5,"Upper Moon 6":6,"Lower Moon 1":7,"Lower Moon 2":8,"Lower Moon 3":9,"Lower Moon 4":10,"Lower Moon 5":11,"Lower Moon 6":12};
-        const sorted = players.sort((a,b)=> (rankOrder[a.rank]||12)-(rankOrder[b.rank]||12));
-        sorted.forEach((player,i)=>{
+    function renderRanking(players) {
+        rankingList.innerHTML = "";
+        
+        if (players.length === 0) {
+            rankingList.innerHTML = "<li class='no-players'>Keine Spieler vorhanden</li>";
+            return;
+        }
+        
+        const rankOrder = {
+            "Upper Moon 1": 1,
+            "Upper Moon 2": 2,
+            "Upper Moon 3": 3,
+            "Upper Moon 4": 4,
+            "Upper Moon 5": 5,
+            "Upper Moon 6": 6,
+            "Lower Moon 1": 7,
+            "Lower Moon 2": 8,
+            "Lower Moon 3": 9,
+            "Lower Moon 4": 10,
+            "Lower Moon 5": 11,
+            "Lower Moon 6": 12
+        };
+        
+        // Spieler nach Rang sortieren
+        const sortedPlayers = players.sort((a, b) => {
+            return (rankOrder[a.rank] || 12) - (rankOrder[b.rank] || 12);
+        });
+
+        // Rangliste rendern
+        sortedPlayers.forEach((player, index) => {
             const li = document.createElement("li");
-            li.dataset.name=player.name;
-            li.className = `ranking-item ${player.rank.startsWith("Upper")?"upper":"lower"}`;
-            li.style.animationDelay = `${i*0.1}s`;
-            li.innerHTML=`<span class="rank-number">${i+1}</span>
-                          <span class="player-name">${player.name}</span>
-                          <span class="player-type ${player.type==='Demon'?'demon-type':'slayer-type'}">${player.type}</span>
-                          <span class="player-mains">${player.mains.join(", ")}</span>
-                          <span class="player-rank">${player.rank}</span>`;
+            li.className = `ranking-item ${player.rank.startsWith("Upper") ? "upper" : "lower"}`;
+            
+            li.innerHTML = `
+                <span class="rank-number">${index + 1}</span>
+                <span class="player-name">${player.name}</span>
+                <span class="player-type ${player.type === 'Demon' ? 'demon-type' : 'slayer-type'}">${player.type}</span>
+                <span class="player-mains">${player.mains.join(", ")}</span>
+                <span class="player-rank">${player.rank}</span>
+            `;
+            
             rankingList.appendChild(li);
         });
     }
 
-    // Dropdown
-    function updateDropdown(players){
-        existingPlayers.innerHTML="";
-        players.forEach(player=>{
-            const opt = document.createElement("option");
-            opt.value=player.name;
-            opt.innerText=player.name;
-            existingPlayers.appendChild(opt);
-        });
+    // Benachrichtigung anzeigen
+    function showNotification(message, type) {
+        // Einfache Benachrichtigung mit Alert (kann durch schönere UI ersetzt werden)
+        alert(message);
     }
 
-    // Lokale Spieler
-    function savePlayerLocally(playerData){
-        try{
-            const players = JSON.parse(localStorage.getItem('demonSlayerPlayers')||'{}');
-            players[playerData.name]=playerData;
-            localStorage.setItem('demonSlayerPlayers',JSON.stringify(players));
-        }catch(e){ console.error(e); }
-    }
-    function loadLocalPlayers(){
-        try{
-            const playersData = localStorage.getItem('demonSlayerPlayers');
-            if(playersData) return Object.values(JSON.parse(playersData));
-        }catch(e){ console.error(e); }
-        return [];
-    }
+    // Echtzeit-Updates einrichten
+    setupRealtimeUpdates();
 
-    // Verbindung Status
-    function updateConnectionStatus(online){
-        if(online){
-            connectionStatus.className="connection-status online-status";
-            connectionStatus.innerHTML='<span class="status-indicator online-indicator"></span> Online';
-            localDataInfo.style.display="none";
-            demoModeBanner.style.display="none";
-        } else {
-            connectionStatus.className="connection-status offline-status";
-            connectionStatus.innerHTML='<span class="status-indicator offline-indicator"></span> Offline';
-            firebaseError.style.display="block";
-        }
-    }
-
+    // Initial Spieler laden
+    loadPlayers();
     </script>
 </body>
 </html>
