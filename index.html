@@ -8,9 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Zusätzliche Styles für die Simulation */
-        .simulation-mode-banner {
-            background: linear-gradient(45deg, #4CAF50, #2E7D32);
+        /* Zusätzliche Styles für die Fallback-Lösung */
+        .demo-mode-banner {
+            background: linear-gradient(45deg, #ff8c00, #ff4500);
             color: white;
             padding: 10px 20px;
             text-align: center;
@@ -26,48 +26,67 @@
             100% { opacity: 0.8; }
         }
         
-        .admin-info {
-            background: rgba(33, 150, 243, 0.1);
-            border: 1px solid rgba(33, 150, 243, 0.3);
+        .firebase-error {
+            background: rgba(255, 69, 0, 0.1);
+            border: 1px solid rgba(255, 69, 0, 0.3);
             border-radius: 8px;
             padding: 15px;
             margin: 15px 0;
         }
         
-        .admin-info h4 {
-            color: #2196F3;
+        .firebase-error h3 {
+            color: #ff4500;
             margin-bottom: 10px;
         }
         
-        .simulation-controls {
+        .local-data-info {
+            background: rgba(255, 165, 0, 0.1);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .local-data-info h4 {
+            color: #ff8c00;
+            margin-bottom: 10px;
+        }
+        
+        .connection-status {
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: 15px;
         }
         
-        .simulation-btn {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
+        .online-status {
+            background: rgba(52, 168, 83, 0.2);
+            color: #34A853;
         }
         
-        .btn-save {
-            background: linear-gradient(45deg, #4CAF50, #2E7D32);
-            color: white;
+        .offline-status {
+            background: rgba(234, 67, 53, 0.2);
+            color: #EA4335;
         }
         
-        .btn-load {
-            background: linear-gradient(45deg, #2196F3, #1976D2);
-            color: white;
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
         }
         
-        .btn-reset {
-            background: linear-gradient(45deg, #f44336, #d32f2f);
-            color: white;
+        .online-indicator {
+            background: #34A853;
+            box-shadow: 0 0 5px #34A853;
+        }
+        
+        .offline-indicator {
+            background: #EA4335;
+            box-shadow: 0 0 5px #EA4335;
         }
     </style>
 </head>
@@ -89,25 +108,24 @@
                 <button id="loginBtn" class="btn-login"><i class="fab fa-google"></i> Login (Admin)</button>
                 <button id="logoutBtn" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 <span id="userEmail"><i class="fas fa-user"></i> Nicht eingeloggt</span>
+                <span id="connectionStatus" class="connection-status offline-status">
+                    <span class="status-indicator offline-indicator"></span>
+                    Offline Modus
+                </span>
             </div>
         </header>
 
-        <div id="simulationModeBanner" class="simulation-mode-banner">
-            <i class="fas fa-info-circle"></i> Simulationsmodus: Daten werden lokal gespeichert
+        <div id="demoModeBanner" class="demo-mode-banner" style="display: none;">
+            <i class="fas fa-info-circle"></i> Demo-Modus: Es werden lokale Beispieldaten angezeigt
         </div>
 
         <main>
             <section id="adminPanel" class="admin-panel card">
                 <h2><i class="fas fa-crown"></i> Spieler verwalten (Admin)</h2>
 
-                <div class="admin-info">
-                    <h4><i class="fas fa-shield-alt"></i> Administratorzugang</h4>
-                    <p>Verwenden Sie einen der folgenden Accounts für Admin-Zugriff:</p>
-                    <ul>
-                        <li>Email: <strong>fabioasik221206@gmail.com</strong></li>
-                        <li>Email: <strong>cand7105@gmail.com</strong></li>
-                    </ul>
-                    <p>Passwort: <em>Beliebig (wird im Simulationsmodus nicht geprüft)</em></p>
+                <div id="firebaseError" class="firebase-error" style="display: none;">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Firebase-Verbindungsfehler</h3>
+                    <p>Die Verbindung zur Datenbank ist fehlgeschlagen. Änderungen können nicht gespeichert werden.</p>
                 </div>
 
                 <div class="form-group">
@@ -136,16 +154,15 @@
                 </div>
                 
                 <button id="removeBtn" class="action-btn btn-danger"><i class="fas fa-trash-alt"></i> Spieler entfernen</button>
-                
-                <div class="simulation-controls">
-                    <button id="saveDataBtn" class="simulation-btn btn-save"><i class="fas fa-download"></i> Daten exportieren</button>
-                    <button id="loadDataBtn" class="simulation-btn btn-load"><i class="fas fa-upload"></i> Daten importieren</button>
-                    <button id="resetDataBtn" class="simulation-btn btn-reset"><i class="fas fa-trash"></i> Daten zurücksetzen</button>
-                </div>
             </section>
 
             <section class="ranking-section">
                 <h2><i class="fas fa-trophy"></i> Live-Rangliste</h2>
+                
+                <div id="localDataInfo" class="local-data-info" style="display: none;">
+                    <h4><i class="fas fa-database"></i> Lokale Daten</h4>
+                    <p>Es werden lokal gespeicherte Daten angezeigt, da keine Verbindung zur Datenbank möglich war.</p>
+                </div>
                 
                 <div class="ranking-header">
                     <span>Rang</span>
@@ -159,8 +176,23 @@
         </main>
     </div>
 
-    <script>
-    // Demo-Daten für den Fall, dass keine Daten vorhanden sind
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getDatabase, ref, set, remove, get, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+
+    // Firebase Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
+        authDomain: "demonslayerranks.firebaseapp.com",
+        databaseURL: "https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app/",
+        projectId: "demonslayerranks",
+        storageBucket: "demonslayerranks.appspot.com",
+        messagingSenderId: "244021550640",
+        appId: "1:244021550640:web:4d2a3c7a52c205f5e997f5"
+    };
+
+    // Demo-Daten für den Fall, dass Firebase nicht funktioniert
     const demoPlayers = [
         {
             name: "Mikato",
@@ -194,6 +226,21 @@
         }
     ];
 
+    let app;
+    let db;
+    let auth;
+    let provider;
+
+    try {
+        app = initializeApp(firebaseConfig);
+        db = getDatabase(app);
+        auth = getAuth();
+        provider = new GoogleAuthProvider();
+    } catch (error) {
+        console.error("Firebase Initialization Error:", error);
+        showNotification("Firebase konnte nicht initialisiert werden. Demo-Modus aktiviert.", "error");
+    }
+
     // DOM Elemente
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
@@ -205,274 +252,273 @@
     const mainFields = document.getElementById("mainFields");
     const addUpdateBtn = document.getElementById("addUpdateBtn");
     const removeBtn = document.getElementById("removeBtn");
-    const saveDataBtn = document.getElementById("saveDataBtn");
-    const loadDataBtn = document.getElementById("loadDataBtn");
-    const resetDataBtn = document.getElementById("resetDataBtn");
-    const simulationModeBanner = document.getElementById("simulationModeBanner");
+    const firebaseError = document.getElementById("firebaseError");
+    const localDataInfo = document.getElementById("localDataInfo");
+    const demoModeBanner = document.getElementById("demoModeBanner");
+    const connectionStatus = document.getElementById("connectionStatus");
 
     let selectedType = "Demon";
     let currentUser = null;
-    let isAdmin = false;
+    let isOnline = false;
+    let usingDemoData = false;
 
-    // Event-Listener
-    loginBtn.addEventListener("click", handleLogin);
-    logoutBtn.addEventListener("click", handleLogout);
+    // Login / Logout
+    loginBtn.addEventListener("click", () => {
+        if (auth) {
+            signInWithPopup(auth, provider);
+        } else {
+            showNotification("Firebase ist nicht verfügbar. Admin-Funktionen deaktiviert.", "error");
+        }
+    });
     
+    logoutBtn.addEventListener("click", () => {
+        if (auth) {
+            signOut(auth);
+        }
+    });
+
     // Typ Buttons
     btnDemon.addEventListener("click", ()=>{
-        selectedType = "Demon";
+        selectedType="Demon";
         btnDemon.classList.add("selected");
         btnDemonSlayer.classList.remove("selected");
-        mainFields.innerHTML = `<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">`;
+        mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">`;
     });
     
     btnDemonSlayer.addEventListener("click", ()=>{
-        selectedType = "Demon Slayer";
+        selectedType="Demon Slayer";
         btnDemonSlayer.classList.add("selected");
         btnDemon.classList.remove("selected");
-        mainFields.innerHTML = `<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">
+        mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">
         <label>Main Character 2:</label><input type="text" id="main2" placeholder="Main 2" class="text-input">`;
     });
 
-    // Spieler hinzufügen/aktualisieren
-    addUpdateBtn.addEventListener("click", handleAddUpdatePlayer);
-    
-    // Spieler entfernen
-    removeBtn.addEventListener("click", handleRemovePlayer);
-    
-    // Daten-Operationen
-    saveDataBtn.addEventListener("click", exportData);
-    loadDataBtn.addEventListener("click", importData);
-    resetDataBtn.addEventListener("click", resetData);
+    // Auth Status - nur wenn Firebase verfügbar ist
+    if (auth) {
+        onAuthStateChanged(auth, (user)=>{
+            currentUser = user;
+            if(user){
+                document.getElementById("userEmail").innerHTML = `<i class="fas fa-user"></i> ${user.email}`;
+                if(user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com"){
+                    adminPanel.style.display = "block";
+                    setTimeout(() => {
+                        adminPanel.classList.add("visible");
+                    }, 10);
+                } else {
+                    adminPanel.classList.remove("visible");
+                    setTimeout(() => {
+                        adminPanel.style.display = "none";
+                    }, 300);
+                }
+            } else {
+                adminPanel.classList.remove("visible");
+                setTimeout(() => {
+                    adminPanel.style.display = "none";
+                }, 300);
+                document.getElementById("userEmail").innerHTML = "<i class=\"fas fa-user\"></i> Nicht eingeloggt";
+            }
+            loadPlayers(); // Immer Spieler laden, auch wenn nicht eingeloggt
+        });
+    } else {
+        // Firebase nicht verfügbar, Admin-Panel ausblenden
+        adminPanel.style.display = "none";
+        firebaseError.style.display = "block";
+        demoModeBanner.style.display = "block";
+        usingDemoData = true;
+        updateConnectionStatus(false);
+    }
 
-    // Login-Funktion (Simulation)
-    function handleLogin() {
-        const email = prompt("Bitte geben Sie Ihre Email-Adresse ein (Simulationsmodus):");
-        if (!email) return;
-        
-        currentUser = { email: email };
-        document.getElementById("userEmail").innerHTML = `<i class="fas fa-user"></i> ${email}`;
-        
-        // Admin-Rechte prüfen
-        isAdmin = email === "fabioasik221206@gmail.com" || email === "cand7105@gmail.com";
-        
-        if (isAdmin) {
-            adminPanel.style.display = "block";
-            setTimeout(() => {
-                adminPanel.classList.add("visible");
-            }, 10);
-            showNotification("Admin-Zugriff gewährt", "success");
-        } else {
-            adminPanel.style.display = "none";
-            showNotification("Standard-Benutzerzugriff", "info");
+    // Spieler hinzufügen/aktualisieren
+    addUpdateBtn.addEventListener("click", async ()=>{
+        if (!db) {
+            showNotification("Datenbank nicht verfügbar. Demo-Modus aktiviert.", "error");
+            return;
         }
         
-        loadPlayers();
-    }
-
-    // Logout-Funktion
-    function handleLogout() {
-        currentUser = null;
-        isAdmin = false;
-        adminPanel.style.display = "none";
-        document.getElementById("userEmail").innerHTML = "<i class=\"fas fa-user\"></i> Nicht eingeloggt";
-        showNotification("Erfolgreich ausgeloggt", "success");
-    }
-
-    // Spieler hinzufügen/aktualisieren
-    function handleAddUpdatePlayer() {
-        if (!isAdmin) {
+        if(!currentUser){ 
             showNotification("Nur Admins können Spieler hinzufügen.", "error");
-            return;
+            return; 
         }
         
         const name = document.getElementById("playerName").value.trim();
         const main1 = document.getElementById("main1")?.value.trim();
-        let main2 = "";
-        
-        if (selectedType === "Demon Slayer") {
-            main2 = document.getElementById("main2")?.value.trim();
-        }
+        const main2 = document.getElementById("main2")?.value.trim();
 
-        if (!name || !main1 || (selectedType === "Demon Slayer" && !main2)) {
+        if(!name || !main1 || (selectedType==="Demon Slayer" && !main2)){
             showNotification("Bitte alle Felder ausfüllen!", "error");
             return;
         }
 
-        const mains = selectedType === "Demon" ? [main1] : [main1, main2];
+        const mains = selectedType==="Demon" ? [main1] : [main1, main2];
         const playerData = { name, type: selectedType, mains, rank: "Lower Moon 6" };
 
-        // Spieler speichern
-        savePlayer(playerData);
-        showNotification("Spieler erfolgreich hinzugefügt/aktualisiert!", "success");
-        
-        // Formular zurücksetzen
-        document.getElementById("playerName").value = "";
-        document.getElementById("main1").value = "";
-        if (main2) document.getElementById("main2").value = "";
-        
-        loadPlayers();
-    }
+        try{
+            await set(ref(db,'players/'+name), playerData);
+            showNotification("Spieler erfolgreich hinzugefügt/aktualisiert!", "success");
+            document.getElementById("playerName").value = "";
+            document.getElementById("main1").value = "";
+            if(main2) document.getElementById("main2").value = "";
+            
+            // Lokal speichern für Offline-Zugriff
+            savePlayerLocally(playerData);
+            loadPlayers();
+        } catch(err){ 
+            showNotification("Fehler: "+err.message, "error");
+            // Fallback: lokal speichern
+            savePlayerLocally(playerData);
+            showNotification("Spieler lokal gespeichert (Offline-Modus).", "info");
+            loadPlayers();
+        }
+    });
 
     // Spieler entfernen
-    function handleRemovePlayer() {
-        if (!isAdmin) {
-            showNotification("Nur Admins können Spieler entfernen.", "error");
-            return;
-        }
-        
+    removeBtn.addEventListener("click", async ()=>{
         const name = existingPlayers.value;
-        if (!name) return;
+        if(!name) return;
+        if(!confirm(`Möchten Sie wirklich ${name} entfernen?`)) return;
         
-        if (!confirm(`Möchten Sie wirklich ${name} entfernen?`)) return;
-        
-        removePlayer(name);
-        showNotification("Spieler erfolgreich entfernt!", "success");
-        loadPlayers();
+        try {
+            if (db) {
+                await remove(ref(db,'players/'+name));
+                showNotification("Spieler erfolgreich entfernt!", "success");
+            }
+            
+            // Auch lokal entfernen
+            removePlayerLocally(name);
+            loadPlayers();
+        } catch(err){ 
+            showNotification("Fehler: "+err.message, "error");
+            // Fallback: lokal entfernen
+            removePlayerLocally(name);
+            showNotification("Spieler lokal entfernt (Offline-Modus).", "info");
+            loadPlayers();
+        }
+    });
+
+    // Verbindungsstatus aktualisieren
+    function updateConnectionStatus(online) {
+        isOnline = online;
+        if (online) {
+            connectionStatus.className = "connection-status online-status";
+            connectionStatus.innerHTML = '<span class="status-indicator online-indicator"></span> Online';
+            localDataInfo.style.display = "none";
+            demoModeBanner.style.display = "none";
+        } else {
+            connectionStatus.className = "connection-status offline-status";
+            connectionStatus.innerHTML = '<span class="status-indicator offline-indicator"></span> Offline';
+            firebaseError.style.display = "block";
+        }
     }
 
-    // Spieler speichern
-    function savePlayer(playerData) {
+    // Spieler lokal speichern
+    function savePlayerLocally(playerData) {
         try {
             const players = JSON.parse(localStorage.getItem('demonSlayerPlayers') || '{}');
             players[playerData.name] = playerData;
             localStorage.setItem('demonSlayerPlayers', JSON.stringify(players));
-            return true;
         } catch (e) {
-            console.error("Fehler beim Speichern des Spielers:", e);
-            showNotification("Fehler beim Speichern des Spielers", "error");
-            return false;
+            console.error("Fehler beim lokalen Speichern:", e);
         }
     }
 
-    // Spieler entfernen
-    function removePlayer(playerName) {
+    // Spieler lokal entfernen
+    function removePlayerLocally(playerName) {
         try {
             const players = JSON.parse(localStorage.getItem('demonSlayerPlayers') || '{}');
             delete players[playerName];
             localStorage.setItem('demonSlayerPlayers', JSON.stringify(players));
-            return true;
         } catch (e) {
-            console.error("Fehler beim Entfernen des Spielers:", e);
-            showNotification("Fehler beim Entfernen des Spielers", "error");
-            return false;
+            console.error("Fehler beim lokalen Entfernen:", e);
         }
     }
 
-    // Spieler laden
-    function loadPlayers() {
+    // Lokale Spieler laden
+    function loadLocalPlayers() {
         try {
             const playersData = localStorage.getItem('demonSlayerPlayers');
-            let players = [];
-            
             if (playersData) {
-                const playersObj = JSON.parse(playersData);
-                players = Object.values(playersObj);
+                const players = JSON.parse(playersData);
+                return Object.values(players);
             }
-            
-            // Wenn keine Spieler vorhanden sind, Demo-Daten laden
-            if (players.length === 0) {
-                players = demoPlayers;
-                // Demo-Daten speichern
-                const playersObj = {};
-                demoPlayers.forEach(player => {
-                    playersObj[player.name] = player;
-                });
-                localStorage.setItem('demonSlayerPlayers', JSON.stringify(playersObj));
-            }
-            
-            updateDropdown(players);
-            renderRanking(players);
         } catch (e) {
-            console.error("Fehler beim Laden der Spieler:", e);
-            rankingList.innerHTML = "<li class='error-message'>Fehler beim Laden der Spielerdaten</li>";
+            console.error("Fehler beim Laden lokaler Daten:", e);
         }
+        return [];
     }
 
-    // Daten exportieren
-    function exportData() {
-        try {
-            const playersData = localStorage.getItem('demonSlayerPlayers');
-            if (!playersData) {
-                showNotification("Keine Daten zum Exportieren vorhanden", "info");
-                return;
-            }
-            
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(playersData);
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "demon_slayer_data.json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
-            
-            showNotification("Daten erfolgreich exportiert", "success");
-        } catch (e) {
-            console.error("Fehler beim Exportieren der Daten:", e);
-            showNotification("Fehler beim Exportieren der Daten", "error");
-        }
-    }
-
-    // Daten importieren
-    function importData() {
-        if (!isAdmin) {
-            showNotification("Nur Admins können Daten importieren.", "error");
-            return;
-        }
-        
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.json';
-        
-        input.onchange = e => {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                try {
-                    const contents = e.target.result;
-                    const players = JSON.parse(contents);
-                    
-                    // Validierung der Daten
-                    if (typeof players !== 'object') {
-                        throw new Error("Ungültiges Datenformat");
+    // Spieler laden und Rangliste rendern
+    async function loadPlayers(){
+        // Zuerst versuchen, von Firebase zu laden
+        if (db) {
+            try {
+                console.log("Versuche Spieler von Firebase zu laden...");
+                const snapshot = await get(ref(db,'players/'));
+                
+                // Online-Modus
+                updateConnectionStatus(true);
+                
+                if(!snapshot.exists()) {
+                    console.log("Keine Daten in der Datenbank gefunden");
+                    // Versuche lokale Daten zu laden
+                    const localPlayers = loadLocalPlayers();
+                    if (localPlayers.length > 0) {
+                        localDataInfo.style.display = "block";
+                        updateDropdown(localPlayers);
+                        renderRanking(localPlayers);
+                    } else {
+                        // Demo-Daten laden
+                        updateDropdown(demoPlayers);
+                        renderRanking(demoPlayers);
+                        demoModeBanner.style.display = "block";
+                        usingDemoData = true;
                     }
-                    
-                    localStorage.setItem('demonSlayerPlayers', JSON.stringify(players));
-                    showNotification("Daten erfolgreich importiert", "success");
-                    loadPlayers();
-                } catch (e) {
-                    console.error("Fehler beim Importieren der Daten:", e);
-                    showNotification("Fehler beim Importieren der Daten: " + e.message, "error");
+                    return; 
                 }
-            };
-            
-            reader.readAsText(file);
-        };
-        
-        input.click();
-    }
-
-    // Daten zurücksetzen
-    function resetData() {
-        if (!isAdmin) {
-            showNotification("Nur Admins können Daten zurücksetzen.", "error");
-            return;
+                
+                const data = snapshot.val();
+                console.log("Daten aus Firebase:", data);
+                
+                const players = Object.values(data);
+                
+                // Speichere die Daten lokal für Offline-Zugriff
+                try {
+                    const playersObj = {};
+                    players.forEach(player => {
+                        playersObj[player.name] = player;
+                    });
+                    localStorage.setItem('demonSlayerPlayers', JSON.stringify(playersObj));
+                } catch (e) {
+                    console.error("Fehler beim lokalen Speichern:", e);
+                }
+                
+                updateDropdown(players);
+                renderRanking(players);
+                return;
+            } catch(err){
+                console.error("Fehler beim Laden der Spieler von Firebase:", err);
+                updateConnectionStatus(false);
+            }
         }
         
-        if (!confirm("Möchten Sie wirklich alle Daten zurücksetzen? Diese Aktion kann nicht rückgängig gemacht werden.")) {
-            return;
+        // Fallback: Lokale Daten laden
+        const localPlayers = loadLocalPlayers();
+        if (localPlayers.length > 0) {
+            localDataInfo.style.display = "block";
+            updateDropdown(localPlayers);
+            renderRanking(localPlayers);
+        } else {
+            // Demo-Daten verwenden
+            updateDropdown(demoPlayers);
+            renderRanking(demoPlayers);
+            demoModeBanner.style.display = "block";
+            usingDemoData = true;
         }
-        
-        localStorage.removeItem('demonSlayerPlayers');
-        showNotification("Daten wurden zurückgesetzt", "success");
-        loadPlayers();
     }
 
     // Dropdown für Admin
-    function updateDropdown(players) {
-        existingPlayers.innerHTML = "";
-        players.forEach(player => {
+    function updateDropdown(players){
+        existingPlayers.innerHTML="";
+        players.forEach(player=>{
             const opt = document.createElement("option");
             opt.value = player.name;
             opt.innerText = player.name;
@@ -481,11 +527,11 @@
     }
 
     // Rangliste rendern
-    function renderRanking(players) {
-        rankingList.innerHTML = "";
+    function renderRanking(players){
+        rankingList.innerHTML="";
         
-        if (players.length === 0) {
-            rankingList.innerHTML = "<li class='no-players'>Keine Spieler vorhanden</li>";
+        if(players.length === 0) {
+            rankingList.innerHTML="<li class='no-players'>Keine Spieler vorhanden</li>";
             return;
         }
         
@@ -504,19 +550,19 @@
             "Lower Moon 6": 12
         };
         
-        const sorted = players.sort((a, b) => {
+        const sorted = players.sort((a,b)=>{
             return (rankOrder[a.rank] || 12) - (rankOrder[b.rank] || 12);
         });
 
         sorted.forEach((player, index) => {
             const li = document.createElement("li");
-            li.dataset.name = player.name;
-            li.className = `ranking-item ${player.rank.startsWith("Upper") ? "upper" : "lower"}`;
+            li.dataset.name=player.name;
+            li.className = `ranking-item ${player.rank.startsWith("Upper")?"upper":"lower"}`;
             
             // Animationseffekt mit Verzögerung
             li.style.animationDelay = `${index * 0.1}s`;
             
-            li.innerHTML = `
+            li.innerHTML=`
                 <span class="rank-number">${index + 1}</span>
                 <span class="player-name">${player.name}</span>
                 <span class="player-type ${player.type === 'Demon' ? 'demon-type' : 'slayer-type'}">${player.type}</span>
@@ -548,6 +594,7 @@
 
     // Initialisierung
     window.addEventListener('load', () => {
+        // Prüfe zuerst die Verbindung
         loadPlayers();
     });
     </script>
