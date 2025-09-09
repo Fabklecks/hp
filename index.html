@@ -275,6 +275,11 @@
             background: rgba(255, 69, 0, 0.3);
             border: 2px dashed #ff4500;
         }
+        
+        .mains-container {
+            display: flex;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -784,7 +789,7 @@
 
         try{
             await set(ref(db,'players/'+name), playerData);
-            showNotification("Spieler erfolgreicht hinzugefügt/aktualisiert!", "success");
+            showNotification("Spieler erfolgreich hinzugefügt/aktualisiert!", "success");
             document.getElementById("playerName").value = "";
             document.getElementById("main1").value = "";
             if(main2) document.getElementById("main2").value = "";
@@ -992,12 +997,16 @@
             // Animationseffekt mit Verzögerung
             li.style.animationDelay = `${index * 0.1}s`;
             
-            li.innerHTML=`
-                <span class="player-rank ${player.rank.startsWith("Upper")?"upper-rank":"lower-rank"}">${player.rank}</span>
-                <span class="player-name">${player.name}</span>
-                <span class="player-type ${player.type === 'Demon' ? 'demon-type' : 'slayer-type'}">${player.type}</span>
-                <span class="player-mains">${player.mains.join(", ")}</span>
-            `;
+            // Container für Mains und Bearbeiten-Button
+            const mainsContainer = document.createElement('div');
+            mainsContainer.className = 'mains-container';
+            
+            // Mains Text
+            const mainsText = document.createElement('span');
+            mainsText.className = 'player-mains';
+            mainsText.textContent = player.mains.join(", ");
+            
+            mainsContainer.appendChild(mainsText);
             
             // Bearbeiten-Button für Admins hinzufügen
             if (isAdmin) {
@@ -1007,8 +1016,17 @@
                 editButton.addEventListener('click', () => {
                     editPlayerMains(player);
                 });
-                li.querySelector('.player-mains').appendChild(editButton);
+                mainsContainer.appendChild(editButton);
             }
+            
+            li.innerHTML=`
+                <span class="player-rank ${player.rank.startsWith("Upper")?"upper-rank":"lower-rank"}">${player.rank}</span>
+                <span class="player-name">${player.name}</span>
+                <span class="player-type ${player.type === 'Demon' ? 'demon-type' : 'slayer-type'}">${player.type}</span>
+            `;
+            
+            // Füge den Mains-Container hinzu
+            li.appendChild(mainsContainer);
             
             rankingList.appendChild(li);
         });
