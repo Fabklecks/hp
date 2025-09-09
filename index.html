@@ -17,9 +17,9 @@
             width: 250px;
             background: rgba(30, 30, 46, 0.95);
             backdrop-filter: blur(10px);
-            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
             transition: left 0.3s ease;
             z-index: 1000;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
             padding: 20px;
             overflow-y: auto;
         }
@@ -45,6 +45,7 @@
         
         .sidebar-toggle:hover {
             background: rgba(255, 69, 0, 1);
+            left: 5px;
         }
         
         .social-header {
@@ -54,13 +55,18 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
+        .social-header h3 {
+            color: #ff8c00;
+            margin-bottom: 10px;
+        }
+        
         .social-item {
             display: flex;
             align-items: center;
             margin-bottom: 20px;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 12px;
             background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
             transition: all 0.3s;
         }
         
@@ -81,103 +87,110 @@
             font-size: 1.2rem;
         }
         
-        .social-text {
+        .social-info {
             flex: 1;
         }
         
-        .social-text h3 {
-            font-size: 1rem;
+        .social-info h4 {
             margin-bottom: 5px;
             color: #ff8c00;
         }
         
-        .social-text p {
-            font-size: 0.85rem;
-            opacity: 0.8;
+        .social-info a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
         }
         
-        .edit-mains-btn {
-            background: rgba(255, 193, 7, 0.2);
-            border: 1px solid rgba(255, 193, 7, 0.3);
-            color: #FFC107;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            margin-top: 10px;
-            transition: all 0.3s;
-        }
-        
-        .edit-mains-btn:hover {
-            background: rgba(255, 193, 7, 0.3);
-        }
-        
-        .edit-mains-dialog {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(30, 30, 46, 0.95);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
-            z-index: 1001;
-            width: 90%;
-            max-width: 400px;
-        }
-        
-        .edit-mains-dialog h3 {
-            margin-bottom: 15px;
+        .social-info a:hover {
             color: #ff8c00;
+            text-decoration: underline;
         }
         
-        .edit-mains-dialog input {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(10, 10, 20, 0.6);
-            color: white;
-        }
-        
-        .edit-mains-dialog-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-        
+        /* Verbesserte Drag & Drop Hitbox */
         .drag-drop-area {
             height: 20px;
             background: rgba(255, 69, 0, 0.1);
             border-radius: 3px;
             margin: 5px 0;
             transition: all 0.3s;
-        }
-        
-        .drag-drop-area.active {
-            background: rgba(255, 69, 0, 0.3);
-            height: 30px;
-        }
-        
-        /* Anpassungen für bessere Kompatibilität mit style.css */
-        .login-area {
             display: flex;
             align-items: center;
-            gap: 15px;
+            justify-content: center;
         }
         
-        #loginBtn, #logoutBtn {
+        .drag-drop-area::before {
+            content: "↓ Platzieren ↓";
+            color: rgba(255, 69, 0, 0.5);
+            font-size: 0.7rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .drag-drop-area.drag-over {
+            background: rgba(255, 69, 0, 0.3);
+            height: 40px;
+        }
+        
+        .drag-drop-area.drag-over::before {
+            opacity: 1;
+        }
+        
+        /* Edit-Button für Mains */
+        .edit-mains-btn {
+            background: rgba(255, 165, 0, 0.2);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            color: #ffa500;
+            border-radius: 4px;
+            padding: 5px 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.8rem;
+        }
+        
+        .edit-mains-btn:hover {
+            background: rgba(255, 165, 0, 0.3);
+        }
+        
+        /* Formular zum Bearbeiten der Mains */
+        .edit-mains-form {
             display: none;
+            background: rgba(30, 30, 46, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid rgba(255, 165, 0, 0.3);
         }
         
-        #loginBtn.visible, #logoutBtn.visible {
-            display: flex;
+        .edit-mains-form input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            background: rgba(10, 10, 20, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            color: white;
         }
         
-        .ranking-item {
-            position: relative;
+        .edit-mains-form button {
+            padding: 8px 15px;
+            background: rgba(255, 165, 0, 0.3);
+            border: 1px solid rgba(255, 165, 0, 0.5);
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .edit-mains-form button:hover {
+            background: rgba(255, 165, 0, 0.5);
+        }
+        
+        /* Anpassungen für Login/Logout Buttons */
+        #loginBtn, #logoutBtn {
+            transition: all 0.3s;
         }
     </style>
 </head>
@@ -191,21 +204,20 @@
         <div class="flame"></div>
     </div>
 
-    <!-- Social Sidebar -->
+    <!-- Social Media Sidebar -->
     <div class="social-sidebar" id="socialSidebar">
         <div class="social-header">
-            <h2><i class="fas fa-share-alt"></i> Social Links</h2>
-            <p>Creator & Project Leader</p>
+            <h3><i class="fas fa-share-alt"></i> Social Links</h3>
+            <p>Folge uns auf YouTube</p>
         </div>
         
         <div class="social-item">
             <div class="social-icon">
                 <i class="fab fa-youtube"></i>
             </div>
-            <div class="social-text">
-                <h3>J.O.K.R (Creator)</h3>
-                <p>YouTube Channel</p>
-                <a href="https://www.youtube.com/@J.O.K.R" target="_blank" class="edit-mains-btn">Besuchen</a>
+            <div class="social-info">
+                <h4>J.O.K.R (Creator)</h4>
+                <a href="https://www.youtube.com/@J.O.K.R" target="_blank">youtube.com/@J.O.K.R</a>
             </div>
         </div>
         
@@ -213,14 +225,13 @@
             <div class="social-icon">
                 <i class="fab fa-youtube"></i>
             </div>
-            <div class="social-text">
-                <h3>Mikato (Project Leader)</h3>
-                <p>YouTube Channel</p>
-                <a href="https://www.youtube.com/@Mikato-o" target="_blank" class="edit-mains-btn">Besuchen</a>
+            <div class="social-info">
+                <h4>Mikato (Projektleiter)</h4>
+                <a href="https://www.youtube.com/@Mikato-o" target="_blank">youtube.com/@Mikato-o</a>
             </div>
         </div>
     </div>
-    
+
     <button class="sidebar-toggle" id="sidebarToggle">
         <i class="fas fa-chevron-right"></i>
     </button>
@@ -231,7 +242,7 @@
             
             <div class="login-area">
                 <button id="loginBtn" class="btn-login"><i class="fab fa-google"></i> Login (Admin)</button>
-                <button id="logoutBtn" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                <button id="logoutBtn" class="btn-logout" style="display: none;"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 <span id="userEmail"><i class="fas fa-user"></i> Nicht eingeloggt</span>
                 <span id="connectionStatus" class="connection-status offline-status">
                     <span class="status-indicator offline-indicator"></span>
@@ -298,10 +309,6 @@
                     <select id="existingPlayers" class="select-input"></select>
                 </div>
                 
-                <button id="editMainsBtn" class="action-btn" style="background: #FFC107; color: #333; margin-bottom: 10px;">
-                    <i class="fas fa-edit"></i> Main Characters bearbeiten
-                </button>
-                
                 <button id="removeBtn" class="action-btn btn-danger"><i class="fas fa-trash-alt"></i> Spieler entfernen</button>
             </section>
 
@@ -323,264 +330,764 @@
                     <span>TYP</span>
                     <span>MAIN CHARACTERS</span>
                 </div>
-                <ul id="rankingList" class="ranking-list">
-                    <!-- Beispiel-Daten -->
-                    <li class="ranking-item upper">
-                        <span class="player-rank upper-moon">Upper Rank 1</span>
-                        <span class="player-name">Mikato</span>
-                        <span class="player-type demon-type">Demon</span>
-                        <span class="player-mains">Yorrichi Type Zero</span>
-                    </li>
-                    <div class="drag-drop-area" data-position="0"></div>
-                    <li class="ranking-item upper">
-                        <span class="player-rank upper-moon">Upper Rank 2</span>
-                        <span class="player-name">LooserMarc9</span>
-                        <span class="player-type slayer-type">Demon Slayer</span>
-                        <span class="player-mains">Tengen Uzui, Kyojuré Rengoku</span>
-                    </li>
-                </ul>
+                <ul id="rankingList" class="ranking-list"></ul>
             </section>
         </main>
     </div>
 
-    <!-- Dialog zum Bearbeiten der Main Characters -->
-    <div id="editMainsDialog" class="edit-mains-dialog card">
-        <h3><i class="fas fa-edit"></i> Main Characters bearbeiten</h3>
-        <p>Spieler: <span id="editPlayerName"></span></p>
-        
-        <div class="form-group">
-            <label>Main Character 1:</label>
-            <input type="text" id="editMain1" class="text-input">
-        </div>
-        
-        <div class="form-group">
-            <label>Main Character 2:</label>
-            <input type="text" id="editMain2" class="text-input">
-        </div>
-        
-        <div class="edit-mains-dialog-buttons">
-            <button id="cancelEditMains" class="btn-logout">Abbrechen</button>
-            <button id="saveMains" class="btn-login">Speichern</button>
-        </div>
-    </div>
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getDatabase, ref, set, remove, get, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 
-    <script>
-        // Demo-Daten
-        const demoPlayers = [
-            {
-                name: "Mikato",
-                type: "Demon",
-                mains: ["Yorrichi Type Zero"],
-                rank: "Upper Rank 1"
-            },
-            {
-                name: "LooserMarc9",
-                type: "Demon Slayer", 
-                mains: ["Tengen Uzui", "Kyojuré Rengoku"],
-                rank: "Upper Rank 2"
-            },
-            {
-                name: "Nezuko",
-                type: "Demon",
-                mains: ["Blood Demon Art"],
-                rank: "Upper Rank 6"
-            },
-            {
-                name: "Zenitsu",
-                type: "Demon Slayer",
-                mains: ["Thunder Breathing"],
-                rank: "Lower Rank 2"
-            },
-            {
-                name: "Inosuke",
-                type: "Demon Slayer", 
-                mains: ["Beast Breathing"],
-                rank: "Lower Rank 3"
-            }
-        ];
+    const firebaseConfig = {
+      apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
+      authDomain: "demonslayerranks.firebaseapp.com",
+      databaseURL: "https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "demonslayerranks",
+      storageBucket: "demonslayerranks.firebasestorage.app",
+      messagingSenderId: "244021550640",
+      appId: "1:244021550640:web:4d2a3c7a52c205f5e997f5",
+      measurementId: "G-WH3WQBKPX4"
+    };
 
-        // DOM Elemente
-        const loginBtn = document.getElementById("loginBtn");
-        const logoutBtn = document.getElementById("logoutBtn");
-        const userEmail = document.getElementById("userEmail");
-        const adminPanel = document.getElementById("adminPanel");
-        const rankingList = document.getElementById("rankingList");
-        const existingPlayers = document.getElementById("existingPlayers");
-        const editMainsBtn = document.getElementById("editMainsBtn");
-        const editMainsDialog = document.getElementById("editMainsDialog");
-        const editPlayerName = document.getElementById("editPlayerName");
-        const editMain1 = document.getElementById("editMain1");
-        const editMain2 = document.getElementById("editMain2");
-        const cancelEditMains = document.getElementById("cancelEditMains");
-        const saveMains = document.getElementById("saveMains");
-        const sidebarToggle = document.getElementById("sidebarToggle");
-        const socialSidebar = document.getElementById("socialSidebar");
+    // Demo-Daten für den Fall, dass Firebase nicht funktioniert
+    const demoPlayers = [
+        {
+            name: "Mikato",
+            type: "Demon",
+            mains: ["Yorrichi Type Zero"],
+            rank: "Upper Rank 1"
+        },
+        {
+            name: "Tanjiro",
+            type: "Demon Slayer", 
+            mains: ["Water Breathing", "Hinokami Kagura"],
+            rank: "Upper Rank 4"
+        },
+        {
+            name: "Nezuko",
+            type: "Demon",
+            mains: ["Blood Demon Art"],
+            rank: "Upper Rank 6"
+        },
+        {
+            name: "Zenitsu",
+            type: "Demon Slayer",
+            mains: ["Thunder Breathing"],
+            rank: "Lower Rank 2"
+        },
+        {
+            name: "Inosuke",
+            type: "Demon Slayer", 
+            mains: ["Beast Breathing"],
+            rank: "Lower Rank 3"
+        }
+    ];
 
-        let isAdmin = false;
-        let currentPlayer = null;
+    let app;
+    let db;
+    let auth;
+    let provider;
 
-        // Initialisierung
-        document.addEventListener('DOMContentLoaded', function() {
-            // Zeige die Demo-Daten an
-            renderRanking(demoPlayers);
-            updateDropdown(demoPlayers);
-            
-            // Event-Listener für Sidebar
-            sidebarToggle.addEventListener('click', function() {
-                socialSidebar.classList.toggle('open');
-                sidebarToggle.innerHTML = socialSidebar.classList.contains('open') ? 
-                    '<i class="fas fa-chevron-left"></i>' : '<i class="fas fa-chevron-right"></i>';
-            });
-            
-            // Event-Listener für Login/Logout (Demo)
-            loginBtn.addEventListener('click', function() {
-                isAdmin = true;
-                updateLoginUI();
-                showNotification('Erfolgreich als Admin eingeloggt', 'success');
-            });
-            
-            logoutBtn.addEventListener('click', function() {
-                isAdmin = false;
-                updateLoginUI();
-                showNotification('Erfolgreich ausgeloggt', 'info');
-            });
-            
-            // Event-Listener für Main-Bearbeitung
-            editMainsBtn.addEventListener('click', function() {
-                const selectedPlayer = existingPlayers.value;
-                if (!selectedPlayer) {
-                    showNotification('Bitte wählen Sie einen Spieler aus', 'error');
-                    return;
-                }
-                
-                openEditMainsDialog(selectedPlayer);
-            });
-            
-            cancelEditMains.addEventListener('click', function() {
-                editMainsDialog.style.display = 'none';
-            });
-            
-            saveMains.addEventListener('click', function() {
-                if (currentPlayer) {
-                    const main1 = editMain1.value.trim();
-                    const main2 = editMain2.value.trim();
-                    
-                    if (!main1) {
-                        showNotification('Main Character 1 ist erforderlich', 'error');
-                        return;
-                    }
-                    
-                    // Aktualisiere die Main Characters
-                    currentPlayer.mains = main2 ? [main1, main2] : [main1];
-                    
-                    // Aktualisiere die Anzeige
-                    renderRanking(demoPlayers);
-                    showNotification('Main Characters erfolgreich aktualisiert', 'success');
-                    editMainsDialog.style.display = 'none';
-                }
-            });
-            
-            // Initialisiere Login-UI
-            updateLoginUI();
+    try {
+        app = initializeApp(firebaseConfig);
+        db = getDatabase(app);
+        auth = getAuth();
+        provider = new GoogleAuthProvider();
+    } catch (error) {
+        console.error("Firebase Initialization Error:", error);
+        showNotification("Firebase konnte nicht initialisiert werden. Demo-Modus aktiviert.", "error");
+    }
+
+    // DOM Elemente
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const adminPanel = document.getElementById("adminPanel");
+    const rankingList = document.getElementById("rankingList");
+    const existingPlayers = document.getElementById("existingPlayers");
+    const btnDemon = document.getElementById("btnDemon");
+    const btnDemonSlayer = document.getElementById("btnDemonSlayer");
+    const mainFields = document.getElementById("mainFields");
+    const addUpdateBtn = document.getElementById("addUpdateBtn");
+    const removeBtn = document.getElementById("removeBtn");
+    const firebaseError = document.getElementById("firebaseError");
+    const localDataInfo = document.getElementById("localDataInfo");
+    const demoModeBanner = document.getElementById("demoModeBanner");
+    const connectionStatus = document.getElementById("connectionStatus");
+    const rankOptions = document.querySelectorAll('.rank-option');
+    const adminDragInfo = document.getElementById('adminDragInfo');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const socialSidebar = document.getElementById('socialSidebar');
+
+    let selectedType = "Demon";
+    let selectedRank = "Upper Rank 1";
+    let currentUser = null;
+    let isOnline = false;
+    let usingDemoData = false;
+    let isAdmin = false;
+    let dragSourceElement = null;
+    let editingPlayer = null;
+
+    // Sidebar Toggle
+    sidebarToggle.addEventListener('click', () => {
+        socialSidebar.classList.toggle('open');
+        if (socialSidebar.classList.contains('open')) {
+            sidebarToggle.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        } else {
+            sidebarToggle.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        }
+    });
+
+    // Login / Logout
+    loginBtn.addEventListener("click", () => {
+        if (auth) {
+            signInWithPopup(auth, provider);
+        } else {
+            showNotification("Firebase ist nicht verfügbar. Admin-Funktionen deaktiviert.", "error");
+        }
+    });
+    
+    logoutBtn.addEventListener("click", () => {
+        if (auth) {
+            signOut(auth);
+        }
+    });
+
+    // Typ Buttons
+    btnDemon.addEventListener("click", ()=>{
+        selectedType="Demon";
+        btnDemon.classList.add("selected");
+        btnDemonSlayer.classList.remove("selected");
+        mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">`;
+    });
+    
+    btnDemonSlayer.addEventListener("click", ()=>{
+        selectedType="Demon Slayer";
+        btnDemonSlayer.classList.add("selected");
+        btnDemon.classList.remove("selected");
+        mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">
+        <label>Main Character 2:</label><input type="text" id="main2" placeholder="Main 2" class="text-input">`;
+    });
+
+    // Rang-Auswahl
+    rankOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            // Entferne Auswahl von allen Optionen
+            rankOptions.forEach(opt => opt.classList.remove('selected'));
+            // Wähle die aktuelle Option aus
+            option.classList.add('selected');
+            selectedRank = option.dataset.rank;
         });
+    });
 
-        // Login-UI aktualisieren
-        function updateLoginUI() {
-            if (isAdmin) {
-                loginBtn.classList.remove('visible');
-                logoutBtn.classList.add('visible');
-                userEmail.innerHTML = '<i class="fas fa-user"></i> Admin';
-                adminPanel.style.display = 'block';
-                document.getElementById('adminDragInfo').style.display = 'block';
+    // Standardmäßig Upper Rank 1 auswählen
+    document.querySelector('[data-rank="Upper Rank 1"]').classList.add('selected');
+
+    // Auth Status - nur wenn Firebase verfügbar ist
+    if (auth) {
+        onAuthStateChanged(auth, (user)=>{
+            currentUser = user;
+            if(user){
+                document.getElementById("userEmail").innerHTML = `<i class="fas fa-user"></i> ${user.email}`;
+                isAdmin = (user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com");
+                
+                // Login/Logout Buttons anpassen
+                loginBtn.style.display = "none";
+                logoutBtn.style.display = "flex";
+                
+                if(isAdmin){
+                    adminPanel.style.display = "block";
+                    adminDragInfo.style.display = "block";
+                    setTimeout(() => {
+                        adminPanel.classList.add("visible");
+                    }, 10);
+                } else {
+                    adminPanel.classList.remove("visible");
+                    adminDragInfo.style.display = "none";
+                    setTimeout(() => {
+                        adminPanel.style.display = "none";
+                    }, 300);
+                }
             } else {
-                loginBtn.classList.add('visible');
-                logoutBtn.classList.remove('visible');
-                userEmail.innerHTML = '<i class="fas fa-user"></i> Nicht eingeloggt';
-                adminPanel.style.display = 'none';
-                document.getElementById('adminDragInfo').style.display = 'none';
+                // Login/Logout Buttons anpassen
+                loginBtn.style.display = "flex";
+                logoutBtn.style.display = "none";
+                
+                adminPanel.classList.remove("visible");
+                adminDragInfo.style.display = "none";
+                setTimeout(() => {
+                    adminPanel.style.display = "none";
+                }, 300);
+                document.getElementById("userEmail").innerHTML = "<i class=\"fas fa-user\"></i> Nicht eingeloggt";
+                isAdmin = false;
             }
-        }
+            loadPlayers(); // Immer Spieler laden, auch wenn nicht eingeloggt
+        });
+    } else {
+        // Firebase nicht verfügbar, Admin-Panel ausblenden
+        adminPanel.style.display = "none";
+        adminDragInfo.style.display = "none";
+        firebaseError.style.display = "block";
+        demoModeBanner.style.display = "block";
+        usingDemoData = true;
+        updateConnectionStatus(false);
+    }
 
-        // Dialog zum Bearbeiten der Main Characters öffnen
-        function openEditMainsDialog(playerName) {
-            const player = demoPlayers.find(p => p.name === playerName);
-            if (player) {
-                currentPlayer = player;
-                editPlayerName.textContent = player.name;
-                editMain1.value = player.mains[0] || '';
-                editMain2.value = player.mains[1] || '';
-                editMainsDialog.style.display = 'block';
+    // Drag & Drop Funktionen
+    function initDragAndDrop() {
+        const items = rankingList.querySelectorAll('.ranking-item');
+        
+        // Lösche alle vorhandenen Drag-Drop-Bereiche
+        rankingList.querySelectorAll('.drag-drop-area').forEach(area => area.remove());
+        
+        // Erstelle Drag-Drop-Bereiche zwischen den Elementen
+        items.forEach((item, index) => {
+            // Erstelle einen Drag-Drop-Bereich vor jedem Element (außer dem ersten)
+            if (index > 0) {
+                const dragArea = document.createElement('div');
+                dragArea.className = 'drag-drop-area';
+                dragArea.dataset.position = index;
+                rankingList.insertBefore(dragArea, item);
+                
+                // Event-Listener für Drag & Drop
+                dragArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dragArea.classList.add('drag-over');
+                });
+                
+                dragArea.addEventListener('dragleave', (e) => {
+                    dragArea.classList.remove('drag-over');
+                });
+                
+                dragArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dragArea.classList.remove('drag-over');
+                    
+                    if (dragSourceElement) {
+                        // Element an der richtigen Position einfügen
+                        rankingList.insertBefore(dragSourceElement, dragArea.nextSibling);
+                        
+                        // Ränge aktualisieren
+                        updateRanksAfterDrag();
+                    }
+                });
             }
-        }
+            
+            // Handle für Drag & Drop hinzufügen
+            if (isAdmin) {
+                const dragHandle = document.createElement('span');
+                dragHandle.className = 'drag-handle';
+                dragHandle.innerHTML = '<i class="fas fa-arrows-alt"></i>';
+                item.prepend(dragHandle);
+                
+                // Event-Listener für Drag & Drop
+                item.setAttribute('draggable', 'true');
+                
+                item.addEventListener('dragstart', (e) => {
+                    dragSourceElement = item;
+                    e.dataTransfer.setData('text/plain', item.dataset.name);
+                    item.classList.add('dragging');
+                });
+                
+                item.addEventListener('dragend', (e) => {
+                    item.classList.remove('dragging');
+                    rankingList.querySelectorAll('.drag-drop-area').forEach(area => {
+                        area.classList.remove('drag-over');
+                    });
+                });
+            } else {
+                // Entferne Drag & Drop Funktionen, wenn nicht Admin
+                item.setAttribute('draggable', 'false');
+                const handle = item.querySelector('.drag-handle');
+                if (handle) handle.remove();
+            }
+        });
+        
+        // Füge einen Bereich nach dem letzten Element hinzu
+        const lastDragArea = document.createElement('div');
+        lastDragArea.className = 'drag-drop-area';
+        lastDragArea.dataset.position = items.length;
+        rankingList.appendChild(lastDragArea);
+        
+        lastDragArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            lastDragArea.classList.add('drag-over');
+        });
+        
+        lastDragArea.addEventListener('dragleave', (e) => {
+            lastDragArea.classList.remove('drag-over');
+        });
+        
+        lastDragArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            lastDragArea.classList.remove('drag-over');
+            
+            if (dragSourceElement) {
+                // Element am Ende einfügen
+                rankingList.appendChild(dragSourceElement);
+                
+                // Ränge aktualisieren
+                updateRanksAfterDrag();
+            }
+        });
+    }
 
-        // Rangliste rendern
-        function renderRanking(players) {
-            rankingList.innerHTML = "";
+    // Ränge nach Drag & Drop aktualisieren
+    async function updateRanksAfterDrag() {
+        const items = rankingList.querySelectorAll('.ranking-item');
+        const updatedPlayers = [];
+        
+        // Neue Rangreihenfolge bestimmen
+        items.forEach((item, index) => {
+            const playerName = item.dataset.name;
+            const rank = getRankFromPosition(index);
             
-            if (players.length === 0) {
-                rankingList.innerHTML = "<li class='no-players'>Keine Spieler vorhanden</li>";
-                return;
-            }
-            
-            const rankOrder = {
-                "Upper Rank 1": 1,
-                "Upper Rank 2": 2,
-                "Upper Rank 3": 3,
-                "Upper Rank 4": 4,
-                "Upper Rank 5": 5,
-                "Upper Rank 6": 6,
-                "Lower Rank 1": 7,
-                "Lower Rank 2": 8,
-                "Lower Rank 3": 9,
-                "Lower Rank 4": 10,
-                "Lower Rank 5": 11,
-                "Lower Rank 6": 12
+            // Spieler-Objekt mit aktualisiertem Rang erstellen
+            const player = {
+                name: playerName,
+                rank: rank,
+                type: item.querySelector('.player-type').textContent,
+                mains: item.querySelector('.player-mains').textContent.split(', ')
             };
             
-            const sorted = players.sort((a, b) => {
-                return (rankOrder[a.rank] || 12) - (rankOrder[b.rank] || 12);
+            updatedPlayers.push(player);
+            
+            // Rang in der Anzeige aktualisieren
+            const rankElement = item.querySelector('.player-rank');
+            rankElement.textContent = rank;
+            rankElement.className = `player-rank ${rank.startsWith("Upper") ? "upper-moon" : "lower-moon"}`;
+        });
+        
+        // Datenbank aktualisieren (wenn online)
+        if (db && isOnline) {
+            try {
+                // Alle Spieler mit neuen Rängen speichern
+                for (const player of updatedPlayers) {
+                    await set(ref(db, 'players/' + player.name), player);
+                }
+                showNotification("Rangliste erfolgreich aktualisiert!", "success");
+                
+                // Lokale Daten aktualisieren
+                const playersObj = {};
+                updatedPlayers.forEach(player => {
+                    playersObj[player.name] = player;
+                });
+                localStorage.setItem('demonSlayerPlayers', JSON.stringify(playersObj));
+            } catch (err) {
+                showNotification("Fehler beim Aktualisieren der Ränge: " + err.message, "error");
+            }
+        } else if (!isOnline) {
+            // Offline: Nur lokale Daten aktualisieren
+            const playersObj = {};
+            updatedPlayers.forEach(player => {
+                playersObj[player.name] = player;
             });
+            localStorage.setItem('demonSlayerPlayers', JSON.stringify(playersObj));
+            showNotification("Rangliste lokal aktualisiert (Offline-Modus).", "info");
+        }
+        
+        // Drag & Drop neu initialisieren
+        initDragAndDrop();
+    }
 
-            sorted.forEach((player, index) => {
-                // Füge Drag & Drop Bereich hinzu
-                if (index > 0) {
-                    const dropArea = document.createElement('div');
-                    dropArea.className = 'drag-drop-area';
-                    dropArea.dataset.position = index;
-                    rankingList.appendChild(dropArea);
+    // Rang basierend auf Position bestimmen
+    function getRankFromPosition(position) {
+        const ranks = [
+            "Upper Rank 1",
+            "Upper Rank 2",
+            "Upper Rank 3",
+            "Upper Rank 4",
+            "Upper Rank 5",
+            "Upper Rank 6",
+            "Lower Rank 1",
+            "Lower Rank 2",
+            "Lower Rank 3",
+            "Lower Rank 4",
+            "Lower Rank 5",
+            "Lower Rank 6"
+        ];
+        
+        return ranks[position] || "Lower Rank 6";
+    }
+
+    // Mains bearbeiten Funktion
+    function setupEditMains() {
+        document.querySelectorAll('.edit-mains-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const playerItem = btn.closest('.ranking-item');
+                const playerName = playerItem.dataset.name;
+                const mainsText = playerItem.querySelector('.player-mains').textContent;
+                
+                // Formular anzeigen
+                let form = playerItem.querySelector('.edit-mains-form');
+                if (!form) {
+                    form = document.createElement('div');
+                    form.className = 'edit-mains-form';
+                    form.innerHTML = `
+                        <input type="text" class="edit-main1" placeholder="Main 1">
+                        <input type="text" class="edit-main2" placeholder="Main 2 (optional)">
+                        <button class="save-mains-btn">Speichern</button>
+                        <button class="cancel-mains-btn">Abbrechen</button>
+                    `;
+                    playerItem.appendChild(form);
+                    
+                    // Event-Listener für Formular
+                    form.querySelector('.save-mains-btn').addEventListener('click', () => {
+                        saveMains(playerName, form);
+                    });
+                    
+                    form.querySelector('.cancel-mains-btn').addEventListener('click', () => {
+                        form.style.display = 'none';
+                    });
                 }
                 
-                const li = document.createElement('li');
-                li.dataset.name = player.name;
-                li.className = `ranking-item ${player.rank.startsWith("Upper") ? "upper" : "lower"}`;
+                // Bestehende Werte setzen
+                const mains = mainsText.split(', ');
+                form.querySelector('.edit-main1').value = mains[0] || '';
+                form.querySelector('.edit-main2').value = mains[1] || '';
                 
-                li.innerHTML = `
-                    <span class="player-rank ${player.rank.startsWith("Upper") ? "upper-moon" : "lower-moon"}">${player.rank}</span>
-                    <span class="player-name">${player.name}</span>
-                    <span class="player-type ${player.type === 'Demon' ? 'demon-type' : 'slayer-type'}">${player.type}</span>
-                    <span class="player-mains">${player.mains.join(", ")}</span>
-                `;
-                
-                rankingList.appendChild(li);
+                form.style.display = 'block';
             });
+        });
+    }
+
+    // Mains speichern
+    async function saveMains(playerName, form) {
+        const main1 = form.querySelector('.edit-main1').value.trim();
+        const main2 = form.querySelector('.edit-main2').value.trim();
+        
+        if (!main1) {
+            showNotification("Bitte mindestens einen Main Character angeben!", "error");
+            return;
+        }
+        
+        const mains = main2 ? [main1, main2] : [main1];
+        
+        try {
+            // Spielerdaten laden
+            let playerData;
+            if (db && isOnline) {
+                const snapshot = await get(ref(db, 'players/' + playerName));
+                playerData = snapshot.val();
+            } else {
+                const localPlayers = JSON.parse(localStorage.getItem('demonSlayerPlayers') || '{}');
+                playerData = localPlayers[playerName];
+            }
+            
+            if (playerData) {
+                // Mains aktualisieren
+                playerData.mains = mains;
+                
+                // In Datenbank speichern
+                if (db && isOnline) {
+                    await set(ref(db, 'players/' + playerName), playerData);
+                    showNotification("Mains erfolgreich aktualisiert!", "success");
+                }
+                
+                // Lokal speichern
+                const localPlayers = JSON.parse(localStorage.getItem('demonSlayerPlayers') || '{}');
+                localPlayers[playerName] = playerData;
+                localStorage.setItem('demonSlayerPlayers', JSON.stringify(localPlayers));
+                
+                // UI aktualisieren
+                const mainsElement = document.querySelector(`.ranking-item[data-name="${playerName}"] .player-mains`);
+                mainsElement.textContent = mains.join(', ');
+                
+                // Formular ausblenden
+                form.style.display = 'none';
+            }
+        } catch (err) {
+            showNotification("Fehler beim Speichern: " + err.message, "error");
+        }
+    }
+
+    // Spieler hinzufügen/aktualisieren
+    addUpdateBtn.addEventListener("click", async ()=>{
+        if (!db) {
+            showNotification("Datenbank nicht verfügbar. Demo-Modus aktiviert.", "error");
+            return;
+        }
+        
+        if(!currentUser){ 
+            showNotification("Nur Admins können Spieler hinzufügen.", "error");
+            return; 
+        }
+        
+        const name = document.getElementById("playerName").value.trim();
+        const main1 = document.getElementById("main1")?.value.trim();
+        const main2 = document.getElementById("main2")?.value.trim();
+
+        if(!name || !main1 || (selectedType==="Demon Slayer" && !main2)){
+            showNotification("Bitte alle Felder ausfüllen!", "error");
+            return;
         }
 
-        // Dropdown für Admin aktualisieren
-        function updateDropdown(players) {
-            existingPlayers.innerHTML = "";
-            players.forEach(player => {
-                const opt = document.createElement("option");
-                opt.value = player.name;
-                opt.innerText = player.name;
-                existingPlayers.appendChild(opt);
-            });
-        }
+        const mains = selectedType==="Demon" ? [main1] : [main1, main2];
+        const playerData = { name, type: selectedType, mains, rank: selectedRank };
 
-        // Benachrichtigungsfunktion
-        function showNotification(message, type) {
-            // Einfache Benachrichtigung für Demo-Zwecke
-            alert(`${type.toUpperCase()}: ${message}`);
+        try{
+            await set(ref(db,'players/'+name), playerData);
+            showNotification("Spieler erfolgreich hinzugefügt/aktualisiert!", "success");
+            document.getElementById("playerName").value = "";
+            document.getElementById("main1").value = "";
+            if(main2) document.getElementById("main2").value = "";
+            
+            // Lokal speichern für Offline-Zugriff
+            savePlayerLocally(playerData);
+            loadPlayers();
+        } catch(err){ 
+            showNotification("Fehler: "+err.message, "error");
+            // Fallback: lokal speichern
+            savePlayerLocally(playerData);
+            showNotification("Spieler lokal gespeichert (Offline-Modus).", "info");
+            loadPlayers();
         }
+    });
+
+    // Spieler entfernen
+    removeBtn.addEventListener("click", async ()=>{
+        const name = existingPlayers.value;
+        if(!name) return;
+        if(!confirm(`Möchten Sie wirklich ${name} entfernen?`)) return;
+        
+        try {
+            if (db) {
+                await remove(ref(db,'players/'+name));
+                showNotification("Spieler erfolgreich entfernt!", "success");
+            }
+            
+            // Auch lokal entfernen
+            removePlayerLocally(name);
+            loadPlayers();
+        } catch(err){ 
+            showNotification("Fehler: "+err.message, "error");
+            // Fallback: lokal entfernen
+            removePlayerLocally(name);
+            showNotification("Spieler lokal entfernt (Offline-Modus).", "info");
+            loadPlayers();
+        }
+    });
+
+    // Verbindungsstatus aktualisieren
+    function updateConnectionStatus(online) {
+        isOnline = online;
+        if (online) {
+            connectionStatus.className = "connection-status online-status";
+            connectionStatus.innerHTML = '<span class="status-indicator online-indicator"></span> Online';
+            localDataInfo.style.display = "none";
+            demoModeBanner.style.display = "none";
+        } else {
+            connectionStatus.className = "connection-status offline-status";
+            connectionStatus.innerHTML = '<span class="status-indicator offline-indicator"></span> Offline';
+            firebaseError.style.display = "block";
+        }
+    }
+
+    // Spieler lokal speichern
+    function savePlayerLocally(playerData) {
+        try {
+            const players = JSON.parse(localStorage.getItem('demonSlayerPlayers') || '{}');
+            players[playerData.name] = playerData;
+            localStorage.setItem('demonSlayerPlayers', JSON.stringify(players));
+        } catch (e) {
+            console.error("Fehler beim lokalen Speichern:", e);
+        }
+    }
+
+    // Spieler lokal entfernen
+    function removePlayerLocally(playerName) {
+        try {
+            const players = JSON.parse(localStorage.getItem('demonSlayerPlayers') || '{}');
+            delete players[playerName];
+            localStorage.setItem('demonSlayerPlayers', JSON.stringify(players));
+        } catch (e) {
+            console.error("Fehler beim lokalen Entfernen:", e);
+        }
+    }
+
+    // Lokale Spieler laden
+    function loadLocalPlayers() {
+        try {
+            const playersData = localStorage.getItem('demonSlayerPlayers');
+            if (playersData) {
+                const players = JSON.parse(playersData);
+                return Object.values(players);
+            }
+        } catch (e) {
+            console.error("Fehler beim Laden lokaler Daten:", e);
+        }
+        return [];
+    }
+
+    // Spieler laden und Rangliste rendern
+    async function loadPlayers(){
+        // Zuerst versuchen, von Firebase zu laden
+        if (db) {
+            try {
+                console.log("Versuche Spieler von Firebase zu laden...");
+                const snapshot = await get(ref(db,'players/'));
+                
+                // Online-Modus
+                updateConnectionStatus(true);
+                
+                if(!snapshot.exists()) {
+                    console.log("Keine Daten in der Datenbank gefunden");
+                    // Versuche lokale Daten zu laden
+                    const localPlayers = loadLocalPlayers();
+                    if (localPlayers.length > 0) {
+                        localDataInfo.style.display = "block";
+                        updateDropdown(localPlayers);
+                        renderRanking(localPlayers);
+                    } else {
+                        // Demo-Daten laden
+                        updateDropdown(demoPlayers);
+                        renderRanking(demoPlayers);
+                        demoModeBanner.style.display = "block";
+                        usingDemoData = true;
+                    }
+                    return; 
+                }
+                
+                const data = snapshot.val();
+                console.log("Daten aus Firebase:", data);
+                
+                const players = Object.values(data);
+                
+                // Speichere die Daten lokal für Offline-Zugriff
+                try {
+                    const playersObj = {};
+                    players.forEach(player => {
+                        playersObj[player.name] = player;
+                    });
+                    localStorage.setItem('demonSlayerPlayers', JSON.stringify(playersObj));
+                } catch (e) {
+                    console.error("Fehler beim lokalen Speichern:", e);
+                }
+                
+                updateDropdown(players);
+                renderRanking(players);
+                return;
+            } catch(err){
+                console.error("Fehler beim Laden der Spieler von Firebase:", err);
+                updateConnectionStatus(false);
+            }
+        }
+        
+        // Fallback: Lokale Daten laden
+        const localPlayers = loadLocalPlayers();
+        if (localPlayers.length > 0) {
+            localDataInfo.style.display = "block";
+            updateDropdown(localPlayers);
+            renderRanking(localPlayers);
+        } else {
+            // Demo-Daten verwenden
+            updateDropdown(demoPlayers);
+            renderRanking(demoPlayers);
+            demoModeBanner.style.display = "block";
+            usingDemoData = true;
+        }
+    }
+
+    // Dropdown für Admin
+    function updateDropdown(players){
+        existingPlayers.innerHTML="";
+        players.forEach(player=>{
+            const opt = document.createElement("option");
+            opt.value = player.name;
+            opt.innerText = player.name;
+            existingPlayers.appendChild(opt);
+        });
+    }
+
+    // Rangliste rendern
+    function renderRanking(players){
+        rankingList.innerHTML="";
+        
+        if(players.length === 0) {
+            rankingList.innerHTML="<li class='no-players'>Keine Spieler vorhanden</li>";
+            return;
+        }
+        
+        const rankOrder = {
+            "Upper Rank 1": 1,
+            "Upper Rank 2": 2,
+            "Upper Rank 3": 3,
+            "Upper Rank 4": 4,
+            "Upper Rank 5": 5,
+            "Upper Rank 6": 6,
+            "Lower Rank 1": 7,
+            "Lower Rank 2": 8,
+            "Lower Rank 3": 9,
+            "Lower Rank 4": 10,
+            "Lower Rank 5": 11,
+            "Lower Rank 6": 12
+        };
+        
+        const sorted = players.sort((a,b)=>{
+            return (rankOrder[a.rank] || 12) - (rankOrder[b.rank] || 12);
+        });
+
+        sorted.forEach((player, index) => {
+            const li = document.createElement("li");
+            li.dataset.name=player.name;
+            li.className = `ranking-item ${player.rank.startsWith("Upper")?"upper":"lower"}`;
+            
+            // Animationseffekt mit Verzögerung
+            li.style.animationDelay = `${index * 0.1}s`;
+            
+            li.innerHTML=`
+                <span class="player-rank ${player.rank.startsWith("Upper")?"upper-moon":"lower-moon"}">${player.rank}</span>
+                <span class="player-name">${player.name}</span>
+                <span class="player-type ${player.type === 'Demon' ? 'demon-type' : 'slayer-type'}">${player.type}</span>
+                <span class="player-mains">${player.mains.join(", ")}</span>
+            `;
+            
+            // Bearbeiten-Button für Admins hinzufügen
+            if (isAdmin) {
+                const editButton = document.createElement('button');
+                editButton.className = 'edit-mains-btn';
+                editButton.innerHTML = '<i class="fas fa-edit"></i> Bearbeiten';
+                li.querySelector('.player-mains').after(editButton);
+            }
+            
+            rankingList.appendChild(li);
+        });
+        
+        // Drag & Drop initialisieren
+        initDragAndDrop();
+        
+        // Edit-Buttons initialisieren
+        if (isAdmin) {
+            setupEditMains();
+        }
+    }
+
+    // Benachrichtigungsfunktion
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <span>${message}</span>
+            <button onclick="this.parentElement.remove()">&times;</button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Automatisch nach 3 Sekunden entfernen
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.remove();
+            }
+        }, 3000);
+    }
+
+    // Initialisierung
+    window.addEventListener('load', () => {
+        // Prüfe zuerst die Verbindung
+        loadPlayers();
+    });
     </script>
 </body>
 </html>
