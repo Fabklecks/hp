@@ -232,7 +232,7 @@
         .social-item i {
             width: 20px;
             text-align: center;
-            color: #ff8c00;
+            color: #ff0000;
         }
         
         .social-item a {
@@ -280,6 +280,40 @@
             display: flex;
             align-items: center;
         }
+        
+        /* Edit Mains Section */
+        #editMainsSection {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .edit-type-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .edit-type-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(10, 10, 20, 0.6);
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .edit-type-btn.selected {
+            background: rgba(255, 69, 0, 0.3);
+            border-color: #ff4500;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -301,14 +335,14 @@
         
         <div class="social-item">
             <i class="fab fa-youtube"></i>
-            <span>J.O.K.R:</span>
-            <a href="https://www.youtube.com/@J.O.K.R" target="_blank">YouTube</a>
+            <span>Leitung:</span>
+            <a href="https://www.youtube.com/@Mikato-o" target="_blank">Mikato</a>
         </div>
         
         <div class="social-item">
             <i class="fab fa-youtube"></i>
-            <span>Mikato:</span>
-            <a href="https://www.youtube.com/@Mikato-o" target="_blank">YouTube</a>
+            <span>Developer:</span>
+            <a href="https://www.youtube.com/@J.O.K.R" target="_blank">J.O.K.R</a>
         </div>
     </div>
 
@@ -388,14 +422,33 @@
                 <button id="removeBtn" class="action-btn btn-danger"><i class="fas fa-trash-alt"></i> Spieler entfernen</button>
                 
                 <div class="form-group" id="editMainsSection" style="display: none;">
-                    <h3>Mains bearbeiten</h3>
-                    <div id="editMainsFields"></div>
-                    <button id="saveMainsBtn" class="action-btn btn-primary"><i class="fas fa-save"></i> Mains speichern</button>
+                    <h3>Spieler bearbeiten</h3>
+                    
+                    <div class="form-group">
+                        <label>Typ auswählen:</label>
+                        <div class="edit-type-buttons">
+                            <button id="editBtnDemon" class="edit-type-btn"><i class="fas fa-moon"></i> Demon</button>
+                            <button id="editBtnDemonSlayer" class="edit-type-btn"><i class="fas fa-shield-alt"></i> Demon Slayer</button>
+                        </div>
+                    </div>
+                    
+                    <div id="editMainFields">
+                        <div class="form-group">
+                            <label>Main Character 1:</label>
+                            <input type="text" id="editMain1" class="text-input">
+                        </div>
+                        <div class="form-group" id="editMain2Field" style="display: none;">
+                            <label>Main Character 2:</label>
+                            <input type="text" id="editMain2" class="text-input">
+                        </div>
+                    </div>
+                    
+                    <button id="saveMainsBtn" class="action-btn btn-primary"><i class="fas fa-save"></i> Änderungen speichern</button>
                 </div>
             </section>
 
             <section class="ranking-section">
-                <h2><i class="fas fa-trophy"></i> Live-Rangliste</h2>
+                <h2><i class="fas fa-trophy"></i> Rangliste</h2>
                 
                 <div id="localDataInfo" class="local-data-info" style="display: none;">
                     <h4><i class="fas fa-database"></i> Lokale Daten</h4>
@@ -407,10 +460,7 @@
                 </div>
                 
                 <div class="ranking-header">
-                    <span>Rang</span>
-                    <span>Name</span>
-                    <span>Typ</span>
-                    <span>Main Characters</span>
+
                 </div>
                 <ul id="rankingList" class="ranking-list"></ul>
             </section>
@@ -502,8 +552,12 @@
     const socialMenu = document.getElementById('socialMenu');
     const menuToggle = document.getElementById('menuToggle');
     const editMainsSection = document.getElementById('editMainsSection');
-    const editMainsFields = document.getElementById('editMainsFields');
     const saveMainsBtn = document.getElementById('saveMainsBtn');
+    const editBtnDemon = document.getElementById('editBtnDemon');
+    const editBtnDemonSlayer = document.getElementById('editBtnDemonSlayer');
+    const editMain1 = document.getElementById('editMain1');
+    const editMain2 = document.getElementById('editMain2');
+    const editMain2Field = document.getElementById('editMain2Field');
 
     let selectedType = "Demon";
     let selectedRank = "Upper Rank 1";
@@ -513,6 +567,7 @@
     let isAdmin = false;
     let dragSourceElement = null;
     let currentlyEditingPlayer = null;
+    let editPlayerType = "Demon";
 
     // Login / Logout
     loginBtn.addEventListener("click", () => {
@@ -550,6 +605,21 @@
         btnDemon.classList.remove("selected");
         mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">
         <label>Main Character 2:</label><input type="text" id="main2" placeholder="Main 2" class="text-input">`;
+    });
+
+    // Edit Typ Buttons
+    editBtnDemon.addEventListener("click", ()=>{
+        editPlayerType="Demon";
+        editBtnDemon.classList.add("selected");
+        editBtnDemonSlayer.classList.remove("selected");
+        editMain2Field.style.display = "none";
+    });
+    
+    editBtnDemonSlayer.addEventListener("click", ()=>{
+        editPlayerType="Demon Slayer";
+        editBtnDemonSlayer.classList.add("selected");
+        editBtnDemon.classList.remove("selected");
+        editMain2Field.style.display = "block";
     });
 
     // Rang-Auswahl
@@ -678,6 +748,18 @@
                         // Ränge aktualisieren
                         updateRanksAfterDrag();
                     }
+                    // Vergrößerte Hitbox für Drop-Zone
+                    const dropZone = document.createElement('div');
+                    dropZone.className = 'drop-zone';
+                    dropZone.style.height = '30px';
+                    dropZone.style.margin = '10px 0';
+                    rankingList.insertBefore(dropZone, item.nextSibling);
+                    
+                    setTimeout(() => {
+                        if (dropZone.parentNode) {
+                            dropZone.parentNode.removeChild(dropZone);
+                        }
+                    }, 500);
                 });
             } else {
                 // Entferne Drag & Drop Funktionen, wenn nicht Admin
@@ -1039,54 +1121,26 @@
     function editPlayerMains(player) {
         currentlyEditingPlayer = player;
         editMainsSection.style.display = 'block';
-        editMainsFields.innerHTML = '';
         
-        // Felder für die Mains erstellen
-        const mains = player.mains || [];
+        // Typ-Buttons setzen
+        editPlayerType = player.type;
+        if (player.type === "Demon") {
+            editBtnDemon.classList.add("selected");
+            editBtnDemonSlayer.classList.remove("selected");
+            editMain2Field.style.display = "none";
+        } else {
+            editBtnDemonSlayer.classList.add("selected");
+            editBtnDemon.classList.remove("selected");
+            editMain2Field.style.display = "block";
+        }
         
-        mains.forEach((main, index) => {
-            const inputGroup = document.createElement('div');
-            inputGroup.className = 'form-group';
-            inputGroup.innerHTML = `
-                <label>Main ${index + 1}:</label>
-                <input type="text" class="text-input main-input" value="${main}" data-index="${index}">
-                <button class="action-btn btn-danger remove-main-btn" style="margin-top: 5px; padding: 5px 10px;">
-                    <i class="fas fa-trash"></i> Entfernen
-                </button>
-            `;
-            editMainsFields.appendChild(inputGroup);
-            
-            // Event-Listener für Entfernen-Button
-            const removeBtn = inputGroup.querySelector('.remove-main-btn');
-            removeBtn.addEventListener('click', () => {
-                inputGroup.remove();
-            });
-        });
-        
-        // Button zum Hinzufügen weiterer Mains
-        const addMainBtn = document.createElement('button');
-        addMainBtn.className = 'action-btn btn-primary';
-        addMainBtn.innerHTML = '<i class="fas fa-plus"></i> Main hinzufügen';
-        addMainBtn.addEventListener('click', () => {
-            const inputGroup = document.createElement('div');
-            inputGroup.className = 'form-group';
-            inputGroup.innerHTML = `
-                <label>Main ${editMainsFields.children.length + 1}:</label>
-                <input type="text" class="text-input main-input">
-                <button class="action-btn btn-danger remove-main-btn" style="margin-top: 5px; padding: 5px 10px;">
-                    <i class="fas fa-trash"></i> Entfernen
-                </button>
-            `;
-            editMainsFields.appendChild(inputGroup);
-            
-            // Event-Listener für Entfernen-Button
-            const removeBtn = inputGroup.querySelector('.remove-main-btn');
-            removeBtn.addEventListener('click', () => {
-                inputGroup.remove();
-            });
-        });
-        
-        editMainsFields.appendChild(addMainBtn);
+        // Mains in Felder eintragen
+        editMain1.value = player.mains[0] || "";
+        if (player.mains.length > 1) {
+            editMain2.value = player.mains[1] || "";
+        } else {
+            editMain2.value = "";
+        }
     }
 
     // Event-Listener für Speichern-Button
@@ -1094,16 +1148,13 @@
         if (!currentlyEditingPlayer) return;
         
         // Mains aus den Eingabefeldern sammeln
-        const mainInputs = editMainsFields.querySelectorAll('.main-input');
-        const newMains = [];
+        const newMains = [editMain1.value.trim()];
         
-        mainInputs.forEach(input => {
-            if (input.value.trim() !== '') {
-                newMains.push(input.value.trim());
-            }
-        });
+        if (editPlayerType === "Demon Slayer" && editMain2.value.trim() !== "") {
+            newMains.push(editMain2.value.trim());
+        }
         
-        if (newMains.length === 0) {
+        if (newMains[0] === "") {
             showNotification("Mindestens ein Main Character muss angegeben werden.", "error");
             return;
         }
@@ -1111,13 +1162,14 @@
         // Spieler aktualisieren
         const updatedPlayer = {
             ...currentlyEditingPlayer,
+            type: editPlayerType,
             mains: newMains
         };
         
         try {
             if (db && isOnline) {
                 await set(ref(db, 'players/' + updatedPlayer.name), updatedPlayer);
-                showNotification("Mains erfolgreich aktualisiert!", "success");
+                showNotification("Spieler erfolgreich aktualisiert!", "success");
             }
             
             // Lokal speichern
