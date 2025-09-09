@@ -1,198 +1,284 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Demon Slayer Hinokami Chronicles 2 - Rangliste</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demon Slayer Hinokami Chronicles 2 - Rangliste</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Hintergrund-Animationen -->
+    <div class="background-animation">
+        <div class="flame"></div>
+        <div class="flame"></div>
+        <div class="flame"></div>
+        <div class="flame"></div>
+        <div class="flame"></div>
+    </div>
 
-<h1>Demon Slayer Hinokami Chronicles 2 - Rangliste</h1>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-fire"></i> Demon Slayer Hinokami Chronicles 2 - Rangliste</h1>
+            
+            <div class="login-area">
+                <button id="loginBtn" class="btn-login"><i class="fab fa-google"></i> Login (Admin)</button>
+                <button id="logoutBtn" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                <span id="userEmail"><i class="fas fa-user"></i> Nicht eingeloggt</span>
+            </div>
+        </header>
 
-<div class="login-area">
-  <button id="loginBtn">Login (Admin)</button>
-  <button id="logoutBtn">Logout</button>
-  <span id="userEmail">Nicht eingeloggt</span>
-</div>
+        <main>
+            <section id="adminPanel" class="admin-panel card">
+                <h2><i class="fas fa-crown"></i> Spieler verwalten (Admin)</h2>
 
-<div id="adminPanel" class="admin-panel">
-  <h2>Spieler verwalten (Admin)</h2>
+                <div class="form-group">
+                    <label>Spielername:</label>
+                    <input type="text" id="playerName" placeholder="Spielername" class="text-input">
+                </div>
 
-  <label>Spielername:</label>
-  <input type="text" id="playerName" placeholder="Spielername">
+                <div class="form-group">
+                    <label>Typ auswählen:</label>
+                    <div class="type-buttons">
+                        <button id="btnDemon" class="type-btn selected"><i class="fas fa-moon"></i> Demon</button>
+                        <button id="btnDemonSlayer" class="type-btn"><i class="fas fa-shield-alt"></i> Demon Slayer</button>
+                    </div>
+                </div>
 
-  <label>Typ auswählen:</label>
-  <div class="type-buttons">
-    <button id="btnDemon" class="type-btn selected">Demon</button>
-    <button id="btnDemonSlayer" class="type-btn">Demon Slayer</button>
-  </div>
+                <div id="mainFields" class="form-group">
+                    <label>Main Character 1:</label>
+                    <input type="text" id="main1" placeholder="Main 1" class="text-input">
+                </div>
 
-  <div id="mainFields">
-    <label>Main Character 1:</label>
-    <input type="text" id="main1" placeholder="Main 1">
-  </div>
+                <button id="addUpdateBtn" class="action-btn btn-primary"><i class="fas fa-plus-circle"></i> Spieler hinzufügen/aktualisieren</button>
+                
+                <div class="form-group">
+                    <label>Bestehenden Spieler auswählen:</label>
+                    <select id="existingPlayers" class="select-input"></select>
+                </div>
+                
+                <button id="removeBtn" class="action-btn btn-danger"><i class="fas fa-trash-alt"></i> Spieler entfernen</button>
+            </section>
 
-  <button id="addUpdateBtn" class="action-btn">Spieler hinzufügen/aktualisieren</button>
-  <br>
-  <label>Bestehenden Spieler auswählen:</label>
-  <select id="existingPlayers"></select>
-  <button id="removeBtn" class="action-btn">Spieler entfernen</button>
-</div>
+            <section class="ranking-section">
+                <h2><i class="fas fa-trophy"></i> Live-Rangliste</h2>
+                <div class="ranking-header">
+                    <span>Rang</span>
+                    <span>Name</span>
+                    <span>Typ</span>
+                    <span>Main Characters</span>
+                </div>
+                <ul id="rankingList" class="ranking-list"></ul>
+            </section>
+        </main>
+    </div>
 
-<h2>Live-Rangliste</h2>
-<ul id="rankingList" class="ranking-list"></ul>
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getDatabase, ref, set, remove, get, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-import { getDatabase, ref, set, remove, get, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+    // Firebase Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
+        authDomain: "demonslayerranks.firebaseapp.com",
+        databaseURL: "https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app/",
+        projectId: "demonslayerranks",
+        storageBucket: "demonslayerranks.appspot.com",
+        messagingSenderId: "244021550640",
+        appId: "1:244021550640:web:4d2a3c7a52c205f5e997f5"
+    };
 
-// Firebase Config
-const firebaseConfig = {
-  apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
-  authDomain: "demonslayerranks.firebaseapp.com",
-  databaseURL: "https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app/",
-  projectId: "demonslayerranks",
-  storageBucket: "demonslayerranks.firebasedatabase.app",
-  messagingSenderId: "244021550640",
-  appId: "1:244021550640:web:4d2a3c7a52c205f5e997f5"
-};
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth();
-const provider = new GoogleAuthProvider();
+    // DOM Elemente
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const adminPanel = document.getElementById("adminPanel");
+    const rankingList = document.getElementById("rankingList");
+    const existingPlayers = document.getElementById("existingPlayers");
+    const btnDemon = document.getElementById("btnDemon");
+    const btnDemonSlayer = document.getElementById("btnDemonSlayer");
+    const mainFields = document.getElementById("mainFields");
+    const addUpdateBtn = document.getElementById("addUpdateBtn");
+    const removeBtn = document.getElementById("removeBtn");
 
-// DOM Elemente
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const adminPanel = document.getElementById("adminPanel");
-const rankingList = document.getElementById("rankingList");
-const existingPlayers = document.getElementById("existingPlayers");
-const btnDemon = document.getElementById("btnDemon");
-const btnDemonSlayer = document.getElementById("btnDemonSlayer");
-const mainFields = document.getElementById("mainFields");
-const addUpdateBtn = document.getElementById("addUpdateBtn");
-const removeBtn = document.getElementById("removeBtn");
+    let selectedType = "Demon";
+    let currentUser = null;
 
-let selectedType = "Demon";
-let currentUser = null;
+    // Login / Logout
+    loginBtn.addEventListener("click", () => signInWithPopup(auth, provider));
+    logoutBtn.addEventListener("click", () => signOut(auth));
 
-// Login / Logout
-loginBtn.addEventListener("click", () => signInWithPopup(auth, provider));
-logoutBtn.addEventListener("click", () => signOut(auth));
+    // Typ Buttons
+    btnDemon.addEventListener("click", ()=>{
+        selectedType="Demon";
+        btnDemon.classList.add("selected");
+        btnDemonSlayer.classList.remove("selected");
+        mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">`;
+    });
+    btnDemonSlayer.addEventListener("click", ()=>{
+        selectedType="Demon Slayer";
+        btnDemonSlayer.classList.add("selected");
+        btnDemon.classList.remove("selected");
+        mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">
+        <label>Main Character 2:</label><input type="text" id="main2" placeholder="Main 2" class="text-input">`;
+    });
 
-// Typ Buttons
-btnDemon.addEventListener("click", ()=>{
-  selectedType="Demon";
-  btnDemon.classList.add("selected");
-  btnDemonSlayer.classList.remove("selected");
-  mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1">`;
-});
-btnDemonSlayer.addEventListener("click", ()=>{
-  selectedType="Demon Slayer";
-  btnDemonSlayer.classList.add("selected");
-  btnDemon.classList.remove("selected");
-  mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1">
-  <label>Main Character 2:</label><input type="text" id="main2" placeholder="Main 2">`;
-});
+    // Auth Status
+    onAuthStateChanged(auth, (user)=>{
+        currentUser = user;
+        if(user){
+            document.getElementById("userEmail").innerHTML = `<i class="fas fa-user"></i> ${user.email}`;
+            if(user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com"){
+                adminPanel.style.display = "block";
+                setTimeout(() => {
+                    adminPanel.classList.add("visible");
+                }, 10);
+            } else {
+                adminPanel.classList.remove("visible");
+                setTimeout(() => {
+                    adminPanel.style.display = "none";
+                }, 300);
+            }
+        } else {
+            adminPanel.classList.remove("visible");
+            setTimeout(() => {
+                adminPanel.style.display = "none";
+            }, 300);
+            document.getElementById("userEmail").innerHTML = '<i class="fas fa-user"></i> Nicht eingeloggt';
+        }
+        loadPlayers(); // Immer Spieler laden, auch wenn nicht eingeloggt
+    });
 
-// Auth Status
-onAuthStateChanged(auth, (user)=>{
-  currentUser = user;
-  if(user){
-    document.getElementById("userEmail").innerText = user.email;
-    if(user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com"){
-      adminPanel.style.display = "block";
-    } else {
-      adminPanel.style.display = "none";
+    // Spieler hinzufügen/aktualisieren
+    addUpdateBtn.addEventListener("click", async ()=>{
+        if(!currentUser){ 
+            showNotification("Nur Admins können Spieler hinzufügen.", "error");
+            return; 
+        }
+        const name = document.getElementById("playerName").value.trim();
+        const main1 = document.getElementById("main1")?.value.trim();
+        const main2 = document.getElementById("main2")?.value.trim();
+
+        if(!name || !main1 || (selectedType==="Demon Slayer" && !main2)){
+            showNotification("Bitte alle Felder ausfüllen!", "error");
+            return;
+        }
+
+        const mains = selectedType==="Demon" ? [main1] : [main1, main2];
+        const playerData = { name, type: selectedType, mains, rank: "Lower Moon 6" };
+
+        try{
+            await set(ref(db,'players/'+name), playerData);
+            showNotification("Spieler erfolgreich hinzugefügt/aktualisiert!", "success");
+            document.getElementById("playerName").value = "";
+            document.getElementById("main1").value = "";
+            if(main2) document.getElementById("main2").value = "";
+            loadPlayers();
+        } catch(err){ 
+            showNotification("Fehler: "+err.message, "error");
+        }
+    });
+
+    // Spieler entfernen
+    removeBtn.addEventListener("click", async ()=>{
+        const name = existingPlayers.value;
+        if(!name) return;
+        if(!confirm(`Möchten Sie wirklich ${name} entfernen?`)) return;
+        
+        try{
+            await remove(ref(db,'players/'+name));
+            showNotification("Spieler erfolgreich entfernt!", "success");
+            loadPlayers();
+        } catch(err){ 
+            showNotification("Fehler: "+err.message, "error");
+        }
+    });
+
+    // Spieler laden und Rangliste rendern
+    async function loadPlayers(){
+        try {
+            const snapshot = await get(ref(db,'players/'));
+            const data = snapshot.val();
+            if(!data){ 
+                rankingList.innerHTML="<li class='no-players'>Keine Spieler vorhanden</li>"; 
+                return; 
+            }
+
+            const players = Object.values(data);
+            updateDropdown(players);
+            renderRanking(players);
+        } catch(err){
+            console.error("Fehler beim Laden der Spieler:", err);
+            rankingList.innerHTML=`<li class='error-message'>Fehler beim Laden: ${err.message}</li>`;
+        }
     }
-  } else {
-    adminPanel.style.display = "none";
-    document.getElementById("userEmail").innerText = "Nicht eingeloggt";
-  }
-  loadPlayers(); // Immer Spieler laden, auch wenn nicht eingeloggt
-});
 
-// Spieler hinzufügen/aktualisieren
-addUpdateBtn.addEventListener("click", async ()=>{
-  if(!currentUser){ alert("Nur Admins können Spieler hinzufügen."); return; }
-  const name = document.getElementById("playerName").value.trim();
-  const main1 = document.getElementById("main1")?.value.trim();
-  const main2 = document.getElementById("main2")?.value.trim();
-
-  if(!name || !main1 || (selectedType==="Demon Slayer" && !main2)){
-    alert("Bitte alle Felder ausfüllen!");
-    return;
-  }
-
-  const mains = selectedType==="Demon" ? [main1] : [main1, main2];
-  const playerData = { name, type: selectedType, mains, rank: "Lower Moon 6" };
-
-  try{
-    await set(ref(db,'players/'+name), playerData);
-    loadPlayers();
-  } catch(err){ alert("Fehler: "+err.message); }
-});
-
-// Spieler entfernen
-removeBtn.addEventListener("click", async ()=>{
-  const name = existingPlayers.value;
-  if(!name) return;
-  try{
-    await remove(ref(db,'players/'+name));
-    loadPlayers();
-  } catch(err){ alert("Fehler: "+err.message); }
-});
-
-// Spieler laden und Rangliste rendern
-async function loadPlayers(){
-  try {
-    const snapshot = await get(ref(db,'players/'));
-    const data = snapshot.val();
-    if(!data){ rankingList.innerHTML="<li>Keine Spieler vorhanden</li>"; return; }
-
-    const players = Object.values(data);
-    updateDropdown(players);
-    renderRanking(players);
-  } catch(err){
-    console.error("Fehler beim Laden der Spieler:", err);
-  }
-}
-
-// Dropdown für Admin
-function updateDropdown(players){
-  existingPlayers.innerHTML="";
-  players.forEach(player=>{
-    const opt = document.createElement("option");
-    opt.value = player.name;
-    opt.innerText = player.name;
-    existingPlayers.appendChild(opt);
-  });
-}
-
-// Rangliste rendern
-function renderRanking(players){
-  rankingList.innerHTML="";
-  const sorted = players.sort((a,b)=>{
-    const rankOrder = r => {
-      const [moon,numStr] = r.rank.split(" ");
-      const num = parseInt(numStr) || 6;
-      return (moon==="Upper"?0:1)*10 + num;
+    // Dropdown für Admin
+    function updateDropdown(players){
+        existingPlayers.innerHTML="";
+        players.forEach(player=>{
+            const opt = document.createElement("option");
+            opt.value = player.name;
+            opt.innerText = player.name;
+            existingPlayers.appendChild(opt);
+        });
     }
-    return rankOrder(a)-rankOrder(b);
-  });
 
-  sorted.forEach(player=>{
-    const li = document.createElement("li");
-    li.dataset.name=player.name;
-    li.className = player.rank.startsWith("Upper")?"upper":"lower";
-    li.innerHTML=`<span class="player-name">${player.name}</span> <span class="player-rank">${player.rank}</span> <span class="player-mains">${player.mains.join(", ")}</span>`;
-    rankingList.appendChild(li);
-  });
-}
-</script>
+    // Rangliste rendern
+    function renderRanking(players){
+        rankingList.innerHTML="";
+        const sorted = players.sort((a,b)=>{
+            const rankOrder = r => {
+                const [moon,numStr] = r.rank.split(" ");
+                const num = parseInt(numStr) || 6;
+                return (moon==="Upper"?0:1)*10 + num;
+            }
+            return rankOrder(a)-rankOrder(b);
+        });
 
+        sorted.forEach((player, index) => {
+            const li = document.createElement("li");
+            li.dataset.name=player.name;
+            li.className = `ranking-item ${player.rank.startsWith("Upper")?"upper":"lower"}`;
+            
+            // Animationseffekt mit Verzögerung
+            li.style.animationDelay = `${index * 0.1}s`;
+            
+            li.innerHTML=`
+                <span class="rank-number">${index + 1}</span>
+                <span class="player-name">${player.name}</span>
+                <span class="player-type ${player.type === 'Demon' ? 'demon-type' : 'slayer-type'}">${player.type}</span>
+                <span class="player-mains">${player.mains.join(", ")}</span>
+                <span class="player-rank">${player.rank}</span>
+            `;
+            rankingList.appendChild(li);
+        });
+    }
+
+    // Benachrichtigungsfunktion
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <span>${message}</span>
+            <button onclick="this.parentElement.remove()">&times;</button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Automatisch nach 3 Sekunden entfernen
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.remove();
+            }
+        }, 3000);
+    }
+    </script>
 </body>
 </html>
