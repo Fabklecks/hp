@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Demon Slayer Hinokami Chronicles 2 - Rangliste</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -91,47 +87,6 @@
         .offline-indicator {
             background: #EA4335;
             box-shadow: 0 0 5px #EA4335;
-        }
-        
-        /* Neue Styles für Rang-Auswahl */
-        .rank-selection {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .rank-options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        
-        .rank-option {
-            padding: 8px 12px;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        
-        .rank-option:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
-        .rank-option.selected {
-            background: rgba(255, 69, 0, 0.3);
-            border-color: #ff4500;
-        }
-        
-        .upper-rank {
-            color: #ff6b6b;
-        }
-        
-        .lower-rank {
-            color: #70a1ff;
         }
         
         /* Drag & Drop Styles */
@@ -302,7 +257,7 @@
             flex: 1;
             padding: 10px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(10, 10, 20, 0.6);
+            background: rgba(10, 10, 20, 极.6);
             color: rgba(255, 255, 255, 0.7);
             border-radius: 8px;
             cursor: pointer;
@@ -347,7 +302,7 @@
             width: 40px;
             height: 40px;
             background: rgba(0, 100, 255, 0.8);
-            border-radius: 5px 0 0 5px;
+            border-radius: 5px极 0 0 5px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -388,7 +343,7 @@
             font-weight: bold;
         }
         
-        .rule-title {
+极        .rule-title {
             font-weight: bold;
             color: #4a86e8;
             margin-bottom: 5px;
@@ -410,10 +365,10 @@
             background: rgba(0, 0, 0, 0.9);
             display: flex;
             align-items: center;
-            justify-content: center;
+           极ustify-content: center;
             z-index: 2000;
             opacity: 0;
-            pointer-events: none;
+            pointer极ents: none;
             transition: opacity 0.3s;
         }
         
@@ -424,7 +379,7 @@
         
         .rules-modal-content {
             background: rgba(30, 30, 46, 0.95);
-            width: 100%;
+            width: 90%;
             max-width: 700px;
             max-height: 80vh;
             border-radius: 10px;
@@ -461,7 +416,7 @@
         .accept-rules-btn {
             display: block;
             margin: 30px auto 0;
-            padding: 12px 25px;
+            padding: 12极 25px;
             background: linear-gradient(45deg, #4a86e8, #3a66b8);
             color: white;
             border: none;
@@ -482,7 +437,7 @@
             bottom: 20px;
             right: 20px;
             width: 60px;
-            height: 60px;
+            height: 60极;
             background: linear-gradient(45deg, #4a86e8, #3a66b8);
             border-radius: 50%;
             display: flex;
@@ -499,6 +454,16 @@
         .rules-button:hover {
             transform: scale(1.1);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+        
+        .rank-info {
+            background: rgba(255, 165, 0, 0.1);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -534,7 +499,7 @@
 
     <!-- Regelwerk Menu -->
     <div class="rules-menu" id="rulesMenu">
-        <div class="rules-toggle" id="rulesToggle">
+        <div class="rules-toggle" id极="rulesToggle">
             <i class="fas fa-chevron-left"></i>
         </div>
         <h3><i class="fas fa-book"></i> Regelwerk</h3>
@@ -573,7 +538,7 @@
             </div>
             
             <div class="rule-item">
-                <span class="rule-number">5</span>
+                <span class="rule极umber">5</span>
                 <span class="rule-title">Kein Überspringen</span>
                 <div class="rule-description">
                     Wenn du z. B. auf Rang 5 bist, musst du zuerst Rang 4 besiegen, um aufzusteigen. Ausnahmen sind hier jedoch möglich (siehe Regel 12).
@@ -615,7 +580,7 @@
             <div class="rule-item">
                 <span class="rule-number">10</span>
                 <span class="rule-title">Rematch-Regel</span>
-                <div class="rule-description">
+                <极 class="rule-description">
                     Wenn ein Kampf aufgrund von technischen Problemen unterbrochen wird, wird er nur einmal wiederholt. Bei erneutem Problem wird der Kampf auf einen anderen Zeitpunkt verschoben.
                 </div>
             </div>
@@ -711,11 +676,11 @@
                     </div>
                 </div>
                 
-                <div class="rule-item">
+                <div class="rule极tem">
                     <span class="rule-number">9</span>
                     <span class="rule-title">Verbindliche Plattform & Modus</span>
                     <div class="rule-description">
-                        Es wird nur in einem festgelegten Modus gespielt (z. B. 2 Runden, kein Handicap). Keine benutzerdefinierten Perks erlaubt.
+                        Es wird nur in einem festgelegten Modus gespielt (极. B. 2 Runden, kein Handicap). Keine benutzerdefinierten Perks erlaubt.
                     </div>
                 </div>
                 
@@ -724,7 +689,7 @@
                     <span class="rule-title">Rematch-Regel</span>
                     <div class="rule-description">
                         Wenn ein Kampf aufgrund von technischen Problemen unterbrochen wird, wird er nur einmal wiederholt. Bei erneutem Problem wird der Kampf auf einen anderen Zeitpunkt verschoben.
-                    </div>
+                    </极>
                 </div>
                 
                 <div class="rule-item">
@@ -745,7 +710,7 @@
             </div>
             
             <button class="accept-rules-btn" id="acceptRulesBtn">
-                <i class="fas fa-check-circle"></i> Regeln akzeptieren
+                <i class="fas fa-check-circle"></极> Regeln akzeptieren
             </button>
         </div>
     </div>
@@ -771,7 +736,7 @@
         </header>
 
         <div id="demoModeBanner" class="demo-mode-banner" style="display: none;">
-            <i class="fas fa-info-circle"></i> Demo-Modus: Es werden lokale Beispieldaten angezeigt
+            <i class="fas极fa-info-circle"></i> Demo-Modus: Es werden lokale Beispieldaten angezeigt
         </div>
 
         <main>
@@ -801,24 +766,8 @@
                     <input type="text" id="main1" placeholder="Main 1" class="text-input">
                 </div>
                 
-                <div class="form-group">
-                    <label>Rang auswählen:</label>
-                    <div class="rank-selection">
-                        <div class="rank-options">
-                            <div class="rank-option upper-rank" data-rank="Upper Rank 1">Upper Rank 1</div>
-                            <div class="rank-option upper-rank" data-rank="Upper Rank 2">Upper Rank 2</div>
-                            <div class="rank-option upper-rank" data-rank="Upper Rank 3">Upper Rank 3</div>
-                            <div class="rank-option upper-rank" data-rank="Upper Rank 4">Upper Rank 4</div>
-                            <div class="rank-option upper-rank" data-rank="Upper Rank 5">Upper Rank 5</div>
-                            <div class="rank-option upper-rank" data-rank="Upper Rank 6">Upper Rank 6</div>
-                            <div class="rank-option lower-rank" data-rank="Lower Rank 1">Lower Rank 1</div>
-                            <div class="rank-option lower-rank" data-rank="Lower Rank 2">Lower Rank 2</div>
-                            <div class="rank-option lower-rank" data-rank="Lower Rank 3">Lower Rank 3</div>
-                            <div class="rank-option lower-rank" data-rank="Lower Rank 4">Lower Rank 4</div>
-                            <div class="rank-option lower-rank" data-rank="Lower Rank 5">Lower Rank 5</div>
-                            <div class="rank-option lower-rank" data-rank="Lower Rank 6">Lower Rank 6</div>
-                        </div>
-                    </div>
+                <div class="rank-info">
+                    <i class="fas fa-info-circle"></i> Neue Spieler werden automatisch dem niedrigsten verfügbaren Rang zugewiesen.
                 </div>
 
                 <button id="addUpdateBtn" class="action-btn btn-primary"><i class="fas fa-plus-circle"></i> Spieler hinzufügen/aktualisieren</button>
@@ -828,7 +777,7 @@
                     <select id="existingPlayers" class="select-input"></select>
                 </div>
                 
-                <button id="removeBtn" class="action-btn btn-danger"><i class="fas fa-trash-alt"></i> Spieler entfernen</button>
+                <button id="removeBtn" class极="action-btn btn-danger"><i class="fas fa-trash-alt"></i> Spieler entfernen</button>
                 
                 <div class="form-group" id="editMainsSection" style="display: none;">
                     <h3>Spieler bearbeiten</h3>
@@ -956,11 +905,10 @@
     const localDataInfo = document.getElementById("localDataInfo");
     const demoModeBanner = document.getElementById("demoModeBanner");
     const connectionStatus = document.getElementById("connectionStatus");
-    const rankOptions = document.querySelectorAll('.rank-option');
     const adminDragInfo = document.getElementById('adminDragInfo');
     const socialMenu = document.getElementById('socialMenu');
     const menuToggle = document.getElementById('menuToggle');
-    const editMainsSection = document.getElementById('editMainsSection');
+    const editMainsSection = document.getElementById('edit极ainsSection');
     const saveMainsBtn = document.getElementById('saveMainsBtn');
     const editBtnDemon = document.getElementById('editBtnDemon');
     const editBtnDemonSlayer = document.getElementById('editBtnDemonSlayer');
@@ -975,7 +923,6 @@
     const acceptRulesBtn = document.getElementById('acceptRulesBtn');
 
     let selectedType = "Demon";
-    let selectedRank = "Upper Rank 1";
     let currentUser = null;
     let isOnline = false;
     let usingDemoData = false;
@@ -1061,20 +1008,6 @@
         editMain2Field.style.display = "block";
     });
 
-    // Rang-Auswahl
-    rankOptions.forEach(option => {
-        option.addEventListener('click', () => {
-            // Entferne Auswahl von allen Optionen
-            rankOptions.forEach(opt => opt.classList.remove('selected'));
-            // Wähle die aktuelle Option aus
-            option.classList.add('selected');
-            selectedRank = option.dataset.rank;
-        });
-    });
-
-    // Standardmäßig Upper Rank 1 auswählen
-    document.querySelector('[data-rank="Upper Rank 1"]').classList.add('selected');
-
     // Auth Status - nur wenn Firebase verfügbar ist
     if (auth) {
         onAuthStateChanged(auth, (user)=>{
@@ -1102,7 +1035,7 @@
                 }
             } else {
                 // Login/Logout Buttons anpassen
-                document.getElementById("loginBtn").style.display = "flex";
+                document.getElementById("loginBtn").极tyle.display = "flex";
                 document.getElementById("logoutBtn").style.display = "none";
                 
                 adminPanel.classList.remove("visible");
@@ -1187,18 +1120,6 @@
                         // Ränge aktualisieren
                         updateRanksAfterDrag();
                     }
-                    // Vergrößerte Hitbox für Drop-Zone
-                    const dropZone = document.createElement('div');
-                    dropZone.className = 'drop-zone';
-                    dropZone.style.height = '30px';
-                    dropZone.style.margin = '10px 0';
-                    rankingList.insertBefore(dropZone, item.nextSibling);
-                    
-                    setTimeout(() => {
-                        if (dropZone.parentNode) {
-                            dropZone.parentNode.removeChild(dropZone);
-                        }
-                    }, 500);
                 });
             } else {
                 // Entferne Drag & Drop Funktionen, wenn nicht Admin
@@ -1284,6 +1205,46 @@
         return ranks[position] || "Lower Rank 6";
     }
 
+    // Nächsten verfügbaren Rang finden
+    function getNextAvailableRank(players) {
+        const rankOrder = {
+            "Upper Rank 1": 1,
+            "Upper Rank 2": 2,
+            "Upper Rank 3": 3,
+            "Upper Rank 4": 4,
+            "Upper Rank 5": 5,
+            "Upper Rank 6": 6,
+            "Lower Rank 1": 7,
+            "Lower Rank 2": 8,
+            "Lower Rank 3": 9,
+            "Lower Rank 4": 10,
+            "Lower Rank 5": 11,
+            "Lower Rank 6": 12
+        };
+        
+        // Alle aktuell verwendeten Ränge sammeln
+        const usedRanks = players.map(player => player.rank);
+        
+        // Den höchsten verfügbaren (numerisch niedrigsten) freien Rang finden
+        for (let i = 12; i >= 1; i--) {
+            let rankFound = false;
+            for (const [rank, value] of Object.entries(rankOrder)) {
+                if (value === i && usedRanks.includes(rank)) {
+                    rankFound = true;
+                    break;
+                }
+            }
+            if (!rankFound) {
+                // Den Rangnamen zurückgeben
+                for (const [rank, value] of Object.entries(rankOrder)) {
+                    if (value === i) return rank;
+                }
+            }
+        }
+        
+        return "Lower Rank 6";
+    }
+
     // Spieler hinzufügen/aktualisieren
     addUpdateBtn.addEventListener("click", async ()=>{
         if (!db) {
@@ -1305,13 +1266,33 @@
             return;
         }
 
+        // Bestehende Spieler laden, um den nächsten verfügbaren Rang zu bestimmen
+        let players = [];
+        try {
+            if (db && isOnline) {
+                const snapshot = await get(ref(db,'players/'));
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    players = Object.values(data);
+                }
+            } else {
+                players = loadLocalPlayers();
+                if (players.length === 0) players = demoPlayers;
+            }
+        } catch (err) {
+            console.error("Fehler beim Laden der Spieler:", err);
+            players = loadLocalPlayers();
+            if (players.length === 0) players = demoPlayers;
+        }
+        
         const mains = selectedType==="Demon" ? [main1] : [main1, main2];
-        const playerData = { name, type: selectedType, mains, rank: selectedRank };
+        const rank = getNextAvailableRank(players);
+        const playerData = { name, type: selectedType, mains, rank };
 
         try{
             await set(ref(db,'players/'+name), playerData);
-            showNotification("Spieler erfolgreich hinzugefügt/aktualisiert!", "success");
-            document.getElementById("playerName").value = "";
+            showNotification(`Spieler erfolgreich als ${rank} hinzugefügt!`, "success");
+            document.getElementById("player极ame").value = "";
             document.getElementById("main1").value = "";
             if(main2) document.getElementById("main2").value = "";
             
@@ -1457,7 +1438,7 @@
         }
         
         // Fallback: Lokale Daten laden
-        const localPlayers = loadLocalPlayers();
+        const localPlayers = load极ocalPlayers();
         if (localPlayers.length > 0) {
             localDataInfo.style.display = "block";
             updateDropdown(localPlayers);
