@@ -89,6 +89,47 @@
             box-shadow: 0 0 5px #EA4335;
         }
         
+        /* Neue Styles für Rang-Auswahl */
+        .rank-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .rank-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .rank-option {
+            padding: 8px 12px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .rank-option:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .rank-option.selected {
+            background: rgba(255, 69, 0, 0.3);
+            border-color: #ff4500;
+        }
+        
+        .upper-rank {
+            color: #ff6b6b;
+        }
+        
+        .lower-rank {
+            color: #70a1ff;
+        }
+        
         /* Drag & Drop Styles */
         .ranking-list.dragging {
             cursor: grabbing;
@@ -379,7 +420,7 @@
         
         .rules-modal-content {
             background: rgba(30, 30, 46, 0.95);
-            width: 90%;
+            width: 100%;
             max-width: 700px;
             max-height: 80vh;
             border-radius: 10px;
@@ -454,16 +495,6 @@
         .rules-button:hover {
             transform: scale(1.1);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-        }
-        
-        .rank-info {
-            background: rgba(255, 165, 0, 0.1);
-            border: 1px solid rgba(255, 165, 0, 0.3);
-            border-radius: 8px;
-            padding: 10px;
-            margin: 10px 0;
-            text-align: center;
-            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -640,7 +671,7 @@
                     <span class="rule-number">4</span>
                     <span class="rule-title">Charakterwahl</span>
                     <div class="rule-description">
-                        Es dürfen nur Mains des jewelih3en Spielers benutzt werden.
+                        Es dürfen nur Mains des jeweiligen Spielers benutzt werden.
                     </div>
                 </div>
                 
@@ -653,7 +684,7 @@
                 </div>
                 
                 <div class="rule-item">
-                    <span class="rule-number">极</span>
+                    <span class="rule-number">6</span>
                     <span class="rule-title">Zeitlimit für Herausforderungen</span>
                     <div class="rule-description">
                         Jeder Spieler darf nur eine bestimmte Anzahl an Challenges pro Tag starten (z. B. maximal 3). So vermeidet man Spam-Herausforderungen.
@@ -766,8 +797,24 @@
                     <input type="text" id="main1" placeholder="Main 1" class="text-input">
                 </div>
                 
-                <div class="rank-info">
-                    <i class="fas fa-info-circle"></i> Neue Spieler werden automatisch dem niedrigsten verfügbaren Rang zugewiesen.
+                <div class="form-group">
+                    <label>Rang auswählen:</label>
+                    <div class="rank-selection">
+                        <div class="rank-options">
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 1">Upper Rank 1</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 2">Upper Rank 2</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 3">Upper Rank 3</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 4">Upper Rank 4</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 5">Upper Rank 5</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 6">Upper Rank 6</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 1">Lower Rank 1</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 2">Lower Rank 2</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 3">Lower Rank 3</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 4">Lower Rank 4</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 5">Lower Rank 5</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 6">Lower Rank 6</div>
+                        </div>
+                    </div>
                 </div>
 
                 <button id="addUpdateBtn" class="action-btn btn-primary"><i class="fas fa-plus-circle"></i> Spieler hinzufügen/aktualisieren</button>
@@ -837,7 +884,7 @@
       projectId: "demonslayerranks",
       storageBucket: "demonslayerranks.firebasestorage.app",
       messagingSenderId: "244021550640",
-      appId: "极:244021550640:web:4d2a3c7a52c205f5e997f5",
+      appId: "1:244021550640:web:4d2a3c7a52c205f5e997f5",
       measurementId: "G-WH3WQBKPX4"
     };
 
@@ -905,6 +952,7 @@
     const localDataInfo = document.getElementById("localDataInfo");
     const demoModeBanner = document.getElementById("demoModeBanner");
     const connectionStatus = document.getElementById("connectionStatus");
+    const rankOptions = document.querySelectorAll('.rank-option');
     const adminDragInfo = document.getElementById('adminDragInfo');
     const socialMenu = document.getElementById('socialMenu');
     const menuToggle = document.getElementById('menuToggle');
@@ -923,6 +971,7 @@
     const acceptRulesBtn = document.getElementById('acceptRulesBtn');
 
     let selectedType = "Demon";
+    let selectedRank = "Upper Rank 1";
     let currentUser = null;
     let isOnline = false;
     let usingDemoData = false;
@@ -957,7 +1006,7 @@
     rulesToggle.addEventListener('click', () => {
         rulesMenu.classList.toggle('open');
         rulesToggle.innerHTML = rulesMenu.classList.contains('open') ? 
-            '<i class="fas fa-chevron-right"></i>' : '<极 class="fas fa-chevron-left"></i>';
+            '<i class="fas fa-chevron-right"></i>' : '<i class="fas fa-chevron-left"></i>';
     });
 
     // Regelwerk Button
@@ -990,14 +1039,14 @@
         btnDemonSlayer.classList.add("selected");
         btnDemon.classList.remove("selected");
         mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">
-        <label>Main Character 2:</label><input type="text"极="main2" placeholder="Main 2" class="text-input">`;
+        <label>Main Character 2:</label><input type="text" id="main2" placeholder="Main 2" class="text-input">`;
     });
 
     // Edit Typ Buttons
     editBtnDemon.addEventListener("click", ()=>{
         editPlayerType="Demon";
         editBtnDemon.classList.add("selected");
-        editBtnDemon极ayer.classList.remove("selected");
+        editBtnDemonSlayer.classList.remove("selected");
         editMain2Field.style.display = "none";
     });
     
@@ -1007,6 +1056,20 @@
         editBtnDemon.classList.remove("selected");
         editMain2Field.style.display = "block";
     });
+
+    // Rang-Auswahl
+    rankOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            // Entferne Auswahl von allen Optionen
+            rankOptions.forEach(opt => opt.classList.remove('selected'));
+            // Wähle die aktuelle Option aus
+            option.classList.add('selected');
+            selectedRank = option.dataset.rank;
+        });
+    });
+
+    // Standardmäßig Upper Rank 1 auswählen
+    document.querySelector('[data-rank="Upper Rank 1"]').classList.add('selected');
 
     // Auth Status - nur wenn Firebase verfügbar ist
     if (auth) {
@@ -1105,7 +1168,7 @@
                     item.classList.remove('drag-over');
                 });
                 
-                item.addEventListener('drop', (极) => {
+                item.addEventListener('drop', (e) => {
                     e.preventDefault();
                     item.classList.remove('drag-over');
                     
@@ -1217,48 +1280,6 @@
         return ranks[position] || "Lower Rank 6";
     }
 
-    // Nächsten verfügbaren Rang finden
-    function getNextAvailableRank(players) {
-        const rankOrder = {
-            "Upper Rank 1": 1,
-            "Upper Rank 2": 2,
-            "Upper Rank 3": 3,
-            "Upper Rank 4": 4,
-            "Upper Rank 5": 5,
-            "Upper Rank 6": 6,
-            "Lower Rank 1": 7,
-            "Lower Rank 2": 8,
-            "Lower Rank 3": 9,
-            "Lower Rank 4": 10,
-            "Lower Rank 5": 11,
-            "Lower Rank 6": 12
-        };
-        
-        // Alle aktuell verwendeten Ränge sammeln
-        const usedRanks = players.map(player => player.rank);
-        
-        // Den höchsten (numerisch niedrigsten) verwendeten Rang finden
-        let highestUsedRank = 12; // Starte mit dem niedrigsten möglichen Rang
-        
-        usedRanks.forEach(rank => {
-            const rankValue = rankOrder[rank] || 12;
-            if (rankValue < highestUsedRank) {
-                highestUsedRank = rankValue;
-            }
-        });
-        
-        // Den nächsten verfügbaren Rang finden (einen niedrigeren als der niedrigste vorhandene)
-        let nextRankValue = highestUsedRank + 1;
-        if (nextRankValue > 12) nextRankValue = 12;
-        
-        // Den Rangnamen zurückgeben
-        for (const [rank, value] of Object.entries(rankOrder)) {
-            if (value === nextRankValue) return rank;
-        }
-        
-        return "Lower Rank 6";
-    }
-
     // Spieler hinzufügen/aktualisieren
     addUpdateBtn.addEventListener("click", async ()=>{
         if (!db) {
@@ -1280,32 +1301,12 @@
             return;
         }
 
-        // Bestehende Spieler laden, um den nächsten verfügbaren Rang zu bestimmen
-        let players = [];
-        try {
-            if (db && isOnline) {
-                const snapshot = await get(ref(db,'players/'));
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    players = Object.values(data);
-                }
-            } else {
-                players = loadLocalPlayers();
-                if (players.length === 0) players = demoPlayers;
-            }
-        } catch (err) {
-            console.error("Fehler beim Laden der Spieler:", err);
-            players = loadLocalPlayers();
-            if (players.length === 0) players = demoPlayers;
-        }
-        
         const mains = selectedType==="Demon" ? [main1] : [main1, main2];
-        const rank = getNextAvailableRank(players);
-        const playerData = { name, type: selectedType, mains, rank };
+        const playerData = { name, type: selectedType, mains, rank: selectedRank };
 
         try{
             await set(ref(db,'players/'+name), playerData);
-            showNotification(`Spieler erfolgreich als ${rank} hinzugefügt!`, "success");
+            showNotification("Spieler erfolgreich hinzugefügt/aktualisiert!", "success");
             document.getElementById("playerName").value = "";
             document.getElementById("main1").value = "";
             if(main2) document.getElementById("main2").value = "";
@@ -1364,7 +1365,7 @@
     // Spieler lokal speichern
     function savePlayerLocally(playerData) {
         try {
-            const players = JSON.parse(localStorage.getItem('demon极ayerPlayers') || '{}');
+            const players = JSON.parse(localStorage.getItem('demonSlayerPlayers') || '{}');
             players[playerData.name] = playerData;
             localStorage.setItem('demonSlayerPlayers', JSON.stringify(players));
         } catch (e) {
