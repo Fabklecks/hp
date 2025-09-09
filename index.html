@@ -314,150 +314,6 @@
             border-color: #ff4500;
             color: white;
         }
-
-        /* Regelwerk Styles */
-        .rules-menu {
-            position: fixed;
-            top: 50%;
-            left: -300px;
-            transform: translateY(-50%);
-            width: 300px;
-            height: 80vh;
-            background: rgba(30, 30, 46, 0.98);
-            border-radius: 0 10px 10px 0;
-            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.4);
-            transition: left 0.3s ease;
-            z-index: 1001;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        
-        .rules-menu.open {
-            left: 0;
-        }
-        
-        .rules-toggle {
-            position: absolute;
-            right: -40px;
-            top: 20px;
-            width: 40px;
-            height: 40px;
-            background: rgba(59, 130, 246, 0.8);
-            border-radius: 0 5px 5px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: white;
-            font-size: 1.2rem;
-        }
-        
-        .rules-menu h3 {
-            color: #3b82f6;
-            margin-bottom: 15px;
-            text-align: center;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
-            padding-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .rule-item {
-            margin-bottom: 15px;
-            padding: 10px;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
-        .rule-item h4 {
-            color: #3b82f6;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .rule-item p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-        
-        /* Rules Overlay für Erstbesucher */
-        .rules-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            backdrop-filter: blur(5px);
-        }
-        
-        .rules-content {
-            background: rgba(30, 30, 46, 0.95);
-            border-radius: 15px;
-            padding: 30px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-        
-        .rules-content h2 {
-            color: #3b82f6;
-            text-align: center;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .accept-rules-btn {
-            background: linear-gradient(45deg, #3b82f6, #2563eb);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            display: block;
-            margin: 25px auto 0;
-            transition: all 0.3s;
-        }
-        
-        .accept-rules-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
-        }
-        
-        /* Regelwerk Button in der Navigation */
-        .rules-btn {
-            background: rgba(59, 130, 246, 0.2);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            color: #3b82f6;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-left: 10px;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .rules-btn:hover {
-            background: rgba(59, 130, 246, 0.3);
-        }
     </style>
 </head>
 <body>
@@ -468,158 +324,6 @@
         <div class="flame"></div>
         <div class="flame"></div>
         <div class="flame"></div>
-    </div>
-
-    <!-- Regelwerk Overlay für Erstbesucher -->
-    <div class="rules-overlay" id="rulesOverlay">
-        <div class="rules-content">
-            <h2><i class="fas fa-book"></i> Ranglisten-Regelwerk</h2>
-            <p style="text-align: center; margin-bottom: 20px; color: rgba(255, 255, 255, 0.9);">
-                Bevor du fortfährst, lies bitte das Regelwerk für die Demon Slayer Rangliste:
-            </p>
-            
-            <div class="rule-item">
-                <h4><i class="fas fa-wifi"></i> 1. Sauberes Match</h4>
-                <p>Keine Lags, kein Pausieren, keine Unterbrechungen. Alles, was den Kampf stört, macht das Match ungültig. In diesem Fall muss der Kampf wiederholt oder verschoben werden.</p>
-            </div>
-            
-            <div class="rule-item">
-                <h4><i class="fas fa-trophy"></i> 2. Herausforderungen</h4>
-                <p>Wenn jemand herausgefordert wird, hat der Herausgeforderte eine Woche Zeit, einen Termin zu festigen. Wird das nicht gemacht, wird derjenige sofort runtergestuft.</p>
-            </div>
-            
-            <div class="rule-item">
-                <h4><i class="fas fa-volume-mute"></i> 3. Absolute Stille</h4>
-                <p>Während des Matches dürfen nur die beiden Kämpfer sprechen. Keine zusätzlichen Teilnehmer im Voice-Chat.</p>
-            </div>
-            
-            <div class="rule-item">
-                <h4><i class="fas fa-user"></i> 4. Charakterwahl</h4>
-                <p>Es dürfen nur Mains benutzt werden.</p>
-            </div>
-            
-            <div class="rule-item">
-                <h4><i class="fas fa-arrow-up"></i> 5. Kein Überspringen</h4>
-                <p>Wenn du z.B. auf Rang 5 bist, musst du zuerst Rang 4 besiegen, um aufzusteigen. Direkte Sprünge über mehrere Ränge sind nicht erlaubt.</p>
-            </div>
-            
-            <div class="rule-item">
-                <h4><i class="fas fa-hourglass-half"></i> 6. Zeitlimit für Herausforderungen</h4>
-                <p>Jeder Spieler darf nur maximal 3 Challenges pro Tag starten. So vermeidet man Spam-Herausforderungen.</p>
-            </div>
-            
-            <div class="rule-item">
-                <h4><i class="fas fa-balance-scale"></i> 7. Fairness-Kontrolle</h4>
-                <p>Bei Unklarheiten oder Streit über das Ergebnis entscheidet ein Admin oder Schiedsrichter. Beweise (Screenshots oder Videoaufnahme) sind erlaubt, um den Sieg zu bestätigen.</p>
-            </div>
-            
-            <div class="rule-item">
-                <h4><i class="fas fa-clock"></i> 8. Reaktionszeit auf Herausforderungen</h4>
-                <p>Schnellstmöglich Bescheid geben - jeder will weiterkommen.</p>
-            </div>
-            
-            <div class="rule-item">
-                <h4><i class="fas fa-gamepad"></i> 9. Verbindliche Plattform & Modus</h4>
-                <p>Es wird nur in einem festgelegten Modus gespielt (3 Runden, kein Handicap). Keine benutzerdefinierten Perks erlaubt.</p>
-            </div>
-            
-            <div class="rule-item">
-                <h4><i class="fas fa-fire"></i> 10. Aktive Teilnahme</h4>
-                <p>Wer 30 Tage inaktiv ist, verliert automatisch seinen Platz in der gesamten Rangliste.</p>
-            </div>
-            
-            <div class="rule-item">
-                <h4><i class="fas fa-redo"></i> 11. Rematch-Regel</h4>
-                <p>Wenn ein Kampf aufgrund von technischen Problemen unterbrochen wird, wird er nur einmal wiederholt. Bei erneutem Problem wird der Kampf auf einen anderen Zeitpunkt verschoben.</p>
-            </div>
-            
-            <div class="rule-item">
-                <h4><i class="fas fa-shield-alt"></i> 12. Schutz vor Dauerherausforderungen</h4>
-                <p>Ein Gewinner darf nicht sofort erneut von demselben Spieler herausgefordert werden. Cooldown: 24 Stunden zwischen den gleichen Spielern.</p>
-            </div>
-            
-            <div class="rule-item">
-                <h4><i class="fas fa-star"></i> 13. Besondere Umstände</h4>
-                <p>Bei besonderen Umständen kann man Kämpfe überspringen und höher Rangige herausfordern, wenn sie einverstanden sind.</p>
-            </div>
-            
-            <button class="accept-rules-btn" id="acceptRulesBtn">
-                <i class="fas fa-check-circle"></i> Regelwerk akzeptieren
-            </button>
-        </div>
-    </div>
-
-    <!-- Regelwerk Menu -->
-    <div class="rules-menu" id="rulesMenu">
-        <div class="rules-toggle" id="rulesToggle">
-            <i class="fas fa-chevron-left"></i>
-        </div>
-        <h3><i class="fas fa-book"></i> Regelwerk</h3>
-        
-        <div class="rule-item">
-            <h4><i class="fas fa-wifi"></i> Sauberes Match</h4>
-            <p>Keine Lags, kein Pausieren, keine Unterbrechungen.</p>
-        </div>
-        
-        <div class="rule-item">
-            <h4><i class="fas fa-trophy"></i> Herausforderungen</h4>
-            <p>1 Woche Zeit zur Terminfindung, sonst Herabstufung.</p>
-        </div>
-        
-        <div class="rule-item">
-            <h4><i class="fas fa-volume-mute"></i> Absolute Stille</h4>
-            <p>Nur die Kämpfer dürfen während des Matches sprechen.</p>
-        </div>
-        
-        <div class="rule-item">
-            <h4><i class="fas fa-user"></i> Charakterwahl</h4>
-            <p>Es dürfen nur Mains benutzt werden.</p>
-        </div>
-        
-        <div class="rule-item">
-            <h4><i class="fas fa-arrow-up"></i> Kein Überspringen</h4>
-            <p>Ränge müssen nacheinander erklommen werden.</p>
-        </div>
-        
-        <div class="rule-item">
-            <h4><i class="fas fa-hourglass-half"></i> Challenge-Limit</h4>
-            <p>Maximal 3 Herausforderungen pro Tag pro Spieler.</p>
-        </div>
-        
-        <div class="rule-item">
-            <h4><i class="fas fa-balance-scale"></i> Fairness-Kontrolle</h4>
-            <p>Admins entscheiden bei Streitigkeiten.</p>
-        </div>
-        
-        <div class="rule-item">
-            <h4><i class="fas fa-clock"></i> Reaktionszeit</h4>
-            <p>Schnelle Antwort auf Herausforderungen.</p>
-        </div>
-        
-        <div class="rule-item">
-            <h4><i class="fas fa-gamepad"></i> Spielmodus</h4>
-            <p>3 Runden, kein Handicap, keine Custom Perks.</p>
-        </div>
-        
-        <div class="rule-item">
-            <h4><i class="fas fa-fire"></i> Aktive Teilnahme</h4>
-            <p>30 Tage Inaktivität = Entfernung aus der Rangliste.</p>
-        </div>
-        
-        <div class="rule-item">
-            <h4><i class="fas fa-redo"></i> Rematch-Regel</h4>
-            <p>Bei technischen Problemen nur 1 Rematch.</p>
-        </div>
-        
-        <div class="rule-item">
-            <h4><i class="fas fa-shield-alt"></i> Dauerherausforderungen</h4>
-            <p>24h Cooldown zwischen gleichen Spielern.</p>
-        </div>
-        
-        <div class="rule-item">
-            <h4><i class="fas fa-star"></i> Besondere Umstände</h4>
-            <p>Überspringen mit Einverständnis möglich.</p>
-        </div>
     </div>
 
     <!-- Social Media Menu -->
@@ -650,7 +354,6 @@
                 <button id="loginBtn" class="btn-login"><i class="fab fa-google"></i> Login (Admin)</button>
                 <button id="logoutBtn" class="btn-logout" style="display: none;"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 <span id="userEmail"><i class="fas fa-user"></i> Nicht eingeloggt</span>
-                <button id="rulesBtn" class="rules-btn"><i class="fas fa-book"></i> Regeln</button>
                 <span id="connectionStatus" class="connection-status offline-status">
                     <span class="status-indicator offline-indicator"></span>
                     Offline Modus
@@ -663,57 +366,848 @@
         </div>
 
         <main>
-            <!-- Der restliche Code bleibt unverändert -->
-            <!-- ... -->
+            <section id="adminPanel" class="admin-panel card">
+                <h2><i class="fas fa-crown"></i> Spieler verwalten (Admin)</h2>
+
+                <div id="firebaseError" class="firebase-error" style="display: none;">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Firebase-Verbindungsfehler</h3>
+                    <p>Die Verbindung zur Datenbank ist fehlgeschlagen. Änderungen können nicht gespeichert werden.</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Spielername:</label>
+                    <input type="text" id="playerName" placeholder="Spielername" class="text-input">
+                </div>
+
+                <div class="form-group">
+                    <label>Typ auswählen:</label>
+                    <div class="type-buttons">
+                        <button id="btnDemon" class="type-btn selected"><i class="fas fa-moon"></i> Demon</button>
+                        <button id="btnDemonSlayer" class="type-btn"><i class="fas fa-shield-alt"></i> Demon Slayer</button>
+                    </div>
+                </div>
+
+                <div id="mainFields" class="form-group">
+                    <label>Main Character 1:</label>
+                    <input type="text" id="main1" placeholder="Main 1" class="text-input">
+                </div>
+                
+                <div class="form-group">
+                    <label>Rang auswählen:</label>
+                    <div class="rank-selection">
+                        <div class="rank-options">
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 1">Upper Rank 1</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 2">Upper Rank 2</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 3">Upper Rank 3</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 4">Upper Rank 4</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 5">Upper Rank 5</div>
+                            <div class="rank-option upper-rank" data-rank="Upper Rank 6">Upper Rank 6</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 1">Lower Rank 1</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 2">Lower Rank 2</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 3">Lower Rank 3</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 4">Lower Rank 4</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 5">Lower Rank 5</div>
+                            <div class="rank-option lower-rank" data-rank="Lower Rank 6">Lower Rank 6</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="addUpdateBtn" class="action-btn btn-primary"><i class="fas fa-plus-circle"></i> Spieler hinzufügen/aktualisieren</button>
+                
+                <div class="form-group">
+                    <label>Bestehenden Spieler auswählen:</label>
+                    <select id="existingPlayers" class="select-input"></select>
+                </div>
+                
+                <button id="removeBtn" class="action-btn btn-danger"><i class="fas fa-trash-alt"></i> Spieler entfernen</button>
+                
+                <div class="form-group" id="editMainsSection" style="display: none;">
+                    <h3>Spieler bearbeiten</h3>
+                    
+                    <div class="form-group">
+                        <label>Typ auswählen:</label>
+                        <div class="edit-type-buttons">
+                            <button id="editBtnDemon" class="edit-type-btn"><i class="fas fa-moon"></i> Demon</button>
+                            <button id="editBtnDemonSlayer" class="edit-type-btn"><i class="fas fa-shield-alt"></i> Demon Slayer</button>
+                        </div>
+                    </div>
+                    
+                    <div id="editMainFields">
+                        <div class="form-group">
+                            <label>Main Character 1:</label>
+                            <input type="text" id="editMain1" class="text-input">
+                        </div>
+                        <div class="form-group" id="editMain2Field" style="display: none;">
+                            <label>Main Character 2:</label>
+                            <input type="text" id="editMain2" class="text-input">
+                        </div>
+                    </div>
+                    
+                    <button id="saveMainsBtn" class="action-btn btn-primary"><i class="fas fa-save"></i> Änderungen speichern</button>
+                </div>
+            </section>
+
+            <section class="ranking-section">
+                <h2><i class="fas fa-trophy"></i>Rangliste</h2>
+                
+                <div id="localDataInfo" class="local-data-info" style="display: none;">
+                    <h4><i class="fas fa-database"></i> Lokale Daten</h4>
+                    <p>Es werden lokal gespeicherte Daten angezeigt, da keine Verbindung zur Datenbank möglich war.</p>
+                </div>
+                
+                <div id="adminDragInfo" class="admin-drag-info" style="display: none;">
+                    <i class="fas fa-arrows-alt"></i> Admin-Modus: Sie können die Rangfolge per Drag & Drop anpassen. Der oberste Spieler wird Upper Rank 1.
+                </div>
+                
+                <div class="ranking-header">
+
+                </div>
+                <ul id="rankingList" class="ranking-list"></ul>
+            </section>
         </main>
     </div>
 
     <script type="module">
-    // Der gesamte Firebase-Code bleibt unverändert
-    // ... 
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getDatabase, ref, set, remove, get, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 
-    // DOM Elemente für Regelwerk
-    const rulesOverlay = document.getElementById('rulesOverlay');
-    const acceptRulesBtn = document.getElementById('acceptRulesBtn');
-    const rulesMenu = document.getElementById('rulesMenu');
-    const rulesToggle = document.getElementById('rulesToggle');
-    const rulesBtn = document.getElementById('rulesBtn');
+    const firebaseConfig = {
+      apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
+      authDomain: "demonslayerranks.firebaseapp.com",
+      databaseURL: "https://demonslayerranks-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "demonslayerranks",
+      storageBucket: "demonslayerranks.firebasestorage.app",
+      messagingSenderId: "244021550640",
+      appId: "1:244021550640:web:4d2a3c7a52c205f5e997f5",
+      measurementId: "G-WH3WQBKPX4"
+    };
 
-    // Regelwerk anzeigen für Erstbesucher
-    window.addEventListener('load', () => {
-        // Prüfen, ob das Regelwerk bereits akzeptiert wurde
-        const rulesAccepted = localStorage.getItem('rulesAccepted');
-        if (!rulesAccepted) {
-            rulesOverlay.style.display = 'flex';
+    // Demo-Daten für den Fall, dass Firebase nicht funktioniert
+    const demoPlayers = [
+        {
+            name: "Mikato",
+            type: "Demon",
+            mains: ["Yorrichi Type Zero"],
+            rank: "Upper Rank 1"
+        },
+        {
+            name: "Tanjiro",
+            type: "Demon Slayer", 
+            mains: ["Water Breathing", "Hinokami Kagura"],
+            rank: "Upper Rank 4"
+        },
+        {
+            name: "Nezuko",
+            type: "Demon",
+            mains: ["Blood Demon Art"],
+            rank: "Upper Rank 6"
+        },
+        {
+            name: "Zenitsu",
+            type: "Demon Slayer",
+            mains: ["Thunder Breathing"],
+            rank: "Lower Rank 2"
+        },
+        {
+            name: "Inosuke",
+            type: "Demon Slayer", 
+            mains: ["Beast Breathing"],
+            rank: "Lower Rank 3"
+        }
+    ];
+
+    let app;
+    let db;
+    let auth;
+    let provider;
+
+    try {
+        app = initializeApp(firebaseConfig);
+        db = getDatabase(app);
+        auth = getAuth();
+        provider = new GoogleAuthProvider();
+    } catch (error) {
+        console.error("Firebase Initialization Error:", error);
+        showNotification("Firebase konnte nicht initialisiert werden. Demo-Modus aktiviert.", "error");
+    }
+
+    // DOM Elemente
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const adminPanel = document.getElementById("adminPanel");
+    const rankingList = document.getElementById("rankingList");
+    const existingPlayers = document.getElementById("existingPlayers");
+    const btnDemon = document.getElementById("btnDemon");
+    const btnDemonSlayer = document.getElementById("btnDemonSlayer");
+    const mainFields = document.getElementById("mainFields");
+    const addUpdateBtn = document.getElementById("addUpdateBtn");
+    const removeBtn = document.getElementById("removeBtn");
+    const firebaseError = document.getElementById("firebaseError");
+    const localDataInfo = document.getElementById("localDataInfo");
+    const demoModeBanner = document.getElementById("demoModeBanner");
+    const connectionStatus = document.getElementById("connectionStatus");
+    const rankOptions = document.querySelectorAll('.rank-option');
+    const adminDragInfo = document.getElementById('adminDragInfo');
+    const socialMenu = document.getElementById('socialMenu');
+    const menuToggle = document.getElementById('menuToggle');
+    const editMainsSection = document.getElementById('editMainsSection');
+    const saveMainsBtn = document.getElementById('saveMainsBtn');
+    const editBtnDemon = document.getElementById('editBtnDemon');
+    const editBtnDemonSlayer = document.getElementById('editBtnDemonSlayer');
+    const editMain1 = document.getElementById('editMain1');
+    const editMain2 = document.getElementById('editMain2');
+    const editMain2Field = document.getElementById('editMain2Field');
+
+    let selectedType = "Demon";
+    let selectedRank = "Upper Rank 1";
+    let currentUser = null;
+    let isOnline = false;
+    let usingDemoData = false;
+    let isAdmin = false;
+    let dragSourceElement = null;
+    let currentlyEditingPlayer = null;
+    let editPlayerType = "Demon";
+
+    // Login / Logout
+    loginBtn.addEventListener("click", () => {
+        if (auth) {
+            signInWithPopup(auth, provider);
         } else {
-            rulesOverlay.style.display = 'none';
-            // Erst danach die Spieler laden
+            showNotification("Firebase ist nicht verfügbar. Admin-Funktionen deaktiviert.", "error");
+        }
+    });
+    
+    logoutBtn.addEventListener("click", () => {
+        if (auth) {
+            signOut(auth);
+        }
+    });
+
+    // Social Menu Toggle
+    menuToggle.addEventListener('click', () => {
+        socialMenu.classList.toggle('open');
+        menuToggle.innerHTML = socialMenu.classList.contains('open') ? 
+            '<i class="fas fa-chevron-left"></i>' : '<i class="fas fa-chevron-right"></i>';
+    });
+
+    // Typ Buttons
+    btnDemon.addEventListener("click", ()=>{
+        selectedType="Demon";
+        btnDemon.classList.add("selected");
+        btnDemonSlayer.classList.remove("selected");
+        mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">`;
+    });
+    
+    btnDemonSlayer.addEventListener("click", ()=>{
+        selectedType="Demon Slayer";
+        btnDemonSlayer.classList.add("selected");
+        btnDemon.classList.remove("selected");
+        mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">
+        <label>Main Character 2:</label><input type="text" id="main2" placeholder="Main 2" class="text-input">`;
+    });
+
+    // Edit Typ Buttons
+    editBtnDemon.addEventListener("click", ()=>{
+        editPlayerType="Demon";
+        editBtnDemon.classList.add("selected");
+        editBtnDemonSlayer.classList.remove("selected");
+        editMain2Field.style.display = "none";
+    });
+    
+    editBtnDemonSlayer.addEventListener("click", ()=>{
+        editPlayerType="Demon Slayer";
+        editBtnDemonSlayer.classList.add("selected");
+        editBtnDemon.classList.remove("selected");
+        editMain2Field.style.display = "block";
+    });
+
+    // Rang-Auswahl
+    rankOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            // Entferne Auswahl von allen Optionen
+            rankOptions.forEach(opt => opt.classList.remove('selected'));
+            // Wähle die aktuelle Option aus
+            option.classList.add('selected');
+            selectedRank = option.dataset.rank;
+        });
+    });
+
+    // Standardmäßig Upper Rank 1 auswählen
+    document.querySelector('[data-rank="Upper Rank 1"]').classList.add('selected');
+
+    // Auth Status - nur wenn Firebase verfügbar ist
+    if (auth) {
+        onAuthStateChanged(auth, (user)=>{
+            currentUser = user;
+            if(user){
+                document.getElementById("userEmail").innerHTML = `<i class="fas fa-user"></i> ${user.email}`;
+                // Login/Logout Buttons anpassen
+                document.getElementById("loginBtn").style.display = "none";
+                document.getElementById("logoutBtn").style.display = "flex";
+                
+                isAdmin = (user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com");
+                
+                if(isAdmin){
+                    adminPanel.style.display = "block";
+                    adminDragInfo.style.display = "block";
+                    setTimeout(() => {
+                        adminPanel.classList.add("visible");
+                    }, 10);
+                } else {
+                    adminPanel.classList.remove("visible");
+                    adminDragInfo.style.display = "none";
+                    setTimeout(() => {
+                        adminPanel.style.display = "none";
+                    }, 300);
+                }
+            } else {
+                // Login/Logout Buttons anpassen
+                document.getElementById("loginBtn").style.display = "flex";
+                document.getElementById("logoutBtn").style.display = "none";
+                
+                adminPanel.classList.remove("visible");
+                adminDragInfo.style.display = "none";
+                setTimeout(() => {
+                    adminPanel.style.display = "none";
+                }, 300);
+                document.getElementById("userEmail").innerHTML = "<i class=\"fas fa-user\"></i> Nicht eingeloggt";
+                isAdmin = false;
+            }
+            loadPlayers(); // Immer Spieler laden, auch wenn nicht eingeloggt
+        });
+    } else {
+        // Firebase nicht verfügbar, Admin-Panel ausblenden
+        adminPanel.style.display = "none";
+        adminDragInfo.style.display = "none";
+        firebaseError.style.display = "block";
+        demoModeBanner.style.display = "block";
+        usingDemoData = true;
+        updateConnectionStatus(false);
+        
+        // Buttons anpassen für Offline-Modus
+        document.getElementById("loginBtn").style.display = "flex";
+        document.getElementById("logoutBtn").style.display = "none";
+    }
+
+    // Drag & Drop Funktionen
+    function initDragAndDrop() {
+        const items = rankingList.querySelectorAll('.ranking-item');
+        
+        items.forEach(item => {
+            // Handle für Drag & Drop hinzufügen
+            if (isAdmin) {
+                const dragHandle = document.createElement('span');
+                dragHandle.className = 'drag-handle';
+                dragHandle.innerHTML = '<i class="fas fa-arrows-alt"></i>';
+                item.prepend(dragHandle);
+                
+                // Event-Listener für Drag & Drop
+                item.setAttribute('draggable', 'true');
+                
+                item.addEventListener('dragstart', (e) => {
+                    dragSourceElement = item;
+                    e.dataTransfer.setData('text/plain', item.dataset.name);
+                    item.classList.add('dragging');
+                    setTimeout(() => item.style.display = 'none', 0);
+                });
+                
+                item.addEventListener('dragend', (e) => {
+                    item.classList.remove('dragging');
+                    item.style.display = 'flex';
+                    rankingList.querySelectorAll('.ranking-item').forEach(i => {
+                        i.classList.remove('drag-over');
+                    });
+                });
+                
+                item.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+                
+                item.addEventListener('dragenter', (e) => {
+                    e.preventDefault();
+                    item.classList.add('drag-over');
+                });
+                
+                item.addEventListener('dragleave', (e) => {
+                    item.classList.remove('drag-over');
+                });
+                
+                item.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    item.classList.remove('drag-over');
+                    
+                    if (dragSourceElement !== item) {
+                        // Element verschieben
+                        if (dragSourceElement.nextSibling === item) {
+                            rankingList.insertBefore(dragSourceElement, item.nextSibling);
+                        } else {
+                            rankingList.insertBefore(dragSourceElement, item);
+                        }
+                        
+                        // Ränge aktualisieren
+                        updateRanksAfterDrag();
+                    }
+                    // Vergrößerte Hitbox für Drop-Zone
+                    const dropZone = document.createElement('div');
+                    dropZone.className = 'drop-zone';
+                    dropZone.style.height = '30px';
+                    dropZone.style.margin = '10px 0';
+                    rankingList.insertBefore(dropZone, item.nextSibling);
+                    
+                    setTimeout(() => {
+                        if (dropZone.parentNode) {
+                            dropZone.parentNode.removeChild(dropZone);
+                        }
+                    }, 500);
+                });
+            } else {
+                // Entferne Drag & Drop Funktionen, wenn nicht Admin
+                item.setAttribute('draggable', 'false');
+                const handle = item.querySelector('.drag-handle');
+                if (handle) handle.remove();
+            }
+        });
+    }
+
+    // Ränge nach Drag & Drop aktualisieren
+    async function updateRanksAfterDrag() {
+        const items = rankingList.querySelectorAll('.ranking-item');
+        const updatedPlayers = [];
+        
+        // Neue Rangreihenfolge bestimmen
+        items.forEach((item, index) => {
+            const playerName = item.dataset.name;
+            const rank = getRankFromPosition(index);
+            
+            // Spieler-Objekt mit aktualisiertem Rang erstellen
+            const player = {
+                name: playerName,
+                rank: rank,
+                type: item.querySelector('.player-type').textContent,
+                mains: item.querySelector('.player-mains').textContent.split(', ')
+            };
+            
+            updatedPlayers.push(player);
+            
+            // Rang in der Anzeige aktualisieren
+            const rankElement = item.querySelector('.player-rank');
+            rankElement.textContent = rank;
+            rankElement.className = `player-rank ${rank.startsWith("Upper") ? "upper-rank" : "lower-rank"}`;
+        });
+        
+        // Datenbank aktualisieren (wenn online)
+        if (db && isOnline) {
+            try {
+                // Alle Spieler mit neuen Rängen speichern
+                for (const player of updatedPlayers) {
+                    await set(ref(db, 'players/' + player.name), player);
+                }
+                showNotification("Rangliste erfolgreich aktualisiert!", "success");
+                
+                // Lokale Daten aktualisieren
+                const playersObj = {};
+                updatedPlayers.forEach(player => {
+                    playersObj[player.name] = player;
+                });
+                localStorage.setItem('demonSlayerPlayers', JSON.stringify(playersObj));
+            } catch (err) {
+                showNotification("Fehler beim Aktualisieren der Ränge: " + err.message, "error");
+            }
+        } else if (!isOnline) {
+            // Offline: Nur lokale Daten aktualisieren
+            const playersObj = {};
+            updatedPlayers.forEach(player => {
+                playersObj[player.name] = player;
+            });
+            localStorage.setItem('demonSlayerPlayers', JSON.stringify(playersObj));
+            showNotification("Rangliste lokal aktualisiert (Offline-Modus).", "info");
+        }
+    }
+
+    // Rang basierend auf Position bestimmen
+    function getRankFromPosition(position) {
+        const ranks = [
+            "Upper Rank 1",
+            "Upper Rank 2",
+            "Upper Rank 3",
+            "Upper Rank 4",
+            "Upper Rank 5",
+            "Upper Rank 6",
+            "Lower Rank 1",
+            "Lower Rank 2",
+            "Lower Rank 3",
+            "Lower Rank 4",
+            "Lower Rank 5",
+            "Lower Rank 6"
+        ];
+        
+        return ranks[position] || "Lower Rank 6";
+    }
+
+    // Spieler hinzufügen/aktualisieren
+    addUpdateBtn.addEventListener("click", async ()=>{
+        if (!db) {
+            showNotification("Datenbank nicht verfügbar. Demo-Modus aktiviert.", "error");
+            return;
+        }
+        
+        if(!currentUser){ 
+            showNotification("Nur Admins können Spieler hinzufügen.", "error");
+            return; 
+        }
+        
+        const name = document.getElementById("playerName").value.trim();
+        const main1 = document.getElementById("main1")?.value.trim();
+        const main2 = document.getElementById("main2")?.value.trim();
+
+        if(!name || !main1 || (selectedType==="Demon Slayer" && !main2)){
+            showNotification("Bitte alle Felder ausfüllen!", "error");
+            return;
+        }
+
+        const mains = selectedType==="Demon" ? [main1] : [main1, main2];
+        const playerData = { name, type: selectedType, mains, rank: selectedRank };
+
+        try{
+            await set(ref(db,'players/'+name), playerData);
+            showNotification("Spieler erfolgreich hinzugefügt/aktualisiert!", "success");
+            document.getElementById("playerName").value = "";
+            document.getElementById("main1").value = "";
+            if(main2) document.getElementById("main2").value = "";
+            
+            // Lokal speichern für Offline-Zugriff
+            savePlayerLocally(playerData);
+            loadPlayers();
+        } catch(err){ 
+            showNotification("Fehler: "+err.message, "error");
+            // Fallback: lokal speichern
+            savePlayerLocally(playerData);
+            showNotification("Spieler lokal gespeichert (Offline-Modus).", "info");
             loadPlayers();
         }
     });
 
-    // Regelwerk akzeptieren
-    acceptRulesBtn.addEventListener('click', () => {
-        localStorage.setItem('rulesAccepted', 'true');
-        rulesOverlay.style.display = 'none';
+    // Spieler entfernen
+    removeBtn.addEventListener("click", async ()=>{
+        const name = existingPlayers.value;
+        if(!name) return;
+        if(!confirm(`Möchten Sie wirklich ${name} entfernen?`)) return;
+        
+        try {
+            if (db) {
+                await remove(ref(db,'players/'+name));
+                showNotification("Spieler erfolgreich entfernt!", "success");
+            }
+            
+            // Auch lokal entfernen
+            removePlayerLocally(name);
+            loadPlayers();
+        } catch(err){ 
+            showNotification("Fehler: "+err.message, "error");
+            // Fallback: lokal entfernen
+            removePlayerLocally(name);
+            showNotification("Spieler lokal entfernt (Offline-Modus).", "info");
+            loadPlayers();
+        }
+    });
+
+    // Verbindungsstatus aktualisieren
+    function updateConnectionStatus(online) {
+        isOnline = online;
+        if (online) {
+            connectionStatus.className = "connection-status online-status";
+            connectionStatus.innerHTML = '<span class="status-indicator online-indicator"></span> Online';
+            localDataInfo.style.display = "none";
+            demoModeBanner.style.display = "none";
+        } else {
+            connectionStatus.className = "connection-status offline-status";
+            connectionStatus.innerHTML = '<span class="status-indicator offline-indicator"></span> Offline';
+            firebaseError.style.display = "block";
+        }
+    }
+
+    // Spieler lokal speichern
+    function savePlayerLocally(playerData) {
+        try {
+            const players = JSON.parse(localStorage.getItem('demonSlayerPlayers') || '{}');
+            players[playerData.name] = playerData;
+            localStorage.setItem('demonSlayerPlayers', JSON.stringify(players));
+        } catch (e) {
+            console.error("Fehler beim lokalen Speichern:", e);
+        }
+    }
+
+    // Spieler lokal entfernen
+    function removePlayerLocally(playerName) {
+        try {
+            const players = JSON.parse(localStorage.getItem('demonSlayerPlayers') || '{}');
+            delete players[playerName];
+            localStorage.setItem('demonSlayerPlayers', JSON.stringify(players));
+        } catch (e) {
+            console.error("Fehler beim lokalen Entfernen:", e);
+        }
+    }
+
+    // Lokale Spieler laden
+    function loadLocalPlayers() {
+        try {
+            const playersData = localStorage.getItem('demonSlayerPlayers');
+            if (playersData) {
+                const players = JSON.parse(playersData);
+                return Object.values(players);
+            }
+        } catch (e) {
+            console.error("Fehler beim Laden lokaler Daten:", e);
+        }
+        return [];
+    }
+
+    // Spieler laden und Rangliste rendern
+    async function loadPlayers(){
+        // Zuerst versuchen, von Firebase zu laden
+        if (db) {
+            try {
+                console.log("Versuche Spieler von Firebase zu laden...");
+                const snapshot = await get(ref(db,'players/'));
+                
+                // Online-Modus
+                updateConnectionStatus(true);
+                
+                if(!snapshot.exists()) {
+                    console.log("Keine Daten in der Datenbank gefunden");
+                    // Versuche lokale Daten zu laden
+                    const localPlayers = loadLocalPlayers();
+                    if (localPlayers.length > 0) {
+                        localDataInfo.style.display = "block";
+                        updateDropdown(localPlayers);
+                        renderRanking(localPlayers);
+                    } else {
+                        // Demo-Daten laden
+                        updateDropdown(demoPlayers);
+                        renderRanking(demoPlayers);
+                        demoModeBanner.style.display = "block";
+                        usingDemoData = true;
+                    }
+                    return; 
+                }
+                
+                const data = snapshot.val();
+                console.log("Daten aus Firebase:", data);
+                
+                const players = Object.values(data);
+                
+                // Speichere die Daten lokal für Offline-Zugriff
+                try {
+                    const playersObj = {};
+                    players.forEach(player => {
+                        playersObj[player.name] = player;
+                    });
+                    localStorage.setItem('demonSlayerPlayers', JSON.stringify(playersObj));
+                } catch (e) {
+                    console.error("Fehler beim lokalen Speichern:", e);
+                }
+                
+                updateDropdown(players);
+                renderRanking(players);
+                return;
+            } catch(err){
+                console.error("Fehler beim Laden der Spieler von Firebase:", err);
+                updateConnectionStatus(false);
+            }
+        }
+        
+        // Fallback: Lokale Daten laden
+        const localPlayers = loadLocalPlayers();
+        if (localPlayers.length > 0) {
+            localDataInfo.style.display = "block";
+            updateDropdown(localPlayers);
+            renderRanking(localPlayers);
+        } else {
+            // Demo-Daten verwenden
+            updateDropdown(demoPlayers);
+            renderRanking(demoPlayers);
+            demoModeBanner.style.display = "block";
+            usingDemoData = true;
+        }
+    }
+
+    // Dropdown für Admin
+    function updateDropdown(players){
+        existingPlayers.innerHTML="";
+        players.forEach(player=>{
+            const opt = document.createElement("option");
+            opt.value = player.name;
+            opt.innerText = player.name;
+            existingPlayers.appendChild(opt);
+        });
+    }
+
+    // Rangliste rendern
+    function renderRanking(players){
+        rankingList.innerHTML="";
+        
+        if(players.length === 0) {
+            rankingList.innerHTML="<li class='no-players'>Keine Spieler vorhanden</li>";
+            return;
+        }
+        
+        const rankOrder = {
+            "Upper Rank 1": 1,
+            "Upper Rank 2": 2,
+            "Upper Rank 3": 3,
+            "Upper Rank 4": 4,
+            "Upper Rank 5": 5,
+            "Upper Rank 6": 6,
+            "Lower Rank 1": 7,
+            "Lower Rank 2": 8,
+            "Lower Rank 3": 9,
+            "Lower Rank 4": 10,
+            "Lower Rank 5": 11,
+            "Lower Rank 6": 12
+        };
+        
+        const sorted = players.sort((a,b)=>{
+            return (rankOrder[a.rank] || 12) - (rankOrder[b.rank] || 12);
+        });
+
+        sorted.forEach((player, index) => {
+            const li = document.createElement("li");
+            li.dataset.name=player.name;
+            li.className = `ranking-item ${player.rank.startsWith("Upper")?"upper":"lower"}`;
+            
+            // Animationseffekt mit Verzögerung
+            li.style.animationDelay = `${index * 0.1}s`;
+            
+            // Container für Mains und Bearbeiten-Button
+            const mainsContainer = document.createElement('div');
+            mainsContainer.className = 'mains-container';
+            
+            // Mains Text
+            const mainsText = document.createElement('span');
+            mainsText.className = 'player-mains';
+            mainsText.textContent = player.mains.join(", ");
+            
+            mainsContainer.appendChild(mainsText);
+            
+            // Bearbeiten-Button für Admins hinzufügen
+            if (isAdmin) {
+                const editButton = document.createElement('button');
+                editButton.className = 'edit-mains-btn';
+                editButton.innerHTML = '<i class="fas fa-edit"></i> Bearbeiten';
+                editButton.addEventListener('click', () => {
+                    editPlayerMains(player);
+                });
+                mainsContainer.appendChild(editButton);
+            }
+            
+            li.innerHTML=`
+                <span class="player-rank ${player.rank.startsWith("Upper")?"upper-rank":"lower-rank"}">${player.rank}</span>
+                <span class="player-name">${player.name}</span>
+                <span class="player-type ${player.type === 'Demon' ? 'demon-type' : 'slayer-type'}">${player.type}</span>
+            `;
+            
+            // Füge den Mains-Container hinzu
+            li.appendChild(mainsContainer);
+            
+            rankingList.appendChild(li);
+        });
+        
+        // Drag & Drop initialisieren
+        initDragAndDrop();
+    }
+
+    // Mains eines Spielers bearbeiten
+    function editPlayerMains(player) {
+        currentlyEditingPlayer = player;
+        editMainsSection.style.display = 'block';
+        
+        // Typ-Buttons setzen
+        editPlayerType = player.type;
+        if (player.type === "Demon") {
+            editBtnDemon.classList.add("selected");
+            editBtnDemonSlayer.classList.remove("selected");
+            editMain2Field.style.display = "none";
+        } else {
+            editBtnDemonSlayer.classList.add("selected");
+            editBtnDemon.classList.remove("selected");
+            editMain2Field.style.display = "block";
+        }
+        
+        // Mains in Felder eintragen
+        editMain1.value = player.mains[0] || "";
+        if (player.mains.length > 1) {
+            editMain2.value = player.mains[1] || "";
+        } else {
+            editMain2.value = "";
+        }
+    }
+
+    // Event-Listener für Speichern-Button
+    saveMainsBtn.addEventListener('click', async () => {
+        if (!currentlyEditingPlayer) return;
+        
+        // Mains aus den Eingabefeldern sammeln
+        const newMains = [editMain1.value.trim()];
+        
+        if (editPlayerType === "Demon Slayer" && editMain2.value.trim() !== "") {
+            newMains.push(editMain2.value.trim());
+        }
+        
+        if (newMains[0] === "") {
+            showNotification("Mindestens ein Main Character muss angegeben werden.", "error");
+            return;
+        }
+        
+        // Spieler aktualisieren
+        const updatedPlayer = {
+            ...currentlyEditingPlayer,
+            type: editPlayerType,
+            mains: newMains
+        };
+        
+        try {
+            if (db && isOnline) {
+                await set(ref(db, 'players/' + updatedPlayer.name), updatedPlayer);
+                showNotification("Spieler erfolgreich aktualisiert!", "success");
+            }
+            
+            // Lokal speichern
+            savePlayerLocally(updatedPlayer);
+            loadPlayers();
+            
+            // Bearbeitungsmodus beenden
+            editMainsSection.style.display = 'none';
+            currentlyEditingPlayer = null;
+        } catch (err) {
+            showNotification("Fehler beim Aktualisieren: " + err.message, "error");
+        }
+    });
+
+    // Benachrichtigungsfunktion
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <span>${message}</span>
+            <button onclick="this.parentElement.remove()">&times;</button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Automatisch nach 3 Sekunden entfernen
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.remove();
+            }
+        }, 3000);
+    }
+
+    // Initialisierung
+    window.addEventListener('load', () => {
+        // Prüfe zuerst die Verbindung
         loadPlayers();
     });
-
-    // Regelwerk-Menü öffnen/schließen
-    rulesToggle.addEventListener('click', () => {
-        rulesMenu.classList.toggle('open');
-        rulesToggle.innerHTML = rulesMenu.classList.contains('open') ? 
-            '<i class="fas fa-chevron-right"></i>' : '<i class="fas fa-chevron-left"></i>';
-    });
-
-    rulesBtn.addEventListener('click', () => {
-        rulesMenu.classList.toggle('open');
-        rulesToggle.innerHTML = rulesMenu.classList.contains('open') ? 
-            '<i class="fas fa-chevron-right"></i>' : '<i class="fas fa-chevron-left"></i>';
-    });
-
-    // Der restliche JavaScript-Code bleibt unverändert
-    // ...
     </script>
 </body>
 </html>
