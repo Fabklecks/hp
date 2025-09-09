@@ -129,6 +129,47 @@
         .lower-moon {
             color: #70a1ff;
         }
+        
+        /* Drag & Drop Styles */
+        .ranking-list.dragging {
+            cursor: grabbing;
+        }
+        
+        .ranking-item.dragging {
+            opacity: 0.5;
+            background: rgba(255, 165, 0, 0.2);
+        }
+        
+        .ranking-item.drag-over {
+            border-top: 3px solid #ff4500;
+        }
+        
+        .drag-handle {
+            cursor: grab;
+            margin-right: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            transition: color 0.3s;
+        }
+        
+        .drag-handle:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .ranking-item {
+            transition: transform 0.3s, background-color 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .admin-drag-info {
+            background: rgba(255, 165, 0, 0.1);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -225,6 +266,10 @@
                     <p>Es werden lokal gespeicherte Daten angezeigt, da keine Verbindung zur Datenbank möglich war.</p>
                 </div>
                 
+                <div id="adminDragInfo" class="admin-drag-info" style="display: none;">
+                    <i class="fas fa-arrows-alt"></i> Admin-Modus: Sie können die Rangfolge per Drag & Drop anpassen. Der oberste Spieler wird Upper Moon 1.
+                </div>
+                
                 <div class="ranking-header">
                     <span>Rang</span>
                     <span>Name</span>
@@ -317,12 +362,15 @@ const firebaseConfig = {
     const demoModeBanner = document.getElementById("demoModeBanner");
     const connectionStatus = document.getElementById("connectionStatus");
     const rankOptions = document.querySelectorAll('.rank-option');
+    const adminDragInfo = document.getElementById('adminDragInfo');
 
     let selectedType = "Demon";
     let selectedRank = "Upper Moon 1";
     let currentUser = null;
     let isOnline = false;
     let usingDemoData = false;
+    let isAdmin = false;
+    let dragSourceElement = null;
 
     // Login / Logout
     loginBtn.addEventListener("click", () => {
@@ -375,33 +423,183 @@ const firebaseConfig = {
             currentUser = user;
             if(user){
                 document.getElementById("userEmail").innerHTML = `<i class="fas fa-user"></i> ${user.email}`;
-                if(user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com"){
+                isAdmin = (user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com");
+                
+                if(isAdmin){
                     adminPanel.style.display = "block";
+                    adminDragInfo.style.display = "block";
                     setTimeout(() => {
                         adminPanel.classList.add("visible");
                     }, 10);
                 } else {
                     adminPanel.classList.remove("visible");
+                    adminDragInfo.style.display = "none";
                     setTimeout(() => {
                         adminPanel.style.display = "none";
                     }, 300);
                 }
             } else {
                 adminPanel.classList.remove("visible");
+                adminDragInfo.style.display = "none";
                 setTimeout(() => {
                     adminPanel.style.display = "none";
                 }, 300);
                 document.getElementById("userEmail").innerHTML = "<i class=\"fas fa-user\"></i> Nicht eingeloggt";
+                isAdmin = false;
             }
             loadPlayers(); // Immer Spieler laden, auch wenn nicht eingeloggt
         });
     } else {
         // Firebase nicht verfügbar, Admin-Panel ausblenden
         adminPanel.style.display = "none";
+        adminDragInfo.style.display = "none";
         firebaseError.style.display = "block";
         demoModeBanner.style.display = "block";
         usingDemoData = true;
         updateConnectionStatus(false);
+    }
+
+    // Drag & Drop Funktionen
+    function initDragAndDrop() {
+        const items = rankingList.querySelectorAll('.ranking-item');
+        
+        items.forEach(item => {
+            // Handle für Drag & Drop hinzufügen
+            if (isAdmin) {
+                const dragHandle = document.createElement('span');
+                dragHandle.className = 'drag-handle';
+                dragHandle.innerHTML = '<i class="fas fa-arrows-alt"></i>';
+                item.prepend(dragHandle);
+                
+                // Event-Listener für Drag & Drop
+                item.setAttribute('draggable', 'true');
+                
+                item.addEventListener('dragstart', (e) => {
+                    dragSourceElement = item;
+                    e.dataTransfer.setData('text/plain', item.dataset.name);
+                    item.classList.add('dragging');
+                    setTimeout(() => item.style.display = 'none', 0);
+                });
+                
+                item.addEventListener('dragend', (e) => {
+                    item.classList.remove('dragging');
+                    item.style.display = 'flex';
+                    rankingList.querySelectorAll('.ranking-item').forEach(i => {
+                        i.classList.remove('drag-over');
+                    });
+                });
+                
+                item.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+                
+                item.addEventListener('dragenter', (e) => {
+                    e.preventDefault();
+                    item.classList.add('drag-over');
+                });
+                
+                item.addEventListener('dragleave', (e) => {
+                    item.classList.remove('drag-over');
+                });
+                
+                item.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    item.classList.remove('drag-over');
+                    
+                    if (dragSourceElement !== item) {
+                        // Element verschieben
+                        if (dragSourceElement.nextSibling === item) {
+                            rankingList.insertBefore(dragSourceElement, item.nextSibling);
+                        } else {
+                            rankingList.insertBefore(dragSourceElement, item);
+                        }
+                        
+                        // Ränge aktualisieren
+                        updateRanksAfterDrag();
+                    }
+                });
+            } else {
+                // Entferne Drag & Drop Funktionen, wenn nicht Admin
+                item.setAttribute('draggable', 'false');
+                const handle = item.querySelector('.drag-handle');
+                if (handle) handle.remove();
+            }
+        });
+    }
+
+    // Ränge nach Drag & Drop aktualisieren
+    async function updateRanksAfterDrag() {
+        const items = rankingList.querySelectorAll('.ranking-item');
+        const updatedPlayers = [];
+        
+        // Neue Rangreihenfolge bestimmen
+        items.forEach((item, index) => {
+            const playerName = item.dataset.name;
+            const rank = getRankFromPosition(index);
+            
+            // Spieler-Objekt mit aktualisiertem Rang erstellen
+            const player = {
+                name: playerName,
+                rank: rank,
+                type: item.querySelector('.player-type').textContent,
+                mains: item.querySelector('.player-mains').textContent.split(', ')
+            };
+            
+            updatedPlayers.push(player);
+            
+            // Rang in der Anzeige aktualisieren
+            const rankElement = item.querySelector('.player-rank');
+            rankElement.textContent = rank;
+            rankElement.className = `player-rank ${rank.startsWith("Upper") ? "upper-moon" : "lower-moon"}`;
+        });
+        
+        // Datenbank aktualisieren (wenn online)
+        if (db && isOnline) {
+            try {
+                // Alle Spieler mit neuen Rängen speichern
+                for (const player of updatedPlayers) {
+                    await set(ref(db, 'players/' + player.name), player);
+                }
+                showNotification("Rangliste erfolgreich aktualisiert!", "success");
+                
+                // Lokale Daten aktualisieren
+                const playersObj = {};
+                updatedPlayers.forEach(player => {
+                    playersObj[player.name] = player;
+                });
+                localStorage.setItem('demonSlayerPlayers', JSON.stringify(playersObj));
+            } catch (err) {
+                showNotification("Fehler beim Aktualisieren der Ränge: " + err.message, "error");
+            }
+        } else if (!isOnline) {
+            // Offline: Nur lokale Daten aktualisieren
+            const playersObj = {};
+            updatedPlayers.forEach(player => {
+                playersObj[player.name] = player;
+            });
+            localStorage.setItem('demonSlayerPlayers', JSON.stringify(playersObj));
+            showNotification("Rangliste lokal aktualisiert (Offline-Modus).", "info");
+        }
+    }
+
+    // Rang basierend auf Position bestimmen
+    function getRankFromPosition(position) {
+        const ranks = [
+            "Upper Moon 1",
+            "Upper Moon 2",
+            "Upper Moon 3",
+            "Upper Moon 4",
+            "Upper Moon 5",
+            "Upper Moon 6",
+            "Lower Moon 1",
+            "Lower Moon 2",
+            "Lower Moon 3",
+            "Lower Moon 4",
+            "Lower Moon 5",
+            "Lower Moon 6"
+        ];
+        
+        return ranks[position] || "Lower Moon 6";
     }
 
     // Spieler hinzufügen/aktualisieren
@@ -646,6 +844,9 @@ const firebaseConfig = {
             `;
             rankingList.appendChild(li);
         });
+        
+        // Drag & Drop initialisieren
+        initDragAndDrop();
     }
 
     // Benachrichtigungsfunktion
