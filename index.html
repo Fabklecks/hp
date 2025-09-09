@@ -8,42 +8,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Zusätzliche Styles für Fehlerbehandlung */
-        .error-container {
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid rgba(255, 0, 0, 0.3);
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
+        /* Zusätzliche Styles für die Fallback-Lösung */
+        .demo-mode-banner {
+            background: linear-gradient(45deg, #ff8c00, #ff4500);
+            color: white;
+            padding: 10px 20px;
             text-align: center;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
         }
         
-        .error-container h3 {
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
+        
+        .firebase-error {
+            background: rgba(255, 69, 0, 0.1);
+            border: 1px solid rgba(255, 69, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .firebase-error h3 {
             color: #ff4500;
             margin-bottom: 10px;
         }
         
-        .error-container p {
-            margin-bottom: 15px;
-        }
-        
-        .retry-btn {
-            background: linear-gradient(45deg, #ff4500, #ff8c00);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .retry-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 69, 0, 0.4);
-        }
-        
-        .offline-data {
+        .local-data-info {
             background: rgba(255, 165, 0, 0.1);
             border: 1px solid rgba(255, 165, 0, 0.3);
             border-radius: 8px;
@@ -51,9 +47,46 @@
             margin: 15px 0;
         }
         
-        .offline-data h4 {
+        .local-data-info h4 {
             color: #ff8c00;
             margin-bottom: 10px;
+        }
+        
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: 15px;
+        }
+        
+        .online-status {
+            background: rgba(52, 168, 83, 0.2);
+            color: #34A853;
+        }
+        
+        .offline-status {
+            background: rgba(234, 67, 53, 0.2);
+            color: #EA4335;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .online-indicator {
+            background: #34A853;
+            box-shadow: 0 0 5px #34A853;
+        }
+        
+        .offline-indicator {
+            background: #EA4335;
+            box-shadow: 0 0 5px #EA4335;
         }
     </style>
 </head>
@@ -75,12 +108,25 @@
                 <button id="loginBtn" class="btn-login"><i class="fab fa-google"></i> Login (Admin)</button>
                 <button id="logoutBtn" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 <span id="userEmail"><i class="fas fa-user"></i> Nicht eingeloggt</span>
+                <span id="connectionStatus" class="connection-status offline-status">
+                    <span class="status-indicator offline-indicator"></span>
+                    Offline Modus
+                </span>
             </div>
         </header>
+
+        <div id="demoModeBanner" class="demo-mode-banner" style="display: none;">
+            <i class="fas fa-info-circle"></i> Demo-Modus: Es werden lokale Beispieldaten angezeigt
+        </div>
 
         <main>
             <section id="adminPanel" class="admin-panel card">
                 <h2><i class="fas fa-crown"></i> Spieler verwalten (Admin)</h2>
+
+                <div id="firebaseError" class="firebase-error" style="display: none;">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Firebase-Verbindungsfehler</h3>
+                    <p>Die Verbindung zur Datenbank ist fehlgeschlagen. Änderungen können nicht gespeichert werden.</p>
+                </div>
 
                 <div class="form-group">
                     <label>Spielername:</label>
@@ -112,15 +158,12 @@
 
             <section class="ranking-section">
                 <h2><i class="fas fa-trophy"></i> Live-Rangliste</h2>
-                <div id="errorContainer" class="error-container" style="display: none;">
-                    <h3><i class="fas fa-exclamation-triangle"></i> Verbindungsfehler</h3>
-                    <p>Die Rangliste konnte nicht geladen werden. Möglicherweise haben Sie keine Berechtigung oder die Datenbank ist nicht erreichbar.</p>
-                    <button id="retryBtn" class="retry-btn"><i class="fas fa-redo"></i> Erneut versuchen</button>
-                </div>
-                <div id="offlineData" class="offline-data" style="display: none;">
-                    <h4><i class="fas fa-info-circle"></i> Offline-Daten</h4>
+                
+                <div id="localDataInfo" class="local-data-info" style="display: none;">
+                    <h4><i class="fas fa-database"></i> Lokale Daten</h4>
                     <p>Es werden lokal gespeicherte Daten angezeigt, da keine Verbindung zur Datenbank möglich war.</p>
                 </div>
+                
                 <div class="ranking-header">
                     <span>Rang</span>
                     <span>Name</span>
@@ -149,10 +192,54 @@
         appId: "1:244021550640:web:4d2a3c7a52c205f5e997f5"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const auth = getAuth();
-    const provider = new GoogleAuthProvider();
+    // Demo-Daten für den Fall, dass Firebase nicht funktioniert
+    const demoPlayers = [
+        {
+            name: "Mikato",
+            type: "Demon",
+            mains: ["Yorrichi Type Zero"],
+            rank: "Lower Moon 6"
+        },
+        {
+            name: "Tanjiro",
+            type: "Demon Slayer", 
+            mains: ["Water Breathing", "Hinokami Kagura"],
+            rank: "Upper Moon 4"
+        },
+        {
+            name: "Nezuko",
+            type: "Demon",
+            mains: ["Blood Demon Art"],
+            rank: "Upper Moon 6"
+        },
+        {
+            name: "Zenitsu",
+            type: "Demon Slayer",
+            mains: ["Thunder Breathing"],
+            rank: "Lower Moon 2"
+        },
+        {
+            name: "Inosuke",
+            type: "Demon Slayer", 
+            mains: ["Beast Breathing"],
+            rank: "Lower Moon 3"
+        }
+    ];
+
+    let app;
+    let db;
+    let auth;
+    let provider;
+
+    try {
+        app = initializeApp(firebaseConfig);
+        db = getDatabase(app);
+        auth = getAuth();
+        provider = new GoogleAuthProvider();
+    } catch (error) {
+        console.error("Firebase Initialization Error:", error);
+        showNotification("Firebase konnte nicht initialisiert werden. Demo-Modus aktiviert.", "error");
+    }
 
     // DOM Elemente
     const loginBtn = document.getElementById("loginBtn");
@@ -165,17 +252,30 @@
     const mainFields = document.getElementById("mainFields");
     const addUpdateBtn = document.getElementById("addUpdateBtn");
     const removeBtn = document.getElementById("removeBtn");
-    const errorContainer = document.getElementById("errorContainer");
-    const retryBtn = document.getElementById("retryBtn");
-    const offlineData = document.getElementById("offlineData");
+    const firebaseError = document.getElementById("firebaseError");
+    const localDataInfo = document.getElementById("localDataInfo");
+    const demoModeBanner = document.getElementById("demoModeBanner");
+    const connectionStatus = document.getElementById("connectionStatus");
 
     let selectedType = "Demon";
     let currentUser = null;
-    let isOnline = true;
+    let isOnline = false;
+    let usingDemoData = false;
 
     // Login / Logout
-    loginBtn.addEventListener("click", () => signInWithPopup(auth, provider));
-    logoutBtn.addEventListener("click", () => signOut(auth));
+    loginBtn.addEventListener("click", () => {
+        if (auth) {
+            signInWithPopup(auth, provider);
+        } else {
+            showNotification("Firebase ist nicht verfügbar. Admin-Funktionen deaktiviert.", "error");
+        }
+    });
+    
+    logoutBtn.addEventListener("click", () => {
+        if (auth) {
+            signOut(auth);
+        }
+    });
 
     // Typ Buttons
     btnDemon.addEventListener("click", ()=>{
@@ -184,6 +284,7 @@
         btnDemonSlayer.classList.remove("selected");
         mainFields.innerHTML=`<label>Main Character 1:</label><input type="text" id="main1" placeholder="Main 1" class="text-input">`;
     });
+    
     btnDemonSlayer.addEventListener("click", ()=>{
         selectedType="Demon Slayer";
         btnDemonSlayer.classList.add("selected");
@@ -192,44 +293,53 @@
         <label>Main Character 2:</label><input type="text" id="main2" placeholder="Main 2" class="text-input">`;
     });
 
-    // Erneut versuchen Button
-    retryBtn.addEventListener("click", () => {
-        errorContainer.style.display = "none";
-        loadPlayers();
-    });
-
-    // Auth Status
-    onAuthStateChanged(auth, (user)=>{
-        currentUser = user;
-        if(user){
-            document.getElementById("userEmail").innerHTML = `<i class="fas fa-user"></i> ${user.email}`;
-            if(user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com"){
-                adminPanel.style.display = "block";
-                setTimeout(() => {
-                    adminPanel.classList.add("visible");
-                }, 10);
+    // Auth Status - nur wenn Firebase verfügbar ist
+    if (auth) {
+        onAuthStateChanged(auth, (user)=>{
+            currentUser = user;
+            if(user){
+                document.getElementById("userEmail").innerHTML = `<i class="fas fa-user"></i> ${user.email}`;
+                if(user.email === "fabioasik221206@gmail.com" || user.email === "cand7105@gmail.com"){
+                    adminPanel.style.display = "block";
+                    setTimeout(() => {
+                        adminPanel.classList.add("visible");
+                    }, 10);
+                } else {
+                    adminPanel.classList.remove("visible");
+                    setTimeout(() => {
+                        adminPanel.style.display = "none";
+                    }, 300);
+                }
             } else {
                 adminPanel.classList.remove("visible");
                 setTimeout(() => {
                     adminPanel.style.display = "none";
                 }, 300);
+                document.getElementById("userEmail").innerHTML = "<i class=\"fas fa-user\"></i> Nicht eingeloggt";
             }
-        } else {
-            adminPanel.classList.remove("visible");
-            setTimeout(() => {
-                adminPanel.style.display = "none";
-            }, 300);
-            document.getElementById("userEmail").innerHTML = "<i class=\"fas fa-user\"></i> Nicht eingeloggt";
-        }
-        loadPlayers(); // Immer Spieler laden, auch wenn nicht eingeloggt
-    });
+            loadPlayers(); // Immer Spieler laden, auch wenn nicht eingeloggt
+        });
+    } else {
+        // Firebase nicht verfügbar, Admin-Panel ausblenden
+        adminPanel.style.display = "none";
+        firebaseError.style.display = "block";
+        demoModeBanner.style.display = "block";
+        usingDemoData = true;
+        updateConnectionStatus(false);
+    }
 
     // Spieler hinzufügen/aktualisieren
     addUpdateBtn.addEventListener("click", async ()=>{
+        if (!db) {
+            showNotification("Datenbank nicht verfügbar. Demo-Modus aktiviert.", "error");
+            return;
+        }
+        
         if(!currentUser){ 
             showNotification("Nur Admins können Spieler hinzufügen.", "error");
             return; 
         }
+        
         const name = document.getElementById("playerName").value.trim();
         const main1 = document.getElementById("main1")?.value.trim();
         const main2 = document.getElementById("main2")?.value.trim();
@@ -254,6 +364,10 @@
             loadPlayers();
         } catch(err){ 
             showNotification("Fehler: "+err.message, "error");
+            // Fallback: lokal speichern
+            savePlayerLocally(playerData);
+            showNotification("Spieler lokal gespeichert (Offline-Modus).", "info");
+            loadPlayers();
         }
     });
 
@@ -263,17 +377,38 @@
         if(!name) return;
         if(!confirm(`Möchten Sie wirklich ${name} entfernen?`)) return;
         
-        try{
-            await remove(ref(db,'players/'+name));
-            showNotification("Spieler erfolgreich entfernt!", "success");
+        try {
+            if (db) {
+                await remove(ref(db,'players/'+name));
+                showNotification("Spieler erfolgreich entfernt!", "success");
+            }
             
             // Auch lokal entfernen
             removePlayerLocally(name);
             loadPlayers();
         } catch(err){ 
             showNotification("Fehler: "+err.message, "error");
+            // Fallback: lokal entfernen
+            removePlayerLocally(name);
+            showNotification("Spieler lokal entfernt (Offline-Modus).", "info");
+            loadPlayers();
         }
     });
+
+    // Verbindungsstatus aktualisieren
+    function updateConnectionStatus(online) {
+        isOnline = online;
+        if (online) {
+            connectionStatus.className = "connection-status online-status";
+            connectionStatus.innerHTML = '<span class="status-indicator online-indicator"></span> Online';
+            localDataInfo.style.display = "none";
+            demoModeBanner.style.display = "none";
+        } else {
+            connectionStatus.className = "connection-status offline-status";
+            connectionStatus.innerHTML = '<span class="status-indicator offline-indicator"></span> Offline';
+            firebaseError.style.display = "block";
+        }
+    }
 
     // Spieler lokal speichern
     function savePlayerLocally(playerData) {
@@ -313,63 +448,70 @@
 
     // Spieler laden und Rangliste rendern
     async function loadPlayers(){
-        try {
-            console.log("Versuche Spieler von Firebase zu laden...");
-            const snapshot = await get(ref(db,'players/'));
-            
-            // Online-Modus
-            isOnline = true;
-            errorContainer.style.display = "none";
-            offlineData.style.display = "none";
-            
-            if(!snapshot.exists()) {
-                console.log("Keine Daten in der Datenbank gefunden");
-                // Versuche lokale Daten zu laden
-                const localPlayers = loadLocalPlayers();
-                if (localPlayers.length > 0) {
-                    offlineData.style.display = "block";
-                    updateDropdown(localPlayers);
-                    renderRanking(localPlayers);
-                } else {
-                    rankingList.innerHTML="<li class='no-players'>Keine Spieler vorhanden</li>"; 
-                }
-                return; 
-            }
-            
-            const data = snapshot.val();
-            console.log("Daten aus Firebase:", data);
-            
-            const players = Object.values(data);
-            
-            // Speichere die Daten lokal für Offline-Zugriff
+        // Zuerst versuchen, von Firebase zu laden
+        if (db) {
             try {
-                const playersObj = {};
-                players.forEach(player => {
-                    playersObj[player.name] = player;
-                });
-                localStorage.setItem('demonSlayerPlayers', JSON.stringify(playersObj));
-            } catch (e) {
-                console.error("Fehler beim lokalen Speichern:", e);
+                console.log("Versuche Spieler von Firebase zu laden...");
+                const snapshot = await get(ref(db,'players/'));
+                
+                // Online-Modus
+                updateConnectionStatus(true);
+                
+                if(!snapshot.exists()) {
+                    console.log("Keine Daten in der Datenbank gefunden");
+                    // Versuche lokale Daten zu laden
+                    const localPlayers = loadLocalPlayers();
+                    if (localPlayers.length > 0) {
+                        localDataInfo.style.display = "block";
+                        updateDropdown(localPlayers);
+                        renderRanking(localPlayers);
+                    } else {
+                        // Demo-Daten laden
+                        updateDropdown(demoPlayers);
+                        renderRanking(demoPlayers);
+                        demoModeBanner.style.display = "block";
+                        usingDemoData = true;
+                    }
+                    return; 
+                }
+                
+                const data = snapshot.val();
+                console.log("Daten aus Firebase:", data);
+                
+                const players = Object.values(data);
+                
+                // Speichere die Daten lokal für Offline-Zugriff
+                try {
+                    const playersObj = {};
+                    players.forEach(player => {
+                        playersObj[player.name] = player;
+                    });
+                    localStorage.setItem('demonSlayerPlayers', JSON.stringify(playersObj));
+                } catch (e) {
+                    console.error("Fehler beim lokalen Speichern:", e);
+                }
+                
+                updateDropdown(players);
+                renderRanking(players);
+                return;
+            } catch(err){
+                console.error("Fehler beim Laden der Spieler von Firebase:", err);
+                updateConnectionStatus(false);
             }
-            
-            updateDropdown(players);
-            renderRanking(players);
-        } catch(err){
-            console.error("Fehler beim Laden der Spieler:", err);
-            
-            // Offline-Modus
-            isOnline = false;
-            errorContainer.style.display = "block";
-            
-            // Versuche lokale Daten zu laden
-            const localPlayers = loadLocalPlayers();
-            if (localPlayers.length > 0) {
-                offlineData.style.display = "block";
-                updateDropdown(localPlayers);
-                renderRanking(localPlayers);
-            } else {
-                rankingList.innerHTML=`<li class='error-message'>Fehler beim Laden: ${err.message}</li>`;
-            }
+        }
+        
+        // Fallback: Lokale Daten laden
+        const localPlayers = loadLocalPlayers();
+        if (localPlayers.length > 0) {
+            localDataInfo.style.display = "block";
+            updateDropdown(localPlayers);
+            renderRanking(localPlayers);
+        } else {
+            // Demo-Daten verwenden
+            updateDropdown(demoPlayers);
+            renderRanking(demoPlayers);
+            demoModeBanner.style.display = "block";
+            usingDemoData = true;
         }
     }
 
