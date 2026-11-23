@@ -18,6 +18,7 @@ const db = getDatabase(app);
 const provider = new GoogleAuthProvider();
 const path = (name) => ref(db, `westeros/${name}`);
 const usernameEmail = (name) => `${name.toLowerCase()}@westeros.demonslayerranks.firebaseapp.com`;
+const isRulesDenied = (error) => error?.code === "PERMISSION_DENIED" || /permission denied/i.test(error?.message || "");
 
 window.gameFirebase = {
   auth,
@@ -32,9 +33,10 @@ window.gameFirebase = {
   logAdminAction(entry) { return push(path("adminLogs"), entry); },
   async isDeletedAccount(uid) { try { const snap = await get(path(`deletedAccounts/${uid}`)); return snap.exists() && snap.val() === true; } catch (error) { console.warn("Kontosperren derzeit nicht lesbar:", error.code || error.message); return false; } },
   async deleteGameProfile(uid) {
-    await set(path(`deletedAccounts/${uid}`), true);
-    await remove(path(`users/${uid}`));
+    try { await set(path(`deletedAccounts/${uid}`), true); }
+    catch (error) { if (!isRulesDenied(error)) throw error; console.warn("Kontosperre konnte mit den aktuellen Regeln nicht gespeichert werden; entferne das Spielkonto trotzdem."); }
     await remove(path(`admins/${uid}`));
+    await remove(path(`users/${uid}`));
   },
   saveProfile(uid, profile) { return set(path(`users/${uid}`), profile); },
   setAdmin(uid, role) { return set(path(`admins/${uid}`), role || null); },
