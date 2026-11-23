@@ -1,0 +1,35 @@
+{
+  "rules": {
+    "westeros": {
+      "users": {
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "auth != null && ((auth.uid == $uid && root.child('westeros/deletedAccounts').child(auth.uid).val() != true) || (auth.token.email == 'fabioasik221206@gmail.com' && auth.token.email_verified == true) || root.child('westeros/admins').child(auth.uid).val() == 'admin' || root.child('westeros/admins').child(auth.uid).val() == 'owner')",
+          ".validate": "newData.hasChildren(['username','packs','opened','owned','lastOpen']) && newData.child('username').isString() && newData.child('username').val().length >= 3 && newData.child('username').val().length <= 20 && newData.child('packs').isNumber() && newData.child('packs').val() >= 0 && (newData.child('packs').val() <= 10 || auth.token.email == 'fabioasik221206@gmail.com' || root.child('westeros/admins').child(auth.uid).val() == 'admin' || root.child('westeros/admins').child(auth.uid).val() == 'owner') && newData.child('packs').val() <= 1000000 && newData.child('opened').isNumber() && newData.child('opened').val() >= 0 && newData.child('owned').exists() && newData.child('lastOpen').isNumber()"
+        }
+      },
+      "admins": {
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "auth != null && auth.token.email == 'fabioasik221206@gmail.com' && auth.token.email_verified == true",
+          ".validate": "newData.isString() && (newData.val() == 'owner' || newData.val() == 'admin')"
+        }
+      },
+      "deletedAccounts": {
+        "$uid": {
+          ".read": "auth != null && (auth.uid == $uid || (auth.token.email == 'fabioasik221206@gmail.com' && auth.token.email_verified == true))",
+          ".write": "auth != null && auth.token.email == 'fabioasik221206@gmail.com' && auth.token.email_verified == true",
+          ".validate": "newData.val() == true"
+        }
+      },
+      "adminLogs": {
+        ".read": "auth != null && auth.token.email == 'fabioasik221206@gmail.com' && auth.token.email_verified == true",
+        "$entry": {
+          ".write": "auth != null && !data.exists() && (auth.token.email == 'fabioasik221206@gmail.com' && auth.token.email_verified == true || root.child('westeros/admins').child(auth.uid).val() == 'admin' || root.child('westeros/admins').child(auth.uid).val() == 'owner')",
+          ".validate": "newData.hasChildren(['actorUid','actorName','action','targetUid','targetName','details','at']) && newData.child('actorUid').val() == auth.uid && newData.child('actorName').isString() && newData.child('actorName').val().length <= 30 && newData.child('action').isString() && (newData.child('action').val() == 'grant_cards' || newData.child('action').val() == 'remove_cards' || newData.child('action').val() == 'grant_chests' || newData.child('action').val() == 'remove_chests' || newData.child('action').val() == 'grant_admin' || newData.child('action').val() == 'remove_admin' || newData.child('action').val() == 'delete_game_profile' || newData.child('action').val() == 'debug_on' || newData.child('action').val() == 'debug_off') && newData.child('targetUid').isString() && newData.child('targetUid').val().length <= 128 && newData.child('targetName').isString() && newData.child('targetName').val().length <= 30 && newData.child('details').isString() && newData.child('details').val().length <= 160 && newData.child('at').isNumber() && newData.child('at').val() >= 0"
+        }
+      }
+    }
+  }
+}
+
