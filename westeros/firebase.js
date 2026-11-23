@@ -46,4 +46,3 @@ window.gameFirebase = {
 onAuthStateChanged(auth, (user) => {
   window.dispatchEvent(new CustomEvent("westeros-auth", { detail: user }));
 });
-
