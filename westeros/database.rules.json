@@ -5,7 +5,7 @@
         ".read": "auth != null",
         "$uid": {
           ".write": "auth != null && (auth.uid == $uid || auth.token.email == 'fabioasik221206@gmail.com' || root.child('westeros/admins').child(auth.uid).val() == 'admin' || root.child('westeros/admins').child(auth.uid).val() == 'owner')",
-          ".validate": "newData.hasChildren(['username', 'packs', 'opened', 'owned', 'lastOpen']) && newData.child('username').isString() && newData.child('username').val().length >= 3 && newData.child('username').val().length <= 20 && newData.child('packs').isNumber() && newData.child('packs').val() >= 0 && newData.child('packs').val() <= 10 && newData.child('opened').isNumber() && newData.child('opened').val() >= 0 && newData.child('owned').exists() && newData.child('lastOpen').isNumber()"
+          ".validate": "newData.hasChildren(['username', 'packs', 'opened', 'lastOpen']) && newData.child('username').isString() && newData.child('username').val().length >= 3 && newData.child('username').val().length <= 20 && newData.child('packs').isNumber() && newData.child('packs').val() >= 0 && newData.child('packs').val() <= 10 && newData.child('opened').isNumber() && newData.child('opened').val() >= 0 && newData.child('lastOpen').isNumber()"
         }
       },
       "admins": {
