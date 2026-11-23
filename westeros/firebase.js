@@ -26,11 +26,11 @@ window.gameFirebase = {
   createPasswordAccount: (name, password) => createUserWithEmailAndPassword(auth, usernameEmail(name), password),
   signOut: () => signOut(auth),
   async getProfile(uid) { const snap = await get(path(`users/${uid}`)); return snap.exists() ? snap.val() : null; },
-  async getProfiles() { const snap = await get(path("users")); return snap.exists() ? snap.val() : {}; },
-  async getAdmins() { const snap = await get(path("admins")); return snap.exists() ? snap.val() : {}; },
+  async getProfiles() { try { const snap = await get(path("users")); return snap.exists() ? snap.val() : {}; } catch (error) { console.warn("Spielerliste derzeit nicht lesbar:", error.code || error.message); return {}; } },
+  async getAdmins() { try { const snap = await get(path("admins")); return snap.exists() ? snap.val() : {}; } catch (error) { console.warn("Adminrollen derzeit nicht lesbar:", error.code || error.message); return {}; } },
   async getAdminLogs() { try { const snap = await get(path("adminLogs")); return snap.exists() ? snap.val() : {}; } catch (error) { console.warn("Adminprotokoll derzeit nicht lesbar:", error.code || error.message); return {}; } },
   logAdminAction(entry) { return push(path("adminLogs"), entry); },
-  async isDeletedAccount(uid) { try { const snap = await get(path(`deletedAccounts/${uid}`)); return snap.exists() && snap.val() === true; } catch (error) { if (error.code === "PERMISSION_DENIED") { console.warn("Die Firebase-Regeln für Kontosperren sind noch nicht aktiv."); return false; } throw error; } },
+  async isDeletedAccount(uid) { try { const snap = await get(path(`deletedAccounts/${uid}`)); return snap.exists() && snap.val() === true; } catch (error) { console.warn("Kontosperren derzeit nicht lesbar:", error.code || error.message); return false; } },
   async deleteGameProfile(uid) {
     await set(path(`deletedAccounts/${uid}`), true);
     await remove(path(`users/${uid}`));
