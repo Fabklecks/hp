@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
-import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+import { getDatabase, ref, get, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
@@ -28,6 +28,14 @@ window.gameFirebase = {
   async getProfile(uid) { const snap = await get(path(`users/${uid}`)); return snap.exists() ? snap.val() : null; },
   async getProfiles() { const snap = await get(path("users")); return snap.exists() ? snap.val() : {}; },
   async getAdmins() { const snap = await get(path("admins")); return snap.exists() ? snap.val() : {}; },
+  async getAdminLogs() { const snap = await get(path("adminLogs")); return snap.exists() ? snap.val() : {}; },
+  logAdminAction(entry) { return push(path("adminLogs"), entry); },
+  async isDeletedAccount(uid) { const snap = await get(path(`deletedAccounts/${uid}`)); return snap.exists() && snap.val() === true; },
+  async deleteGameProfile(uid) {
+    await set(path(`deletedAccounts/${uid}`), true);
+    await remove(path(`users/${uid}`));
+    await remove(path(`admins/${uid}`));
+  },
   saveProfile(uid, profile) { return set(path(`users/${uid}`), profile); },
   setAdmin(uid, role) { return set(path(`admins/${uid}`), role || null); },
   listenProfile(uid, callback) { return onValue(path(`users/${uid}`), (snap) => callback(snap.exists() ? snap.val() : null)); }
