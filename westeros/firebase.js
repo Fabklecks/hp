@@ -17,6 +17,7 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 const provider = new GoogleAuthProvider();
 const path = (name) => ref(db, `westeros/${name}`);
+const battlePlayer = (name, source) => { const deck = [...source]; for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; } return { name, hp: 2000, maxHp: 2000, deck: deck.slice(5), hand: deck.slice(0, 5), field: [], influence: 1, maxInfluence: 1, fatigue: 0 }; };
 const usernameEmail = (name) => `${name.toLowerCase()}@westeros.demonslayerranks.firebaseapp.com`;
 const isRulesDenied = (error) => error?.code === "PERMISSION_DENIED" || /permission denied/i.test(error?.message || "");
 const offerPath = (sellerUid, cardId) => path(`marketOffers/${sellerUid}/${cardId}`);
@@ -254,7 +255,42 @@ window.gameFirebase = {
   saveProfile(uid, profile) { return set(path(`users/${uid}`), profile); },
   claimMarketPayouts,
   setAdmin(uid, role) { return set(path(`admins/${uid}`), role || null); },
-  listenProfile(uid, callback) { return onValue(path(`users/${uid}`), (snap) => callback(snap.exists() ? snap.val() : null)); }
+  listenProfile(uid, callback) { return onValue(path(`users/${uid}`), (snap) => callback(snap.exists() ? snap.val() : null)); },
+  async joinBattleQueue(uid, name, deck) {
+    const queuePath = path('battleQueue');
+    const own = { uid, name, deck, status: 'waiting', joinedAt: Date.now() };
+    const snap = await get(queuePath);
+    const waiting = snap.exists() ? snap.val() : {};
+    for (const [otherUid, candidate] of Object.entries(waiting)) {
+      if (otherUid === uid || candidate?.status !== 'waiting' || !Array.isArray(candidate.deck) || candidate.deck.length !== 20) continue;
+      const battleId = push(path('battles')).key;
+      const claim = await runTransaction(path(`battleQueue/${otherUid}`), current => current?.status === 'waiting' ? { ...current, status: 'matched', battleId } : undefined, { applyLocally: false });
+      if (!claim.committed) continue;
+      const room = {
+        players: {
+          [otherUid]: battlePlayer(candidate.name || 'Spieler', candidate.deck),
+          [uid]: battlePlayer(name, deck)
+        },
+        turn: otherUid, round: 1, log: ['Das Duell beginnt. 4.000 LP für jedes Haus.'], usedEffects: {}, createdAt: Date.now()
+      };
+      await set(path(`battles/${battleId}`), room);
+      await set(path(`battleQueue/${uid}`), { ...own, status: 'matched', battleId });
+      return { battleId };
+    }
+    await set(path(`battleQueue/${uid}`), own);
+    return { waiting: true };
+  },
+  listenBattleQueue(uid, callback, onError) { return onValue(path(`battleQueue/${uid}`), snap => callback(snap.exists() ? snap.val() : null), onError); },
+  listenBattle(battleId, callback, onError) { return onValue(path(`battles/${battleId}`), snap => callback(snap.exists() ? snap.val() : null), onError); },
+  async updateBattle(battleId, uid, value) {
+    const result = await runTransaction(path(`battles/${battleId}`), current => {
+      if (!current?.players?.[uid] || current.winner) return;
+      return value;
+    }, { applyLocally: false });
+    if (!result.committed) throw new Error('Dein Zug konnte nicht gespeichert werden.');
+    return result.snapshot.val();
+  },
+  async leaveBattleQueue(uid) { return remove(path(`battleQueue/${uid}`)); },
 };
 
 onAuthStateChanged(auth, (user) => {
