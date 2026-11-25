@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
-import { getDatabase, ref, get, set, update, onValue, push, remove, runTransaction } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+import { getDatabase, ref, get, set, update, onValue, push, remove, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAHZfys1YpBosbEeK30GG2aVLgG5CpV0DI",
@@ -17,11 +17,71 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 const provider = new GoogleAuthProvider();
 const path = (name) => ref(db, `westeros/${name}`);
-const battlePlayer = (name, source) => { const deck = [...source]; for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; } return { name, hp: 2000, maxHp: 2000, deck: deck.slice(5), hand: deck.slice(0, 5), field: [], influence: 1, maxInfluence: 1, fatigue: 0 }; };
+const battlePlayer = (name, source, seed) => {
+  const deck = [...source];
+  let state = 2166136261;
+  for (const character of seed) state = Math.imul(state ^ character.charCodeAt(0), 16777619);
+  const random = () => {
+    state += 0x6D2B79F5;
+    let value = state;
+    value = Math.imul(value ^ value >>> 15, value | 1);
+    value ^= value + Math.imul(value ^ value >>> 7, value | 61);
+    return ((value ^ value >>> 14) >>> 0) / 4294967296;
+  };
+  for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [deck[i], deck[j]] = [deck[j], deck[i]]; }
+  return { name, hp: 2000, maxHp: 2000, deck: deck.slice(5), hand: deck.slice(0, 5), field: [], influence: 1, maxInfluence: 1, fatigue: 0 };
+};
 const usernameEmail = (name) => `${name.toLowerCase()}@westeros.demonslayerranks.firebaseapp.com`;
 const isRulesDenied = (error) => error?.code === "PERMISSION_DENIED" || /permission denied/i.test(error?.message || "");
 const offerPath = (sellerUid, cardId) => path(`marketOffers/${sellerUid}/${cardId}`);
 const copyData = (value) => value == null ? value : JSON.parse(JSON.stringify(value));
+async function battleIdForPair(first, second) {
+  const pair = [`${first.uid}:${first.queueToken || first.joinedAt}`, `${second.uid}:${second.queueToken || second.joinedAt}`].sort();
+  const bytes = new TextEncoder().encode(pair.join("\u0000"));
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function battleRoomForPair(first, second, battleId) {
+  const players = [first, second].sort((a, b) => a.uid < b.uid ? -1 : a.uid > b.uid ? 1 : 0);
+  return {
+    players: Object.fromEntries(players.map((player) => [player.uid, battlePlayer(player.name || "Spieler", player.deck, `${battleId}:${player.uid}`)])),
+    turn: players[0].uid,
+    round: 1,
+    log: ["Das Duell beginnt. 2.000 LP für jedes Haus."],
+    usedEffects: {},
+    createdAt: Math.max(Number(first.joinedAt) || 0, Number(second.joinedAt) || 0)
+  };
+}
+
+async function ensureBattleRoom(battleId, room) {
+  const target = path(`battles/${battleId}`);
+  const existing = await get(target);
+  if (existing.exists()) return;
+  try {
+    await set(target, room);
+  } catch (error) {
+    // Two clients can create the same deterministic room at once. The first
+    // write wins; the second confirms that the shared room now exists.
+    const latest = await get(target);
+    if (!latest.exists() || !latest.val()?.players?.[Object.keys(room.players)[0]] || !latest.val()?.players?.[Object.keys(room.players)[1]]) throw error;
+  }
+}
+
+async function markQueueEntryMatched(uid, battleId) {
+  const target = path(`battleQueue/${uid}`);
+  let latest = await get(target);
+  if (latest.val()?.status === "matched" && latest.val()?.battleId === battleId) return true;
+  if (latest.val()?.status !== "waiting") return false;
+  try {
+    await update(target, { status: "matched", battleId });
+    return true;
+  } catch (error) {
+    latest = await get(target);
+    if (latest.val()?.status === "matched" && latest.val()?.battleId === battleId) return true;
+    throw error;
+  }
+}
 
 async function settleReservedOffer(sellerUid, cardId, buyerUid, listing) {
   const soldAt = Date.now();
@@ -258,26 +318,34 @@ window.gameFirebase = {
   listenProfile(uid, callback) { return onValue(path(`users/${uid}`), (snap) => callback(snap.exists() ? snap.val() : null)); },
   async joinBattleQueue(uid, name, deck) {
     const queuePath = path('battleQueue');
-    const own = { uid, name, deck, status: 'waiting', joinedAt: Date.now() };
+    // Write first, then read again. Reading before enqueueing lets two players
+    // who click at nearly the same time both see an empty queue and wait forever.
+    const own = { uid, name, deck, queueToken: crypto.randomUUID().replace(/-/g, ''), status: 'waiting', joinedAt: serverTimestamp() };
+    await set(path(`battleQueue/${uid}`), own);
     const snap = await get(queuePath);
     const waiting = snap.exists() ? snap.val() : {};
-    for (const [otherUid, candidate] of Object.entries(waiting)) {
-      if (otherUid === uid || candidate?.status !== 'waiting' || !Array.isArray(candidate.deck) || candidate.deck.length !== 20) continue;
-      const battleId = push(path('battles')).key;
-      const claim = await runTransaction(path(`battleQueue/${otherUid}`), current => current?.status === 'waiting' ? { ...current, status: 'matched', battleId } : undefined, { applyLocally: false });
-      if (!claim.committed) continue;
-      const room = {
-        players: {
-          [otherUid]: battlePlayer(candidate.name || 'Spieler', candidate.deck),
-          [uid]: battlePlayer(name, deck)
-        },
-        turn: otherUid, round: 1, log: ['Das Duell beginnt. 4.000 LP für jedes Haus.'], usedEffects: {}, createdAt: Date.now()
-      };
-      await set(path(`battles/${battleId}`), room);
-      await set(path(`battleQueue/${uid}`), { ...own, status: 'matched', battleId });
-      return { battleId };
+    const candidates = Object.entries(waiting)
+      .filter(([candidateUid, candidate]) => candidate?.status === 'waiting' && Array.isArray(candidate.deck) && candidate.deck.length === 20 && candidate.deck.every((card) => typeof card === 'string'))
+      .map(([candidateUid, candidate]) => ({ ...candidate, uid: candidateUid }))
+      .sort((a, b) => (Number(a.joinedAt) || 0) - (Number(b.joinedAt) || 0) || (a.uid < b.uid ? -1 : a.uid > b.uid ? 1 : 0));
+    const ownIndex = candidates.findIndex((candidate) => candidate.uid === uid);
+    if (ownIndex >= 0 && candidates.length > 1) {
+      // Stable pair ordering plus an ID derived from both UIDs means that if
+      // both clients see the pair, they create the same room and queue entries.
+      const pairStart = ownIndex - (ownIndex % 2);
+      const first = candidates[pairStart];
+      const second = candidates[pairStart + 1];
+      if (first && second) {
+        const battleId = await battleIdForPair(first, second);
+        await ensureBattleRoom(battleId, battleRoomForPair(first, second, battleId));
+        const firstMatched = await markQueueEntryMatched(first.uid, battleId);
+        const secondMatched = await markQueueEntryMatched(second.uid, battleId);
+        if (firstMatched && secondMatched) return { battleId };
+        const ownLatest = await get(path(`battleQueue/${uid}`));
+        const existingBattleId = ownLatest.val()?.status === 'matched' ? ownLatest.val()?.battleId : null;
+        if (existingBattleId) return { battleId: existingBattleId };
+      }
     }
-    await set(path(`battleQueue/${uid}`), own);
     return { waiting: true };
   },
   listenBattleQueue(uid, callback, onError) { return onValue(path(`battleQueue/${uid}`), snap => callback(snap.exists() ? snap.val() : null), onError); },
